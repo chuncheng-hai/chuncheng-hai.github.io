@@ -12,9 +12,9 @@ toc: true
 
 # Startup Playbook (创业手册)
 
-> **原文作者：** Sam Altman 
-> **原文链接：** [playbook.samaltman.com](https://playbook.samaltman.com/) 
-> **中文链接：** [Sam Altman的创业手册](https://jxp73q7qjsg.feishu.cn/docx/WCNZdKDa4o2eUrxK5ElcfBXEnah)
+> **原文作者：** Sam Altman  
+> **原文链接：** [playbook.samaltman.com](https://playbook.samaltman.com/)  
+> **中文链接：** [Sam Altman的创业手册](https://jxp73q7qjsg.feishu.cn/docx/WCNZdKDa4o2eUrxK5ElcfBXEnah)  
 
 
 > *We spend a lot of time advising startups. Though one-on-one advice will always be crucial, we thought it might help us scale Y Combinator if we could distill the most generalizable parts of this advice into a sort of playbook we could give YC and YC Fellowship companies.*
@@ -62,7 +62,7 @@ toc: true
 
 ## Part II  Great Team(第二部分：一个非常好的团队)
 ## Part III A Great Product(第三部分：一个非常好的产品)
-## Great Execution (第四部分： 非常好的执行)
+## Part IV Great Execution (第四部分： 非常好的执行)
 > *Although it’s necessary to build a great product, you’re not done after that. You still have to turn it into a great company, and you have to do it yourself—the fantasy of hiring an “experienced manager” to do all this work is both extremely prevalent and a graveyard for failed companies. You cannot outsource the work to someone else for a long time.*
 
 > *This sounds obvious, but you have to make money. This would be a good time to start thinking about how that’s going to work.*
