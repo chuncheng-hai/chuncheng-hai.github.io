@@ -10,8 +10,6 @@ pin: true
 toc: true
 ---
 
-# Startup Playbook (创业手册)
-
 > **原文作者：** Sam Altman  
 > **原文链接：** [playbook.samaltman.com](https://playbook.samaltman.com/)  
 > **中文链接：** [Sam Altman的创业手册](https://jxp73q7qjsg.feishu.cn/docx/WCNZdKDa4o2eUrxK5ElcfBXEnah)  
