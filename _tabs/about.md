@@ -1,7 +1,5 @@
 ---
 # the default layout is 'page'
-icon: fas fa-info-circle
-order: 4
 ---
 
 Chuncheng Hai — Linux/DevOps 工程师 | INTJ思考者
@@ -14,4 +12,8 @@ Chuncheng Hai — Linux/DevOps 工程师 | INTJ思考者
 
 此博客记录我的技术笔记与认知体系。
 
-GitHub: https://github.com/chuncheng-hai
+Ask me anything
+chunchenghai@outlook.com
+[GitHub]( https://github.com/chuncheng-hai)
+[CSDN](https://blog.csdn.net/m0_61947256?type=blog)
+[哔哩哔哩](https://space.bilibili.com/647385854?spm_id_from=333.1007.0.0)
