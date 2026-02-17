@@ -1,12 +1,11 @@
 ---
 title: 大同这块试验田
+date: 2026-02-17 23:00:00 +0800   # 必须是这个格式，建议带时区
+categories: [历史, 大同]
+tags: [市长, 党史, 耿彦波, 云冈石窟]
 author: Chuncheng Hai
-date: 2026-02-17 23:26:00 +0800
-categories: [HIST]
-tags: [ HIST]
-math: false
-mermaid: false
-toc: true
+description: 大同建国后历任市长断代史，从李铁生到刘俊义，完整梳理大同这块“试验田”的浮沉荣辱。
+layout: post   # Jekyll 用这个，Hexo/Hugo 可省略或改成默认
 ---
 
 > **原文作者**：鱼童91  
