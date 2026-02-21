@@ -8,7 +8,7 @@ layout: post   # Jekyll 用这个，Hexo/Hugo 可省略或改成默认
 toc: true
 ---
 
-> **原文作者**：antirez
+> **原文作者**：antirez  
 > **原文链接**：[Don't fall into the anti-AI hype](https://antirez.com/news/158)
 
 > I love writing software, line by line. It could be said that my career was a continuous effort to create software well written, minimal, where the human touch was the fundamental feature. I also hope for a society where the last are not forgotten. Moreover, I don't want AI to economically succeed, I don't care if the current economic system is subverted (I could be very happy, honestly, if it goes in the direction of a massive redistribution of wealth). But, I would not respect myself and my intelligence if my idea of software and society would impair my vision: facts are facts, and AI is going to change programming forever.
