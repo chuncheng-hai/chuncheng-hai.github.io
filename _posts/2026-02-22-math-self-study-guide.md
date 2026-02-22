@@ -16,12 +16,18 @@ toc: true
 
 ## 数学分析
 
-课程名称：数学分析
-课程链接：[B站-数学分析-陈纪修](https://www.bilibili.com/video/BV15v411g7VP?spm_id_from=333.788.videopod.episodes&vd_source=6f65e5458d8f1daecbbb1874a16d01b2&p=2)
+课程名称：数学分析  
+课程链接：[B站-数学分析-陈纪修](https://www.bilibili.com/video/BV15v411g7VP?spm_id_from=333.788.videopod.episodes&vd_source=6f65e5458d8f1daecbbb1874a16d01b2&p=2)  
+
 集合论  
 交并补差  
 集合的交换律、结合律、分配律、对偶律(德摩根律)  
 笛卡尔集 笛卡尔平面 平面直角坐标系 空间直角坐标系  
+有限集  
+无限集  
+可数集  
+对角线证明  
+可数个可数集之并，还是可数集  
 实数理论 戴德金分割
 微分
 黎曼积分
