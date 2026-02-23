@@ -14,10 +14,17 @@ toc: true
 
 ---
 
-
+什么是好的教育？
 > 学习不是填满水桶, 而是点燃火焰!
 Education is not the filling of a pail but the lighting of a fire.
 ——叶芝 (爱尔兰诗人)
+
+如何进行好教育？
+卡罗尔·德韦克（Carol Dweck） 是斯坦福大学心理学家
+“鼓励（encouragement）与表扬（praise）” 的研究
+
+固定型思维
+成长型思维
 
 教育分为三种模式
 洪堡模式

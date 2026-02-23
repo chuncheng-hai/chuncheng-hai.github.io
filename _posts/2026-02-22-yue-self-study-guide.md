@@ -14,4 +14,7 @@ toc: true
 
 ---
 
-九声六调
+学习粤拼
+- [九声六调](https://www.bilibili.com/video/BV16P4y1x7LC/?spm_id_from=333.1387.upload.video_card.click&vd_source=6f65e5458d8f1daecbbb1874a16d01b2)
+
+[CUHK 粵語網路課堂](https://www.ilc.cuhk.edu.hk/workshop/chinese/cantonese/onlinetutorial/intro.aspx)
