@@ -2,13 +2,11 @@
 
 title: 你为什么不能成为巴菲特
 
-date: 2026-02-23 22:00:00 +0800   # 必须是这个格式，建议带时区
+date: 2026-02-23 22:00:00 +0800
 
 categories: [投资,巴菲特]
 
 tags: [投资,巴菲特]
-
-author: Chuncheng Hai
 
 toc: true
 
