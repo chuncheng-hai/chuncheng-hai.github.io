@@ -69,6 +69,12 @@ MVS 最小可行服务
 
 
 贝索斯 单向门 双向门  
+>Some decisions are consequential and irreversible or nearly irreversible – one-way doors – and these decisions must be made methodically, carefully, slowly, with great deliberation and consultation. If you walk through and don’t like what you see on the other side, you can’t get back to where you were before. We can call these Type 1 decisions. But most decisions aren’t like that – they are changeable, reversible – they’re two-way doors. If you’ve made a suboptimal Type 2 decision, you don’t have to live with the consequences for that long. You can reopen the door and go back through. Type 2 decisions can and should be made quickly by high judgment individuals or small groups.
+>
+>As organizations get larger, there seems to be a tendency to use the heavy-weight Type 1 decision-making process on most decisions, including many Type 2 decisions. The end result of this is slowness, unthoughtful risk aversion, failure to experiment sufficiently, and consequently diminished invention.1 We’ll have to figure out how to fight that tendency.
+>
+>And one-size-fits-all thinking will turn out to be only one of the pitfalls. We’ll work hard to avoid it… and any other large organization maladies we can identify.
+
 马斯克 第一性原理  
 算法 分而治之 减而治之  
 选己所爱，爱己所选  

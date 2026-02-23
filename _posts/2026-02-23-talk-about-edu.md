@@ -15,8 +15,8 @@ toc: true
 ---
 
 什么是好的教育？
-> 学习不是填满水桶, 而是点燃火焰!
-Education is not the filling of a pail but the lighting of a fire.
+> 学习不是灌满一桶水, 而是点燃一团火!  
+Education is not the filling of a pail but the lighting of a fire.  
 ——叶芝 (爱尔兰诗人)
 
 如何进行好教育？
@@ -28,7 +28,7 @@ Education is not the filling of a pail but the lighting of a fire.
 
 教育分为三种模式
 洪堡模式
-义务教育 让人成为合格的流水线工人
+普鲁士教育 让人成为合格的流水线工人
 纽曼模式
 人文博雅
 
@@ -46,4 +46,5 @@ Education is not the filling of a pail but the lighting of a fire.
 吃饭时我讲给几个同事听。他们都不置可否。 好像他们从来没思考过类似的问题。昨天我爱人说她们学校评职称需要发表教学论文，让我帮着写一篇。我把上面的内容整理了一下。题目是“教学模式改革之探索系列-1”。今天早上我到建行交了800元版面费。下午就收到编辑的接收函。另附审稿人评语为：该文思想相当前卫，读后让人耳目一新。推荐在贵刊发表。
 ```
 
-用布鲁诺知识分类法，知识分为
+许渊冲
+先 To know something about everything,再 To know everything about something.
