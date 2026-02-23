@@ -27,6 +27,12 @@ Linux 30个高频命令
 tldr  
 man  
 
+一些更现代的命令
+`htop`
+一些有趣的命令
+`tmd`
+`sl`
+
 nano 与 vim 编辑器
 文本处理  
 grep  
