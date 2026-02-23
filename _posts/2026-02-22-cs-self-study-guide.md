@@ -153,7 +153,7 @@ CS与英语的关系
 先看MIT18.01: Single Variable Calculus
 MIT18.02: Multivariable Calculus
 MIT 18.03:Differential Equations
-[微积分的本质](bilibili.com/video/BV1qW411N7FU/?spm_id_from=333.337.search-card.all.click)
+[微积分的本质](https://www.bilibili.com/video/BV1qW411N7FU/?spm_id_from=333.337.search-card.all.click)
 ##### 1.2 线性代数
 线性代数的本质
 MIT18.06: Linear Algebra
