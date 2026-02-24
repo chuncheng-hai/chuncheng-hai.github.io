@@ -60,20 +60,21 @@ PSTN线路
 数字线路
 模拟线路
 IMS线路
-SIP协议
+会话发起协议(SIP)，是应用层协议，它的传输层基于UDP协议，所以在一通SIP通话中，语音流的RTP端口均为UDP监听
 软电话注册
 
 **标准呼叫流程**的SIP信令交互如下：
 `INVITE → 100 Trying → 180 Ringing → 200 OK`
 
-1. 主叫方发送INVITE消息，发起呼叫  
+1. 主叫方发送一个 SIP 请求"INVITE"(发起呼叫的SIP请求)  
+    - 此请求包含语音流协议的详细信息。为此，在负载中使用了会话描述协议 (SDP)。SDP 消息包含主叫方支持的所有媒体编解码器列表。（这些编解码器使用 RTP 进行传输。）
 2. 被叫方回送100/Trying，表示已收到INVITE消息，处理中  
 3. 被叫方回送180/Ringing，表示振铃中  
 4. 接通后，被叫方回送200/OK，表示摘机  
 5. 主叫方发送ACK，表示确认收到  
 6. 挂断方发送BYE消息，表示挂机  
 
-SDP协商端口通信
+[SIP 简介，第 1 部分：SIP 初探](https://www.oracle.com/technetwork/cn/articles/entarch/introduction-sip-part-1-085274-zhs.html)
 DTMF按键 RFC 2833协议  
 opensips rtpengine
 CRM
@@ -81,7 +82,7 @@ CTI
 
 [FreeSWITCH权威指南]
 
-## 常见SIP响应码(信令)
+## List_of_SIP_response_codes SIP响应码(信令)列表
 
 以下表格基于 **RFC 3261 及相关扩展**，整理了**所有常见及完整 SIP 响应码**
 

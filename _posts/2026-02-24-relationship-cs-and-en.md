@@ -7,14 +7,12 @@ categories: [CS,英语]
 
 tags: [CS,英语]
 
-author: Chuncheng Hai
-
 toc: true
 
 ---
 
-> 原文作者： 宋劲杉
-> 原文链接： [谈谈写程序与学英语](https://akaedu.github.io/readme/3.html)
+> 原文作者： 宋劲杉  
+> 原文链接： [谈谈写程序与学英语](https://akaedu.github.io/readme/3.html)  
 
 俗话说，没有金刚钻，就别揽瓷器活儿。套用到IT业，英语不行，就别做程序员。网上关于程序员学英语的文章不少，但我想谈谈我自己的看法。首先详细讨论一下为什么程序员离了英语不行，然后针对程序员应该怎么学英语说说我的体会。  
 
