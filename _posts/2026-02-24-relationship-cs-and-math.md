@@ -14,9 +14,7 @@ toc: true
 
 ---
 
-学习计算机并不需要学很多数学，因为工程并不需要非常高超的数学功底。
-事实上，计算机科学的数学主要分为 微积分、线性代数、概率论、离散数学四部分，进阶数学为数值分析、凸优化。
-可参考南京大学数学系张高飞老师的[研究生选专业指南](https://zr9558.com/2011/10/16/mathgraduatestudents/)一文，内容如下
+先看一篇文章，下文出自南京大学数学系张高飞老师的[研究生选专业指南](https://zr9558.com/2011/10/16/mathgraduatestudents/)一文
 
 >我系许多研究生向我咨询选专业的问题。我想了很久并有一些心得。写在这里仅供大家参考。
 >
@@ -29,3 +27,47 @@ toc: true
 >我想大多数同学看到这儿之前已经找到了适合自己的专业了。可若仍有人羞怯的说他在中 学时早恋，因此连中学的数学也没学好，我想告诉这部分同学不要怕。在我们系有专门为 你们开设的一个专业：统计学。这一学科只要求懂得小学数学中的加减乘除四则运算就够 了。 更重要的是，选择这一专业的大多都是女同学。在你准确无误的把成千上万个数据加 起来并娴熟的计算出他们的均值时，你也赢得了众多师姐师妹的芳心：短短三年的研究生 生活或许能让你再次体会一次那如花美眷，似水流年的往事。。。
 >
 >最后这一条是专门针对那些悲情人物的。他们连小学的数学也没学好。不要说把上千个数 加起来，就是把两个数加起来，对他们来说都是件很吃力的事。然而这一切丝毫没有削弱 他们对数学的一片痴情。他们日日夜夜泡在图书馆里。他们翻阅了所有的数学文献，却从 未找到一本能读懂的。 但他们仍坚持不懈， 为的就是找到一个适合自己的专业。他们的 行为感动了上帝。上世纪的某一天，上帝为他们创造了一台机器帮他们计算。这就是计算机。借助计算机，他们可以很快的进行加减乘除的运算。这就是计算数学。
+
+
+学习计算机并不需要学非常高深的数学，因为工程并不需要非常高超的数学功底。事实上，计算机科学的数学主要由 微积分、线性代数、概率论、离散数学、信息论组成，进阶数学为数值分析、凸优化。下面列出了计算机科学的数学的优质课程。
+
+## 微积分
+
+- [微积分的本质](https://www.bilibili.com/video/BV1qW411N7FU/?spm_id_from=333.337.search-card.all.click)
+- MIT18.01: Single Variable Calculus
+- MIT18.02: Multivariable Calculus
+- MIT 18.03:Differential Equations
+
+## 线性代数
+
+- 线性代数的本质
+- MIT18.06: Linear Algebra
+
+## 概率论
+
+- Stanford CS109: Probability for Computer Scientists
+- MIT 18.05 Introduction to Probability and Statistics
+- Statistics 110: Probability
+- UCB EECS126 : Probability and Random Processes
+
+## 离散数学
+
+- UCB CS70 : discrete Math and probability theory
+- MIT 6.042J: Mathematics for Computer Science
+
+## 信息论
+
+- MIT6.050J: Information theory and Entropy
+- The Information Theory, Pattern Recognition, and Neural Networks
+
+## 数值分析
+
+- MIT18.330 : Introduction to numerical analysis
+
+## 优化理论
+
+- UCB EECS127：Optimization Models in Engineering
+- Stanford EE364A: Convex Optimization
+
+《具体数学》（Graham, Knuth, Patashnik）开头章节  
+《离散数学及其应用》（Rosen）基础部分 Khan Academy 逻辑与集合部分
