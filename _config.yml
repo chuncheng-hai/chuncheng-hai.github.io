@@ -1,186 +1,178 @@
-# The Site Configuration
+# ====================== 基础配置 ======================
 
-# Import the theme
+# 导入 Chirpy 主题（不要修改）
 theme: jekyll-theme-chirpy
 
-# The language of the webpage › http://www.lingoes.net/en/translator/langcode.htm
-# If it has the same name as one of the files in folder `_data/locales`, the layout language will also be changed,
-# otherwise, the layout language will use the default value of 'en'.
+# 网站语言（已设为简体中文，会同步改变界面语言）
 lang: zh-CN
 
-# Change to your timezone › https://zones.arilyn.cc
+# 时区（中国大陆推荐使用上海时区）
 timezone: Asia/Shanghai
 
-# jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
-# ↓ --------------------------
+# ====================== 站点核心信息 ======================
 
-title: Chuncheng's Blog # the main title
+# 网站主标题（浏览器标签页、首页大标题）
+title: Chuncheng's Blog
 
-tagline: A text-focused Jekyll theme # it will display as the subtitle
+# 副标题 / 标语（显示在标题下方，建议简短有力）
+tagline: 技术笔记 · 成长记录 · 持续分享
 
-description: >- # used by seo meta and the atom feed
-  A minimal, responsive and feature-rich Jekyll theme for technical writing.
+# SEO 元数据 + RSS Feed 使用的描述（非常重要！建议 100-150 字）
+description: >-
+  欢迎来到 Chuncheng 的个人博客。
+  这里专注于记录个人成长的思考与实战经验。
+  希望能与大家共同进步！
 
-# Fill in the protocol & hostname for your site.
-# E.g. 'https://username.github.io', note that it does not end with a '/'.
+# 网站完整 URL（GitHub Pages 用户站点必须这样写，不要末尾加 '/'）
 url: "https://chuncheng-hai.github.io"
 
-github:
-   username: chuncheng-hai # change to your GitHub username
+# ====================== 社交与作者信息 ======================
 
+# GitHub 用户名（主题会自动使用）
+github:
+  username: chuncheng-hai
+
+# Twitter/X 用户名（可选，留空则不显示）
 twitter:
-  username: twitter_username # change to your Twitter username
+  username:  # 填你的 Twitter 用户名，例如：chuncheng_hai
 
 social:
-  # Change to your full name.
-  # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: your_full_name
-  email: example@domain.com # change to your email address
+  # 作者全名（会显示在每篇文章署名、页脚版权等位置）
+  # 【必须修改】请改成你的真实姓名
+  name: Chuncheng Hai
+
+  # 联系邮箱（推荐填写，会显示在侧边栏）
+  # 【建议修改】
+  email: your-email@example.com
+
   links:
-    # The first element serves as the copyright owner's link
-    - https://twitter.com/username # change to your Twitter homepage
-    - https://github.com/username # change to your GitHub homepage
-    # Uncomment below to add more social links
-    # - https://www.facebook.com/username
-    # - https://www.linkedin.com/in/username
+    # 第一条链接会作为页脚「版权所有者」链接（推荐填 GitHub）
+    - https://github.com/chuncheng-hai
+    # 可继续添加更多社交链接（取消注释即可）：
+    # - https://twitter.com/chuncheng_hai
+    # - https://space.bilibili.com/你的ID
+    # - https://weibo.com/你的ID
+    # - https://www.linkedin.com/in/你的ID
 
-# Site Verification Settings
+# ====================== SEO 验证（站长工具） ======================
+
+# 各大搜索引擎验证代码（强烈推荐填写百度和 Google）
 webmaster_verifications:
-  google: # fill in your Google verification code
-  bing: # fill in your Bing verification code
-  alexa: # fill in your Alexa verification code
-  yandex: # fill in your Yandex verification code
-  baidu: # fill in your Baidu verification code
-  facebook: # fill in your Facebook verification code
+  google:   # Google Search Console 验证代码
+  bing:     # Bing Webmaster 验证代码
+  baidu:    # 百度站长平台验证代码（中文博客必填，提升百度收录）
+  yandex:   # Yandex 验证代码
+  alexa:    # Alexa 验证代码（已停用，可忽略）
+  facebook: # Facebook 域名验证代码
 
-# ↑ --------------------------
-# The end of `jekyll-seo-tag` settings
+# ====================== 流量分析与页面浏览量 ======================
 
-# Web Analytics Settings
+# 网站分析工具（可选，根据需求开启一个即可）
 analytics:
   google:
-    id: # fill in your Google Analytics ID
+    id:   # Google Analytics 4 ID（G- 开头）
   goatcounter:
-    id: # fill in your GoatCounter ID
+    id:   # GoatCounter 轻量统计 ID（隐私友好）
   umami:
-    id: # fill in your Umami ID
-    domain: # fill in your Umami domain
-  matomo:
-    id: # fill in your Matomo ID
-    domain: # fill in your Matomo domain
+    id:     # Umami 自托管分析 ID
+    domain: # Umami 域名
   cloudflare:
-    id: # fill in your Cloudflare Web Analytics token
-  fathom:
-    id: # fill in your Fathom Site ID
+    id:   # Cloudflare Web Analytics Token
 
-# Page views settings
+# 页面浏览量统计（目前仅支持 GoatCounter）
 pageviews:
-  provider: # now only supports 'goatcounter'
+  provider: goatcounter   # 推荐开启 GoatCounter（免费、隐私好）
 
-# Prefer color scheme setting.
-#
-# Note: Keep empty will follow the system prefer color by default,
-# and there will be a toggle to switch the theme between dark and light
-# on the bottom left of the sidebar.
-#
-# Available options:
-#
-#     light — Use the light color scheme
-#     dark — Use the dark color scheme
-#
-theme_mode: # [light | dark]
+# ====================== 外观与用户体验 ======================
 
-# The CDN endpoint for media resources.
-# Notice that once it is assigned, the CDN url
-# will be added to all media resources (site avatar, posts' images, audio and video files) paths starting with '/'
-#
-# e.g. 'https://cdn.com'
-cdn:
+# 主题颜色模式
+# 留空 = 跟随系统偏好 + 右下角出现切换按钮（强烈推荐）
+theme_mode:   # 可填 light 或 dark，留空最佳
 
-# the avatar on sidebar, support local or CORS resources
+# 全局 CDN（如果有自己的 CDN，可填加速图片/媒体加载）
+# 填写后所有 / 开头的资源都会自动加上 CDN 前缀
+cdn:   # 示例：https://cdn.chuncheng.dev
+
+# 侧边栏头像（请确保文件存在于 assets/img/profile.jpg）
 avatar: /assets/img/profile.jpg
 
-# The URL of the site-wide social preview image used in SEO `og:image` meta tag.
-# It can be overridden by a customized `page.image` in front matter.
-social_preview_image: # string, local or CORS resources
+# 社交分享预览图（微信/微博/LinkedIn 分享时显示）
+# 建议上传一张 1200×630 的精美图片
+social_preview_image:   # 示例：/assets/img/preview.jpg
 
-# boolean type, the global switch for TOC in posts.
+# 全局文章目录（TOC）开关
 toc: true
 
+# ====================== 评论系统（强烈推荐开启） ======================
+
 comments:
-  # Global switch for the post-comment system. Keeping it empty means disabled.
-  provider: # [disqus | utterances | giscus]
-  # The provider options are as follows:
-  disqus:
-    shortname: # fill with the Disqus shortname. › https://help.disqus.com/en/articles/1717111-what-s-a-shortname
-  # utterances settings › https://utteranc.es/
+  # 评论系统全局开关（留空 = 全局关闭）
+  # 推荐使用 utterances（最简单、无需额外配置）
+  provider: utterances
+
+  # utterances 配置（GitHub Issues 驱动，推荐新手）
   utterances:
-    repo: # <gh-username>/<repo>
-    issue_term: # < url | pathname | title | ...>
-  # Giscus options › https://giscus.app
-  giscus:
-    repo: # <gh-username>/<repo>
-    repo_id:
-    category:
-    category_id:
-    mapping: # optional, default to 'pathname'
-    strict: # optional, default to '0'
-    input_position: # optional, default to 'bottom'
-    lang: # optional, default to the value of `site.lang`
-    reactions_enabled: # optional, default to the value of `1`
+    repo: chuncheng-hai/chuncheng-hai.github.io   # 【必须】你的仓库全名
+    issue_term: pathname   # 推荐使用 pathname（按文章 URL 生成评论）
 
-# Self-hosted static assets, optional › https://github.com/cotes2020/chirpy-static-assets
-assets:
-  self_host:
-    enabled: # boolean, keep empty means false
-    # specify the Jekyll environment, empty means both
-    # only works if `assets.self_host.enabled` is 'true'
-    env: # [development | production]
+  # 如果想用更现代的 Giscus（支持表情、回复线程），可替换为下面配置：
+  # provider: giscus
+  # giscus:
+  #   repo: chuncheng-hai/chuncheng-hai.github.io
+  #   repo_id:          # 去 https://giscus.app 获取
+  #   category:         # 同上
+  #   category_id:      # 同上
+  #   mapping: pathname
+  #   reactions_enabled: 1
+  #   input_position: bottom
 
+# ====================== PWA（渐进式 Web App） ======================
+
+# 支持「添加到主屏幕」安装到手机/桌面（强烈推荐开启）
 pwa:
-  enabled: true # The option for PWA feature (installable)
+  enabled: true
   cache:
-    enabled: true # The option for PWA offline cache
-    # Paths defined here will be excluded from the PWA cache.
-    # Usually its value is the `baseurl` of another website that
-    # shares the same domain name as the current website.
+    enabled: true
+    # 排除缓存的路径（如果你的域名下还有其他子站）
     deny_paths:
-      # - "/example"  # URLs match `<SITE_URL>/example/*` will not be cached by the PWA
+      # - "/other-project"
 
+# ====================== 分页与基础路径 ======================
+
+# 首页每页显示文章数量（10-12 比较合适）
 paginate: 10
 
-# The base URL of your site
+# 站点基础路径（GitHub 用户站点通常留空）
 baseurl: ""
 
-# ------------ The following options are not recommended to be modified ------------------
+# ====================== 高级设置（不建议随意修改） ======================
 
+# Kramdown Markdown 解析器设置
 kramdown:
+  input: GFM
   footnote_backlink: "&#8617;&#xfe0e;"
   syntax_highlighter: rouge
-  syntax_highlighter_opts: # Rouge Options › https://github.com/jneen/rouge#full-options
+  syntax_highlighter_opts:
     css_class: highlight
-    # default_lang: console
-    span:
-      line_numbers: false
     block:
       line_numbers: true
       start_line: 1
 
+# 自定义集合（标签页等）
 collections:
   tabs:
     output: true
     sort_by: order
 
+# 默认 Front Matter 设置
 defaults:
   - scope:
-      path: "" # An empty string here means all files in the project
+      path: ""
       type: posts
     values:
       layout: post
-      comments: true # Enable comments in posts.
-      toc: true # Display TOC column in posts.
-      # DO NOT modify the following parameter unless you are confident enough
-      # to update the code of all other post links in this project.
+      comments: true
+      toc: true
       permalink: /posts/:title/
   - scope:
       path: _drafts
@@ -188,23 +180,24 @@ defaults:
       comments: false
   - scope:
       path: ""
-      type: tabs # see `site.collections`
+      type: tabs
     values:
       layout: page
       permalink: /:title/
 
+# Sass 压缩
 sass:
   style: compressed
 
+# HTML 压缩（生产环境自动启用）
 compress_html:
   clippings: all
   comments: all
   endings: all
-  profile: false
-  blanklines: false
   ignore:
     envs: [development]
 
+# 构建时排除的文件/目录
 exclude:
   - "*.gem"
   - "*.gemspec"
@@ -216,6 +209,7 @@ exclude:
   - "*.config.js"
   - "package*.json"
 
+# 归档功能（分类和标签页）
 jekyll-archives:
   enabled: [categories, tags]
   layouts:
