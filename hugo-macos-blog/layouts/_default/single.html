@@ -1,0 +1,143 @@
+{{- define "main" }}
+
+<article class="post-single {{ if eq .Params.type "reprint" }}article--reprint{{ else }}article--original{{ end }}">
+  <header class="post-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1 class="post-title entry-hint-parent">
+      {{ .Title }}
+      {{- if .Draft }}
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" fill="currentColor">
+          <path d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+      {{- end }}
+    </h1>
+    {{- if .Description }}
+    <div class="post-description">{{ .Description }}</div>
+    {{- end }}
+    {{- if not (.Param "hideMeta") }}
+    <div class="post-meta">
+      {{- partial "post_meta.html" . -}}
+      {{- partial "translation_list.html" . -}}
+      {{- partial "edit_post.html" . -}}
+      {{- partial "post_canonical.html" . -}}
+    </div>
+    {{- end }}
+  </header>
+
+  {{- if eq .Params.type "reprint" }}
+  <aside class="source-box">
+    <strong>转载信息</strong>
+    <div>标题：{{ with .Params.source_title }}{{ . }}{{ else }}{{ .Title }}{{ end }}</div>
+    {{ with .Params.source_author }}<div>作者：{{ . }}</div>{{ end }}
+    {{ with .Params.source_url }}<div>链接：<a href="{{ . }}" target="_blank" rel="noreferrer">{{ . }}</a></div>{{ end }}
+    {{ with .Params.license }}<div>声明：{{ . }}</div>{{ end }}
+  </aside>
+  {{- end }}
+
+  {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
+  {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
+
+  {{- if (.Param "ShowToc") }}
+  {{- partial "toc.html" . }}
+  {{- end }}
+
+  <div class="reading-mode" id="reading-mode">
+    <button type="button" data-mode="bilingual" class="active">双语对照</button>
+    <button type="button" data-mode="original-only">仅原文</button>
+    <button type="button" data-mode="translation-only">仅整理稿</button>
+  </div>
+
+  {{- if .Content }}
+  <div class="post-content" id="post-content">
+    {{- if not (.Param "disableAnchoredHeadings") }}
+    {{- partial "anchored_headings.html" .Content -}}
+    {{- else }}{{ .Content }}{{ end }}
+  </div>
+  {{- end }}
+
+  <footer class="post-footer">
+    {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
+    <ul class="post-tags">
+      {{- range ($.GetTerms $tags) }}
+      <li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+    {{- if (.Param "ShowPostNavLinks") }}
+    {{- partial "post_nav_links.html" . }}
+    {{- end }}
+    {{- if (and site.Params.ShowShareButtons (ne .Params.disableShare true)) }}
+    {{- partial "share_icons.html" . -}}
+    {{- end }}
+  </footer>
+
+  {{- if (.Param "comments") }}
+  {{- partial "comments.html" . }}
+  {{- end }}
+</article>
+
+<script>
+(function () {
+  const article = document.querySelector('.post-single');
+  const modeWrap = document.getElementById('reading-mode');
+  const content = document.getElementById('post-content');
+  if (!article || !modeWrap || !content) return;
+
+  function autoPairQuoteParagraphForReprint() {
+    if (!article.classList.contains('article--reprint')) return;
+    if (content.querySelector('.original, .translation')) return;
+
+    const blocks = Array.from(content.children);
+    blocks.forEach((node) => {
+      if (node.tagName !== 'BLOCKQUOTE') return;
+      const next = node.nextElementSibling;
+      if (!next || next.tagName !== 'P') return;
+
+      const o = document.createElement('div');
+      o.className = 'original';
+      node.parentNode.insertBefore(o, node);
+      o.appendChild(node);
+
+      const t = document.createElement('div');
+      t.className = 'translation';
+      o.parentNode.insertBefore(t, next);
+      t.appendChild(next);
+    });
+  }
+
+  autoPairQuoteParagraphForReprint();
+
+  const original = content.querySelectorAll('.original');
+  const translation = content.querySelectorAll('.translation');
+
+  if (!article.classList.contains('article--reprint') || (!original.length && !translation.length)) {
+    modeWrap.style.display = 'none';
+    return;
+  }
+
+  function setMode(mode) {
+    modeWrap.querySelectorAll('button').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+
+    original.forEach((el) => {
+      el.style.display = (mode === 'translation-only') ? 'none' : '';
+    });
+
+    translation.forEach((el) => {
+      el.style.display = (mode === 'original-only') ? 'none' : '';
+    });
+  }
+
+  modeWrap.addEventListener('click', function (e) {
+    const btn = e.target.closest('button[data-mode]');
+    if (!btn) return;
+    setMode(btn.dataset.mode);
+  });
+
+  setMode('bilingual');
+})();
+</script>
+
+{{- end }}
