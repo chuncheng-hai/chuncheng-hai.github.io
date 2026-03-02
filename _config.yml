@@ -222,4 +222,4 @@ jekyll-archives:
 # 自托管静态资源（字体、JS 等，避免依赖 Google）
 assets:
   self_host:
-    enabled: false
+    enabled: true

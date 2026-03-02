@@ -1,27 +1,23 @@
 name: "Build and Deploy"
-
-# 触发条件
 on:
   push:
     branches:
       - main
       - master
-    # 当这些文件更新时不触发 workflow
     paths-ignore:
       - .gitignore
       - README.md
       - LICENSE
 
-  # 允许在 GitHub Actions 页面手动触发
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# 权限配置
 permissions:
-  contents: read      # 仓库内容只读
-  pages: write        # GitHub Pages 发布权限
-  id-token: write     # 用于身份验证（Actions 推荐权限）
+  contents: read
+  pages: write
+  id-token: write
 
-# 保证同一时间只执行一次部署
+# Allow one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -31,67 +27,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # -----------------------------
-      # 1️⃣ 拉取代码和子模块
-      # -----------------------------
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0       # 获取完整 commit 历史，保证子模块可以 checkout 正确版本
-          submodules: false     # ✅ 拉取子模块（例如主题或 assets）
+          fetch-depth: 0
+          # submodules: true
+          # If using the 'assets' git submodule from Chirpy Starter, uncomment above
+          # (See: https://github.com/cotes2020/chirpy-starter/tree/main/assets)
 
-      # -----------------------------
-      # 2️⃣ 设置 GitHub Pages 环境
-      # -----------------------------
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
 
-      # -----------------------------
-      # 3️⃣ 设置 Ruby 环境（Jekyll）
-      # -----------------------------
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3
-          bundler-cache: true   # ✅ 缓存 Gem 依赖，加快构建速度
+          bundler-cache: true
 
-      # -----------------------------
-      # 4️⃣ 构建网站
-      # -----------------------------
       - name: Build site
-        run: bundle exec jekyll build -d "_site${{ steps.pages.outputs.base_path }}"
+        run: bundle exec jekyll b -d "_site${{ steps.pages.outputs.base_path }}"
         env:
-          JEKYLL_ENV: "production"   # 生产环境构建，禁用调试模式
+          JEKYLL_ENV: "production"
 
-      # -----------------------------
-      # 5️⃣ 测试网站
-      # -----------------------------
       - name: Test site
         run: |
           bundle exec htmlproofer _site \
-            --disable-external \
-            --ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/"
-        # htmlproofer 检查内部链接、图片等是否有效
+            \-\-disable-external \
+            \-\-ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/"
 
-      # -----------------------------
-      # 6️⃣ 上传生成的网站作为 artifact
-      # -----------------------------
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: "_site${{ steps.pages.outputs.base_path }}"
 
   deploy:
-    # -----------------------------
-    # 7️⃣ 部署阶段
-    # -----------------------------
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build   # 依赖 build job 完成
-
+    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
