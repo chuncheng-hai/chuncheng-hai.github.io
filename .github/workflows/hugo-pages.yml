@@ -4,7 +4,7 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "hugo-macos-blog/**"
+      - "**"
       - ".github/workflows/hugo-pages.yml"
   workflow_dispatch:
 
@@ -20,9 +20,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: hugo-macos-blog
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,7 +33,7 @@ jobs:
         run: hugo --minify --gc
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: hugo-macos-blog/public
+          path: public
 
   deploy:
     environment:

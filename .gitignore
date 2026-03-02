@@ -1,34 +1,29 @@
-# Bundler cache
+# Local tooling
 .bundle
 vendor
-Gemfile.lock
-
-# Jekyll cache
-.jekyll-cache
-.jekyll-metadata
-_site
-
-# RubyGems
-*.gem
-
-# NPM dependencies
 node_modules
 package-lock.json
 
-# IDE configurations
+# IDE
 .idea
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
 !.vscode/tasks.json
 
-# Misc
-_sass/vendors
-assets/js/dist
+# Legacy artifacts
+.jekyll-cache
+.jekyll-metadata
+_site
 _site_dev
 _site_prod
 
-# Hugo
-hugo-macos-blog/public
-hugo-macos-blog/.hugo_build.lock
-hugo-macos-blog/resources
+# Hugo artifacts
+public
+resources
+.hugo_build.lock
+
+# Misc
+*.gem
+_sass/vendors
+assets/js/dist
