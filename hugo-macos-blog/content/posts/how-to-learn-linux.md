@@ -4,6 +4,7 @@ title: 如何学习Linux云计算运维
 
 date: 2026-02-22 16:00:00 +0800
 
+series: ["Linux与运维实践"]
 categories: [Linux]
 
 tags: [Linux]
@@ -11,7 +12,6 @@ tags: [Linux]
 author: Chuncheng Hai
 
 toc: true
-
 ---
 
 Linux Unix

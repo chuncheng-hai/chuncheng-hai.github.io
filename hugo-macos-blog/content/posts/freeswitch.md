@@ -4,6 +4,7 @@ title: 呼叫中心之FreeSWITCH
 
 date: 2026-02-24 09:00:00 +0800
 
+series: ["Linux与运维实践"]
 categories: [呼叫中心,FreeSIWTCH]
 
 tags: [呼叫中心,FreeSIWTCH]
@@ -11,7 +12,6 @@ tags: [呼叫中心,FreeSIWTCH]
 author: Chuncheng Hai
 
 toc: true
-
 ---
 
 

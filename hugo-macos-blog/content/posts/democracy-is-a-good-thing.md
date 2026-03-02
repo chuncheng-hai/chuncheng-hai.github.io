@@ -4,12 +4,13 @@ title: 民主是个好东西
 
 date: 2026-02-17 23:00:00 +0800
 
+series: ["转载与编译"]
 categories: [政治]
 
 tags: [政治,民主]
 
 author: Chuncheng Hai
-type: reprint
+post_type: reprint
 source_title: 民主是个好东西
 source_author: 俞可平
 source_url: "https://web.archive.org/web/20070118233128/http://news.xinhuanet.com/comments/2007-01/08/content_5578110.htm"

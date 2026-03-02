@@ -2,9 +2,10 @@
 title: Startup Playbook (创业手册)
 author: Sam Altman
 date: 2026-02-14 10:00:00 +0800
+series: ["转载与编译"]
 categories: [创业]
 tags: [Startup, Sam Altman, YC]
-type: reprint
+post_type: reprint
 source_title: Startup Playbook
 source_author: Sam Altman
 source_url: https://playbook.samaltman.com/

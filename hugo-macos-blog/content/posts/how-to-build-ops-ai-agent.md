@@ -2,6 +2,7 @@
 title: 如何构建内网命令行 Ai Agent
 author: Chuncheng Hai
 date: 2026-02-14 10:00:00 +0800
+series: ["Linux与运维实践"]
 categories: [AI，Ops]
 tags: [AI, Ops]
 math: false

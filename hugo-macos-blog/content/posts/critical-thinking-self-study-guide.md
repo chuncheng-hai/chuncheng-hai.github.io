@@ -4,6 +4,7 @@ title: 批判性思维自学指南
 
 date: 2026-02-22 16:00:00 +0800
 
+series: ["自学指南"]
 categories: [批判性思维,逻辑学]
 
 tags: [批判性思维,逻辑学]
@@ -11,7 +12,6 @@ tags: [批判性思维,逻辑学]
 author: Chuncheng Hai
 
 toc: true
-
 ---
 
 ## 批判性思维入门

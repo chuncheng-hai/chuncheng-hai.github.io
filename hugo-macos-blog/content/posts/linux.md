@@ -4,6 +4,7 @@ title: Linux如何性能分析
 
 date: 2026-02-23 14:00:00 +0800
 
+series: ["Linux与运维实践"]
 categories: [Ops,Linux]
 
 tags: [Ops,Linux]
@@ -11,7 +12,6 @@ tags: [Ops,Linux]
 author: Chuncheng Hai
 
 toc: true
-
 ---
 
 

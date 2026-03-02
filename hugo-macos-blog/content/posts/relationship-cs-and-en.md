@@ -2,12 +2,13 @@
 
 title: 谈谈写程序与学英语
 date: 2026-02-24 17:00:00 +0800
-type: reprint
+post_type: reprint
 source_title: 谈谈写程序与学英语
 source_author: 宋劲杉
 source_url: "https://akaedu.github.io/readme/3.html"
 license: 本文转载并整理用于学习研究
 
+series: ["转载与编译"]
 categories: [CS,英语]
 
 tags: [CS,英语]

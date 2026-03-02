@@ -1,6 +1,6 @@
 {{- define "main" }}
 
-<article class="post-single {{ if eq .Params.type "reprint" }}article--reprint{{ else }}article--original{{ end }}">
+<article class="post-single {{ if eq .Params.post_type "reprint" }}article--reprint{{ else }}article--original{{ end }}">
   <header class="post-header">
     {{ partial "breadcrumbs.html" . }}
     <h1 class="post-title entry-hint-parent">
@@ -26,7 +26,7 @@
     {{- end }}
   </header>
 
-  {{- if eq .Params.type "reprint" }}
+  {{- if eq .Params.post_type "reprint" }}
   <aside class="source-box">
     <strong>转载信息</strong>
     <div>标题：{{ with .Params.source_title }}{{ . }}{{ else }}{{ .Title }}{{ end }}</div>
