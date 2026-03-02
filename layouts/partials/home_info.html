@@ -1,0 +1,125 @@
+{{- with site.Params.homeInfoParams }}
+<article class="first-entry home-info home-hero">
+  <div class="home-hero-bg" aria-hidden="true">
+    <span class="orb orb-a"></span>
+    <span class="orb orb-b"></span>
+    <span class="orb orb-c"></span>
+  </div>
+
+  <div class="home-hero-inner">
+    <section class="home-hero-copy">
+      <p class="hero-kicker">CHUNCHENG HAI · THINK IN SYSTEMS</p>
+      <header class="entry-header">
+        <h1>{{ .Title | markdownify }}</h1>
+      </header>
+      <div class="entry-content">
+        {{ .Content | markdownify }}
+      </div>
+
+      <div class="home-hero-actions">
+        <a href="/search/" class="hero-btn hero-btn-primary">开始搜索</a>
+        <a href="/series/" class="hero-btn">浏览系列</a>
+        <a href="/archives/" class="hero-btn">文章归档</a>
+      </div>
+
+      <div class="home-hero-chips" aria-label="内容方向">
+        <span>人文社科</span>
+        <span>双语整理</span>
+        <span>技术写作</span>
+      </div>
+    </section>
+
+    <aside class="home-hero-visual" aria-label="作者信息">
+      <div class="avatar-card">
+        <img src="/images/profile-picture.jpg" alt="Chuncheng Hai 头像" loading="eager" />
+        <p class="avatar-name">Chuncheng Hai</p>
+        <p class="avatar-role">Writer · Builder · Operator</p>
+      </div>
+      <div class="floating-note">持续发布：转载文 + 原创系列</div>
+    </aside>
+  </div>
+
+  <footer class="entry-footer">
+    {{ partial "social_icons.html" (dict "align" site.Params.homeInfoParams.AlignSocialIconsTo) }}
+  </footer>
+</article>
+
+<section class="home-panel home-panel-grid" data-parallax-wrap>
+  <header class="panel-header">
+    <p class="panel-kicker">CONTENT MAP</p>
+    <h2>内容版图</h2>
+    <p>转载文章、双语整理、原创教程分层呈现，阅读路径清晰。</p>
+  </header>
+  <div class="panel-grid">
+    <a class="panel-card panel-card-large" href="/series/%E8%BD%AC%E8%BD%BD%E4%B8%8E%E7%BC%96%E8%AF%91/" data-parallax="22">
+      <h3>转载与编译</h3>
+      <p>名人演讲、思想文本、原文与整理稿并行阅读。</p>
+      <span>进入系列</span>
+    </a>
+    <a class="panel-card" href="/series/%E8%87%AA%E5%AD%A6%E6%8C%87%E5%8D%97/" data-parallax="14">
+      <h3>自学指南</h3>
+      <p>跨学科路线图，强调系统性积累。</p>
+      <span>查看路线</span>
+    </a>
+    <a class="panel-card" href="/series/linux%E4%B8%8E%E8%BF%90%E7%BB%B4%E5%AE%9E%E8%B7%B5/" data-parallax="18">
+      <h3>Linux 与运维</h3>
+      <p>实践文档化，持续打磨可复用方法。</p>
+      <span>阅读实战</span>
+    </a>
+  </div>
+</section>
+
+<section class="home-panel home-panel-timeline" data-parallax-wrap>
+  <header class="panel-header">
+    <p class="panel-kicker">CREATION RHYTHM</p>
+    <h2>创作节奏</h2>
+  </header>
+  <div class="timeline-row">
+    <div class="timeline-item" data-parallax="9">
+      <strong>输入</strong>
+      <p>整理原始资料、核对出处、建立知识索引。</p>
+    </div>
+    <div class="timeline-item" data-parallax="15">
+      <strong>重排</strong>
+      <p>中英双语、简繁协同、段落结构统一。</p>
+    </div>
+    <div class="timeline-item" data-parallax="11">
+      <strong>发布</strong>
+      <p>系列化沉淀，支持搜索、归档、专题浏览。</p>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const cards = Array.from(document.querySelectorAll("[data-parallax]"));
+  if (!cards.length) return;
+
+  let ticking = false;
+
+  function update() {
+    ticking = false;
+    const viewportH = window.innerHeight || 1;
+    cards.forEach(function (el) {
+      const rect = el.getBoundingClientRect();
+      const speed = Number(el.getAttribute("data-parallax")) || 10;
+      const progress = (rect.top + rect.height * 0.5 - viewportH * 0.5) / viewportH;
+      const shift = Math.max(Math.min(progress * speed, speed), -speed);
+      el.style.transform = "translate3d(0," + (-shift).toFixed(2) + "px,0)";
+    });
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      window.requestAnimationFrame(update);
+      ticking = true;
+    }
+  }
+
+  update();
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+})();
+</script>
+{{- end -}}
