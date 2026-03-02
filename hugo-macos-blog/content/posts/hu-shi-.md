@@ -1,6 +1,9 @@
 ---
 title: 名教
 date: 2026-03-02 19:00:00 +0800
+slug: ming-jiao
+aliases:
+  - /posts/hu-shi-/
 categories: [胡适]
 tags: [胡适]
 author: 胡适
