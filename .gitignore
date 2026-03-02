@@ -25,3 +25,10 @@ package-lock.json
 # Misc
 _sass/vendors
 assets/js/dist
+_site_dev
+_site_prod
+
+# Hugo
+hugo-macos-blog/public
+hugo-macos-blog/.hugo_build.lock
+hugo-macos-blog/resources
