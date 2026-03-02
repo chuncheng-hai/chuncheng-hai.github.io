@@ -43,7 +43,7 @@ social:
 
   # 联系邮箱（推荐填写，会显示在侧边栏）
   # 【建议修改】
-  email: your-email@example.com
+  email: chunchenghai@outlook.com
 
   links:
     # 第一条链接会作为页脚「版权所有者」链接（推荐填 GitHub）
@@ -218,3 +218,8 @@ jekyll-archives:
   permalinks:
     tag: /tags/:name/
     category: /categories/:name/
+
+# 自托管静态资源（字体、JS 等，避免依赖 Google）
+assets:
+  self_host:
+    enabled: true
