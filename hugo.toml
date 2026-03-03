@@ -66,6 +66,8 @@ theme = "PaperMod"
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+      hardWraps = true #  Markdown 渲染器设成“硬换行”
+
 
 [params.fuseOpts]
   isCaseSensitive = false

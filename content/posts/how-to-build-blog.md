@@ -17,6 +17,9 @@ toc: true
 为何要写博客？
 《如何变得有思想：阮一峰博客文集》序言
 
+编程随想  
+阮一峰
+
 ```bash
 # 安装 rbenv
 brew install rbenv ruby-build
