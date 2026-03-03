@@ -25,6 +25,10 @@ theme = "PaperMod"
   TocOpen = false
   comments = false
 
+  [params.chatbot]
+    apiProxy = "https://blog-chatbot-proxy.chuncheng-hai-bot.workers.dev"
+    requestTimeoutSec = 12
+
   [params.homeInfoParams]
     Title = "Chuncheng's Blog"
     Content = "人文社科转载、名人演讲双语整理、系统化技术写作。"

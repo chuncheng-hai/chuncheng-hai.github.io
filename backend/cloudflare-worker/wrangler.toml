@@ -1,0 +1,18 @@
+name = "blog-chatbot-proxy"
+main = "worker.js"
+compatibility_date = "2026-03-03"
+
+[vars]
+# 允许访问此后端的博客域名，生产建议填你的博客域名而不是 *
+ALLOW_ORIGIN = "https://chuncheng-hai.github.io"
+
+# OpenAI 兼容接口地址（例如 OpenAI、OpenRouter 等）
+OPENAI_BASE_URL = "https://text.pollinations.ai/openai/v1"
+
+# 模型名
+OPENAI_MODEL = "openai"
+
+# 上游超时毫秒
+TIMEOUT_MS = "12000"
+
+# 该配置默认可不需要 OPENAI_API_KEY

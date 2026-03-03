@@ -78,15 +78,66 @@ disable_first_line_indent: true
 - 页面：`/chatbot/`
 - 机制：
   - 先做本地文章检索（`/index.json`）
-  - 再调用 OpenAI 兼容大模型生成回答
+  - 再调用后端代理（由后端转发到 OpenAI 兼容模型）
   - 默认启用“引用溯源模式”：回答按 `[1][2]` 标注，且展示可点击来源索引
   - 若模型超时/失败，自动回退为本地匹配结果
-- 默认公共免费端点（可改）：`https://text.pollinations.ai/openai`
-- 可在页面里配置：
-  - API 端点
-  - 模型名
-  - API Key（可选）
-  - 超时秒数
+
+### 安全改造说明
+
+- 前端页面不再展示模型端点、模型名、API Key。
+- 模型配置转移到后端（示例：Cloudflare Worker）。
+- 前端只读取 `hugo.toml` 中的后端代理地址：
+  - `[params.chatbot].apiProxy`
+  - `[params.chatbot].requestTimeoutSec`
+
+### 免费后端示例（Cloudflare Worker）
+
+后端模板位置：
+
+- `backend/cloudflare-worker/worker.js`
+- `backend/cloudflare-worker/wrangler.toml.example`
+
+部署步骤（免费）：
+
+1. 安装 Wrangler 并登录：
+   - `npm i -g wrangler`
+   - `wrangler login`
+2. 进入目录并初始化配置：
+   - `cd backend/cloudflare-worker`
+   - `cp wrangler.toml.example wrangler.toml`
+3. 注入密钥（不要写入仓库）：
+   - `wrangler secret put OPENAI_API_KEY`（可选，默认免费端点可不填）
+4. 发布：
+   - `wrangler deploy`
+5. 将部署得到的 URL 写入 `hugo.toml`：
+
+```toml
+[params.chatbot]
+  apiProxy = "https://your-worker.your-subdomain.workers.dev"
+  requestTimeoutSec = 12
+```
+
+> Worker 会暴露 `POST /` 接口，接收 `{question, contexts}`，返回 `{answer}`。
+> 默认示例使用免费端点 `text.pollinations.ai`，无需前端暴露任何模型配置。
+
+### 一键部署脚本（推荐）
+
+已提供脚本：
+
+- `scripts/deploy_chatbot_worker.sh`
+
+用途：
+
+- 自动检查 Wrangler
+- 自动检查登录状态与 secret
+- 自动部署 Worker
+- 自动把 `workers.dev` URL 回填到 `hugo.toml` 的 `params.chatbot.apiProxy`
+
+执行：
+
+```bash
+./scripts/deploy_chatbot_worker.sh
+```
 
 ## 编程协作规则（skills 约束）
 
