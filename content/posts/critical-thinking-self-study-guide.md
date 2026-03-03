@@ -20,7 +20,8 @@ toc: true
 
 - 课程名称：批判性思维——方法和实践(2026春)
 - 课程链接：[https://www.xuetangx.com/course/thu01011003963/29596212?channel=i.area.learn_title](https://www.xuetangx.com/course/thu01011003963/29596212?channel=i.area.learn_title)
-学习概念的外延与内涵，通过课程中大量习题进行刻意训练
+学习概念的外延与内涵，通过课程中大量习题进行刻意训练  
+隐藏假设  
 
 ## 传统形式逻辑的四大定律
 
