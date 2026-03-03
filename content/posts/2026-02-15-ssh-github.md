@@ -6,7 +6,7 @@ author: Chuncheng Hai
 date: 2026-02-15 21:00:00 +0800
 
 slug: ssh-github
-description: "将自己本机的~/.ssh/id_ed25519."
+description: "文章围绕因代理导致的 GitHub 推送异常的真实问题展开，先说明问题出现的背景与约束条件，再拆解排查思路、方案取舍与落地步骤，并结合Ops场景，帮助读者把方法直接迁移到自己的工程实践中。"
 
 categories: [Ops]
 

@@ -70,8 +70,21 @@ disable_first_line_indent: true
   - `description`
 - `description` 用于：
   - 文章页标题下方摘要
-  - 首页/搜索页摘要
+  - 首页/列表页卡片预览（优先）
+  - 搜索页摘要
   - SEO 元信息（OpenGraph/Twitter 卡片）
+- `description` 撰写原则：
+  - 先交代文章背景，再概括核心内容和读者收益
+  - 避免直接摘抄正文首段或原文句子
+  - 建议 60-110 字，确保首页展示与 SEO 可读性
+
+### 首页预览显示规则（已改为 description 优先）
+
+- 首页/列表页卡片文案来源：
+  - 优先：front matter `description`
+  - 回退：Hugo 自动 `summary`
+- 模板位置：
+  - `layouts/_default/list.html`
 - `slug` 规则（强制）：
   - 全小写
   - 只使用 `a-z`、`0-9`、`-`

@@ -7,7 +7,7 @@ date: 2026-02-24 17:00:00 +0800
 slug: cs-english
 aliases:
   - /posts/relationship-cs-and-en/
-description: "原文作者： 宋劲杉"
+description: "文章从谈谈写程序与学英语的背景问题出发，系统梳理核心观点、推理结构与实践建议，并结合CS、英语语境，帮助读者在较短时间内建立完整认知，并用于后续学习或决策。"
 
 
 series: ["转载"]

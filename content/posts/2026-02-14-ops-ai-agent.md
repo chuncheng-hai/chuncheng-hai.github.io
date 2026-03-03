@@ -8,7 +8,7 @@ date: 2026-02-14 10:00:00 +0800
 slug: ops-ai-agent
 aliases:
   - /posts/how-to-build-ops-ai-agent/
-description: "部署硬件要求：至少8C16G，100GB SSD"
+description: "文章围绕如何构建内网命令行 Ai Agent的真实问题展开，先说明问题出现的背景与约束条件，再拆解排查思路、方案取舍与落地步骤，并结合AIOps、AI场景，帮助读者把方法直接迁移到自己的工程实践中。"
 
 series: ["Linux与运维实践"]
 

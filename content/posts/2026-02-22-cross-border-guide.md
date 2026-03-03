@@ -7,7 +7,7 @@ date: 2026-02-22 16:00:00 +0800
 slug: cross-border-guide
 aliases:
   - /posts/cross-border-e-commerce-self-study-guide/
-description: "选一个国家，新手优先选第一梯队美国、欧洲、东南亚"
+description: "本文面向自学者梳理跨境电商学习的起点背景与常见误区，给出分阶段目标、资料选择、练习方式和复盘方法，帮助读者建立长期可执行的学习路径。"
 
 series: ["自学指南"]
 categories: [跨境电商]

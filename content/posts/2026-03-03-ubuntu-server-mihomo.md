@@ -5,7 +5,7 @@ title: Ubuntu服务器如何科学上网
 date: 2026-03-03 16:00:00 +0800
 
 slug: ubuntu-server-mihomo
-description: "wget https://app."
+description: "文章围绕Ubuntu服务器如何科学上网的真实问题展开，先说明问题出现的背景与约束条件，再拆解排查思路、方案取舍与落地步骤，并结合Ops、Linux场景，帮助读者把方法直接迁移到自己的工程实践中。"
 
 series: ["Linux与运维实践"]
 categories: [Ops,Linux]

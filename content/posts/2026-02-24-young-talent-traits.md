@@ -7,7 +7,7 @@ date: 2026-02-24 16:00:00 +0800
 slug: young-talent-traits
 aliases:
   - /posts/zhang-yi-ming-2016-todays-headlines/
-description: "各位都非常年轻，我今天来的时候挺有压力。"
+description: "文章围绕张一鸣：我遇到的优秀年轻人的5个特质的发言语境与时代背景展开，提炼其关于成长、决策与行动的方法论，并串联关键观点之间的逻辑关系，便于读者形成可执行的个人实践框架。"
 
 categories: [演讲,张一鸣]
 

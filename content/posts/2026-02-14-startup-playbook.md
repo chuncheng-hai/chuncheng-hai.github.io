@@ -6,7 +6,7 @@ author: Sam Altman
 date: 2026-02-14 10:00:00 +0800
 
 slug: startup-playbook
-description: "原文作者： Sam Altman"
+description: "本文为转载整理，先交代Startup Playbook (创业手册)的讨论背景，再按原文逻辑归纳核心论点与关键证据，并补充阅读线索，帮助读者快速把握主题价值与现实启发。"
 
 series: ["转载"]
 

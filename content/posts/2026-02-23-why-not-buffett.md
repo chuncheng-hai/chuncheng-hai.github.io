@@ -7,7 +7,7 @@ date: 2026-02-23 22:00:00 +0800
 slug: why-not-buffett
 aliases:
   - /posts/mark-sellers-you-want-to-be-the-next-warren-buffett/
-description: "中文常译为《你为什么不能成为巴菲特》或《巴菲特的七条“经济护城河”》"
+description: "本文为转载整理，先交代你为什么不能成为巴菲特的讨论背景，参考Mark Sellers《你为什么不能成为巴菲特》，再按原文逻辑归纳核心论点与关键证据，并补充阅读线索，帮助读者快速把握主题价值与现实启发。"
 
 post_type: reprint
 
