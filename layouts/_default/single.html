@@ -1,6 +1,6 @@
 {{- define "main" }}
 
-<article class="post-single {{ if eq .Params.post_type "reprint" }}article--reprint{{ else }}article--original{{ end }}">
+<article class="post-single {{ if eq .Params.post_type "reprint" }}article--reprint{{ else }}article--original{{ end }}{{ if .Params.disable_first_line_indent }} no-first-indent{{ end }}">
   <header class="post-header">
     {{ partial "breadcrumbs.html" . }}
     <h1 class="post-title entry-hint-parent">

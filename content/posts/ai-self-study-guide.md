@@ -9,6 +9,8 @@ categories: [AI,LLM]
 
 tags: [AI,LLM]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

@@ -1,0 +1,23 @@
+---
+
+title: 我的SOP
+
+date: 2026-03-03 22:00:00 +0800
+
+categories: [效率,SOP]
+
+tags: [效率,SOP]
+
+disable_first_line_indent: true
+
+author: Chuncheng Hai
+
+toc: true
+
+---
+
+## 起床SOP
+
+起床  
+刷牙  
+洗脸  

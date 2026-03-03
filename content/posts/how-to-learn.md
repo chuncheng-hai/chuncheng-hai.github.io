@@ -8,6 +8,8 @@ categories: [效率,学习]
 
 tags: [效率,学习]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

@@ -8,6 +8,8 @@ categories: [CS,数学]
 
 tags: [CS,数学]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

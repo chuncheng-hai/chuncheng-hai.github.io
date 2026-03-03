@@ -9,6 +9,8 @@ categories: [经济学]
 
 tags: [经济学]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

@@ -1,16 +1,20 @@
 ---
 title: Don't fall into the anti-AI hype
+
 date: 2026-02-21 22:47:00 +0800
+
 series: ["转载与编译"]
+
 categories: [AI]
+
 tags: [AI]
+
 author: Chuncheng Hai
+
 post_type: reprint
-source_title: Don't fall into the anti-AI hype
-source_author: antirez
-source_url: "https://antirez.com/news/158"
-license: 本文转载并整理用于学习研究
-layout: post   # Jekyll 用这个，Hexo/Hugo 可省略或改成默认
+
+layout: post
+
 toc: true
 ---
 

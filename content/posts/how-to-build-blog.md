@@ -8,6 +8,8 @@ categories: [建站]
 
 tags: [建站]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

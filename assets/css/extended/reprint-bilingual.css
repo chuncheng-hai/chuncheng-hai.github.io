@@ -19,6 +19,11 @@
   text-indent: 2em;
 }
 
+.post-single.no-first-indent .post-content > p:first-of-type,
+.post-single.no-first-indent.article--reprint .post-content > p {
+  text-indent: 0;
+}
+
 .post-single .source-box {
   border: 1px dashed var(--border);
   border-radius: 12px;

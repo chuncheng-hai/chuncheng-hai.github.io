@@ -9,6 +9,8 @@ categories: [CS]
 
 tags: [CS]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

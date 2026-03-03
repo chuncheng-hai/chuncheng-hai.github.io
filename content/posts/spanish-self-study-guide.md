@@ -9,6 +9,8 @@ categories: [西语]
 
 tags: [西语]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

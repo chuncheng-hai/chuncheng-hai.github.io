@@ -1,14 +1,21 @@
 ---
 
 title: 民主是个好东西
+
 date: 2026-02-17 23:00:00 +0800
+
 series: ["转载"]
+
 categories: [政治]
+
 tags: [政治,民主]
+
 post_type: reprint
 
 layout: post
+
 toc: true
+
 comments: true
 ---
 

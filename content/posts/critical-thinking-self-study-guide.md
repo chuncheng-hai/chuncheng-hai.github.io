@@ -9,6 +9,8 @@ categories: [批判性思维,逻辑学]
 
 tags: [批判性思维,逻辑学]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

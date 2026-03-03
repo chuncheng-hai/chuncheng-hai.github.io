@@ -9,6 +9,8 @@ categories: [Ops,Linux]
 
 tags: [Ops,Linux]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

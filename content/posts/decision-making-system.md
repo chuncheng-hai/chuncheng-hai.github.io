@@ -8,6 +8,8 @@ categories: [决策]
 
 tags: [决策]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

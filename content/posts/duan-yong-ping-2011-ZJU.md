@@ -8,6 +8,8 @@ categories: [演讲,段永平]
 
 tags: [演讲,段永平]
 
+disable_first_line_indent: true
+
 toc: true
 
 ---

@@ -8,6 +8,8 @@ categories: [书架]
 
 tags: [书架,阅读]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

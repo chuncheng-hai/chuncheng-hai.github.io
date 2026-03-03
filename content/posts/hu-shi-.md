@@ -1,18 +1,23 @@
 ---
 title: 名教
+
 date: 2026-03-02 19:00:00 +0800
+
 slug: ming-jiao
+
 aliases:
   - /posts/hu-shi-/
+
 series: ["转载与编译"]
+
 categories: [胡适]
+
 tags: [胡适]
+
 author: 胡适
+
 post_type: reprint
-source_title: 名教
-source_author: 胡适
-source_url: https://zh.wikisource.org/wiki/%E5%90%8D%E6%95%99
-license: 本文转载用于学习研究
+
 ---
 
 > **原文链接**：[《名教》](https://zh.wikisource.org/wiki/%E5%90%8D%E6%95%99)  

@@ -9,6 +9,8 @@ categories: [历史学，HIST]
 
 tags: [历史学，HIST]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

@@ -9,6 +9,8 @@ categories: [哲学,POIL]
 
 tags: [哲学,POIL]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

@@ -8,6 +8,8 @@ categories: [投资,巴菲特,段永平]
 
 tags: [投资,巴菲特,段永平]
 
+disable_first_line_indent: true
+
 toc: true
 
 ---

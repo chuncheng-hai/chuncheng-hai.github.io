@@ -8,6 +8,8 @@ categories: [效率,GTD]
 
 tags: [效率,GTD]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

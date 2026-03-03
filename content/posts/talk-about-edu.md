@@ -8,6 +8,8 @@ categories: [随笔,教育]
 
 tags: [随笔,教育]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

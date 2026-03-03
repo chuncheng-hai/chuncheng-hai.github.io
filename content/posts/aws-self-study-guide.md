@@ -9,6 +9,8 @@ categories: [AWS]
 
 tags: [AWS]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true

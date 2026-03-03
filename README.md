@@ -1,19 +1,10 @@
 # Chuncheng Hai Blog (Hugo)
 
-This repository now uses **Hugo + PaperMod** for GitHub Pages deployment.
-
-## Site Source
-- Hugo project root: `hugo-macos-blog/`
-- Theme: `hugo-macos-blog/themes/PaperMod` (git submodule)
-
 ## Local Preview
 ```bash
-cd hugo-macos-blog
-hugo server -D
+UGO_CACHEDIR="$PWD/.hugo_cache" hugo server -D
 ```
 
-## Deployment
-GitHub Actions workflow:
-- `.github/workflows/hugo-pages.yml`
-
-It builds `hugo-macos-blog` and deploys `hugo-macos-blog/public` to GitHub Pages.
+默认首行缩进
+单篇关闭：在该文章 front matter 加
+disable_first_line_indent: true

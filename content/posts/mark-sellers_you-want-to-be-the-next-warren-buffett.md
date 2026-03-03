@@ -3,15 +3,20 @@
 title: 你为什么不能成为巴菲特
 
 date: 2026-02-23 22:00:00 +0800
-post_type: reprint
-source_title: 你为什么不能成为巴菲特
-source_author: Mark Sellers
-license: 本文转载并整理用于学习研究
 
-series: ["转载与编译"]
+post_type: reprint
+
+source_title: 你为什么不能成为巴菲特
+
+source_author: Mark Sellers
+
+
+series: ["转载"]
 categories: [投资,巴菲特]
 
 tags: [投资,巴菲特]
+
+disable_first_line_indent: true
 
 toc: true
 ---

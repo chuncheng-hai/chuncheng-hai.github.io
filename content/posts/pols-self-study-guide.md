@@ -9,6 +9,8 @@ categories: [政治学,POLS]
 
 tags: [政治学,POLS]
 
+disable_first_line_indent: true
+
 author: Chuncheng Hai
 
 toc: true
