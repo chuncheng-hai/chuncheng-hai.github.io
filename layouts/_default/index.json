@@ -1,0 +1,17 @@
+{{- $.Scratch.Add "index" slice -}}
+{{- range site.RegularPages -}}
+  {{- if and (not .Params.searchHidden) (ne .Layout `archives`) (ne .Layout `search`) (ne .Layout `chatbot`) -}}
+    {{- $.Scratch.Add "index" (dict
+      "title" .Title
+      "content" .Plain
+      "permalink" .Permalink
+      "summary" .Summary
+      "series" (.Params.series | default (slice))
+      "tags" (.Params.tags | default (slice))
+      "categories" (.Params.categories | default (slice))
+      "section" .Section
+    ) -}}
+  {{- end -}}
+{{- end -}}
+{{- $.Scratch.Get "index" | jsonify -}}
+

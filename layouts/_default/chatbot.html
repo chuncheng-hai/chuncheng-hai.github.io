@@ -47,10 +47,46 @@
     return (s || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
   }
 
+  function normalizeText(s) {
+    return (s || "")
+      .toLowerCase()
+      .replace(/[，。！？、；：,.!?;:()\[\]{}"'`~@#$%^&*_+=<>|\\/]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
   function tokenize(s) {
-    const raw = (s || "").toLowerCase();
-    const tokens = raw.match(/[\u4e00-\u9fff]|[a-z0-9]{2,}/g) || [];
-    return Array.from(new Set(tokens));
+    const raw = normalizeText(s);
+    const set = new Set();
+
+    // 英文/数字词（长度>=2）
+    const en = raw.match(/[a-z0-9][a-z0-9-]{1,}/g) || [];
+    en.forEach(function (t) { set.add(t); });
+
+    // 中文连续短语（长度>=2）
+    const zh = raw.match(/[\u4e00-\u9fff]{2,}/g) || [];
+    zh.forEach(function (phrase) {
+      set.add(phrase);
+      // 同时加入双字词，提升“高可用”这类短语命中能力
+      if (phrase.length >= 4) {
+        for (let i = 0; i < phrase.length - 1; i++) {
+          set.add(phrase.slice(i, i + 2));
+        }
+      }
+    });
+
+    // 停用词，降低噪声
+    ["相关文章", "有哪些", "是什么", "怎么", "如何", "以及", "关于", "文章"].forEach(function (w) {
+      set.delete(w);
+    });
+
+    return Array.from(set).filter(function (t) { return t.length >= 2; });
+  }
+
+  function asArray(v) {
+    if (Array.isArray(v)) return v;
+    if (typeof v === "string" && v.trim()) return [v];
+    return [];
   }
 
   function appendMessage(role, html) {
@@ -65,25 +101,76 @@
   function scoreDoc(qTokens, doc) {
     if (!qTokens.length) return 0;
     let score = 0;
+    let matched = 0;
     const title = doc.title.toLowerCase();
     const summary = doc.summary.toLowerCase();
     const content = doc.content.toLowerCase();
-    const joined = qTokens.join("");
+    const tokenHit = new Set();
 
     qTokens.forEach(function (t) {
-      if (title.includes(t)) score += 8;
-      if (summary.includes(t)) score += 4;
-      if (content.includes(t)) score += 1;
+      let h = false;
+      if (title.includes(t)) { score += 12; h = true; }
+      if (summary.includes(t)) { score += 5; h = true; }
+      if (content.includes(t)) { score += 2; h = true; }
+      if (h) tokenHit.add(t);
     });
 
-    if (joined && title.includes(joined)) score += 5;
+    matched = tokenHit.size;
+    // 关键词较多时，至少命中2个词才认为相关，防止“高频词误召回”
+    if (qTokens.length >= 3 && matched < 2) return 0;
+    if (qTokens.length >= 5 && matched < 3) return 0;
+    if (score < 8) return 0;
     return score;
+  }
+
+  function intentBoost(question, doc) {
+    const q = normalizeText(question);
+    const title = normalizeText(doc.title);
+    const meta = normalizeText(
+      []
+        .concat(asArray(doc.series))
+        .concat(asArray(doc.categories))
+        .concat(asArray(doc.tags))
+        .join(" ")
+    );
+
+    let boost = 0;
+
+    const hit = function (arr) {
+      return arr.some(function (k) { return q.includes(k); });
+    };
+
+    // Linux/运维/高可用意图
+    if (hit(["linux", "运维", "高可用", "keepalived", "freeswitch", "服务器", "性能分析"])) {
+      if (meta.includes("linux与运维实践")) boost += 28;
+      if (title.includes("linux") || title.includes("高可用") || title.includes("keepalived") || title.includes("freeswitch")) boost += 20;
+      if (meta.includes("linux") || meta.includes("运维") || meta.includes("高可用")) boost += 12;
+    }
+
+    // 转载/双语/演讲意图
+    if (hit(["转载", "编译", "双语", "演讲", "名教", "胡适"])) {
+      if (meta.includes("转载与编译")) boost += 26;
+      if (title.includes("名教") || title.includes("创业手册")) boost += 18;
+    }
+
+    // 自学指南意图
+    if (hit(["自学", "指南", "路线", "学习路径"])) {
+      if (meta.includes("自学指南")) boost += 26;
+      if (title.includes("self-study-guide") || title.includes("自学")) boost += 16;
+    }
+
+    return boost;
   }
 
   function retrieve(question) {
     const qTokens = tokenize(question);
     const ranked = docs
-      .map(function (d) { return { doc: d, score: scoreDoc(qTokens, d) }; })
+      .map(function (d) {
+        const base = scoreDoc(qTokens, d);
+        if (base <= 0) return { doc: d, score: 0 };
+        const bonus = intentBoost(question, d);
+        return { doc: d, score: base + bonus };
+      })
       .filter(function (x) { return x.score > 0; })
       .sort(function (a, b) { return b.score - a.score; })
       .slice(0, 4);
@@ -198,7 +285,11 @@
           title: d.title || "",
           permalink: d.permalink || "#",
           summary: stripHtml(d.summary || ""),
-          content: stripHtml(d.content || "")
+          content: stripHtml(d.content || ""),
+          series: asArray(d.series),
+          tags: asArray(d.tags),
+          categories: asArray(d.categories),
+          section: d.section || ""
         };
       });
       if (CHAT_API) {
