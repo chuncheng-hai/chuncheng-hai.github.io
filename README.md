@@ -61,6 +61,7 @@ disable_first_line_indent: true
 - `.skills/hugo-homepage-apple`
 - `.skills/hugo-release-github-pages`
 - `.skills/hugo-content-quality-guard`
+- `.skills/chatgpt-coding-best-practices`
 
 ### 触发词示例
 
@@ -70,3 +71,24 @@ disable_first_line_indent: true
 - 首页设计：`“首页改成 Apple 风并加滚动动效”`
 - 发布上线：`“帮我做发布前检查并推送上线”`
 - 质量巡检：`“上线前做一遍内容质量检查”`
+- 编程协作：`“给我一套让 ChatGPT 编程的最佳实践提示词”`
+
+## 博客问答助手（RAG + LLM）
+
+- 页面：`/chatbot/`
+- 机制：
+  - 先做本地文章检索（`/index.json`）
+  - 再调用 OpenAI 兼容大模型生成回答
+  - 默认启用“引用溯源模式”：回答按 `[1][2]` 标注，且展示可点击来源索引
+  - 若模型超时/失败，自动回退为本地匹配结果
+- 默认公共免费端点（可改）：`https://text.pollinations.ai/openai`
+- 可在页面里配置：
+  - API 端点
+  - 模型名
+  - API Key（可选）
+  - 超时秒数
+
+## 编程协作规则（skills 约束）
+
+- 使用 `.skills/chatgpt-coding-best-practices` 时，执行硬性规则：
+  - 每次代码修改后，必须同步更新 `README.md`（功能、命令、入口变更需可追溯）。

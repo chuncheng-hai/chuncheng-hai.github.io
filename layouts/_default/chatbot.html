@@ -1,0 +1,311 @@
+{{- define "main" }}
+<article class="chatbot-page">
+  <header class="page-header">
+    <h1>博客问答助手（RAG + 大模型）</h1>
+    <p>先检索站内文章，再调用大模型整合回答。默认启用引用溯源模式（[1][2]）。若模型超时或失败，自动回退为本地匹配结果。</p>
+  </header>
+
+  <section class="chatbot-settings" aria-label="模型设置">
+    <label class="setting-inline">
+      <input id="use-llm" type="checkbox" checked />
+      启用大模型增强
+    </label>
+    <label>
+      API 端点（OpenAI 兼容）
+      <input id="llm-endpoint" type="text" value="https://text.pollinations.ai/openai" />
+    </label>
+    <label>
+      模型名
+      <input id="llm-model" type="text" value="openai" />
+    </label>
+    <label>
+      API Key（可选）
+      <input id="llm-key" type="password" placeholder="可留空，按端点要求配置" />
+    </label>
+    <label>
+      超时（秒）
+      <input id="llm-timeout" type="number" min="3" max="60" step="1" value="12" />
+    </label>
+  </section>
+
+  <section class="chatbot-shell" aria-label="博客问答">
+    <div class="chatbot-log" id="chatbot-log" aria-live="polite">
+      <div class="chatbot-msg chatbot-msg-bot">
+        <p>你好，我是博客助手。你可以问：</p>
+        <ul>
+          <li>“Linux 高可用相关文章有哪些？”</li>
+          <li>“转载与编译系列里有哪些内容？”</li>
+          <li>“俞军产品经理12条在哪里？”</li>
+        </ul>
+      </div>
+    </div>
+
+    <form class="chatbot-form" id="chatbot-form">
+      <input id="chatbot-input" type="text" placeholder="输入你的问题..." maxlength="200" autocomplete="off" />
+      <button type="submit">发送</button>
+    </form>
+  </section>
+</article>
+
+<script>
+(function () {
+  const logEl = document.getElementById("chatbot-log");
+  const formEl = document.getElementById("chatbot-form");
+  const inputEl = document.getElementById("chatbot-input");
+
+  const useLlmEl = document.getElementById("use-llm");
+  const endpointEl = document.getElementById("llm-endpoint");
+  const modelEl = document.getElementById("llm-model");
+  const keyEl = document.getElementById("llm-key");
+  const timeoutEl = document.getElementById("llm-timeout");
+
+  const LLM_STORE_KEY = "chatbot-llm-config-v1";
+  let docs = [];
+
+  function escapeHtml(s) {
+    return (s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function stripHtml(s) {
+    return (s || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  }
+
+  function tokenize(s) {
+    const raw = (s || "").toLowerCase();
+    const tokens = raw.match(/[\u4e00-\u9fff]|[a-z0-9]{2,}/g) || [];
+    return Array.from(new Set(tokens));
+  }
+
+  function appendMessage(role, html) {
+    const div = document.createElement("div");
+    div.className = "chatbot-msg " + (role === "user" ? "chatbot-msg-user" : "chatbot-msg-bot");
+    div.innerHTML = html;
+    logEl.appendChild(div);
+    logEl.scrollTop = logEl.scrollHeight;
+    return div;
+  }
+
+  function loadConfig() {
+    try {
+      const raw = localStorage.getItem(LLM_STORE_KEY);
+      if (!raw) return;
+      const cfg = JSON.parse(raw);
+      if (typeof cfg.useLlm === "boolean") useLlmEl.checked = cfg.useLlm;
+      if (typeof cfg.endpoint === "string") endpointEl.value = cfg.endpoint;
+      if (typeof cfg.model === "string") modelEl.value = cfg.model;
+      if (typeof cfg.key === "string") keyEl.value = cfg.key;
+      if (typeof cfg.timeoutSec === "number") timeoutEl.value = String(cfg.timeoutSec);
+    } catch (_) {}
+  }
+
+  function saveConfig() {
+    const cfg = {
+      useLlm: !!useLlmEl.checked,
+      endpoint: endpointEl.value.trim(),
+      model: modelEl.value.trim(),
+      key: keyEl.value,
+      timeoutSec: Number(timeoutEl.value || 12)
+    };
+    localStorage.setItem(LLM_STORE_KEY, JSON.stringify(cfg));
+  }
+
+  [useLlmEl, endpointEl, modelEl, keyEl, timeoutEl].forEach(function (el) {
+    el.addEventListener("change", saveConfig);
+  });
+
+  function scoreDoc(qTokens, doc) {
+    if (!qTokens.length) return 0;
+    let score = 0;
+    const title = doc.title.toLowerCase();
+    const summary = doc.summary.toLowerCase();
+    const content = doc.content.toLowerCase();
+    const joined = qTokens.join("");
+
+    qTokens.forEach(function (t) {
+      if (title.includes(t)) score += 8;
+      if (summary.includes(t)) score += 4;
+      if (content.includes(t)) score += 1;
+    });
+
+    if (joined && title.includes(joined)) score += 5;
+    return score;
+  }
+
+  function retrieve(question) {
+    const qTokens = tokenize(question);
+    const ranked = docs
+      .map(function (d) { return { doc: d, score: scoreDoc(qTokens, d) }; })
+      .filter(function (x) { return x.score > 0; })
+      .sort(function (a, b) { return b.score - a.score; })
+      .slice(0, 4);
+    return ranked;
+  }
+
+  function renderLocalMatches(ranked) {
+    if (!ranked.length) {
+      return "<p>本地未命中相关文章。建议换关键词，或前往 <a href='/search/'>搜索页</a>。</p>";
+    }
+    const items = ranked.map(function (x) {
+      const d = x.doc;
+      const snippet = escapeHtml((d.summary || d.content || "").slice(0, 140));
+      return "<li><a href='" + d.permalink + "'>" + escapeHtml(d.title) + "</a><p>" + snippet + "...</p></li>";
+    }).join("");
+    return "<p>本地匹配到这些文章：</p><ol class='chatbot-answers'>" + items + "</ol>";
+  }
+
+  function renderSources(ranked) {
+    if (!ranked.length) return "";
+    const items = ranked.map(function (x, idx) {
+      const d = x.doc;
+      return "<li>[" + (idx + 1) + "] <a href='" + d.permalink + "'>" + escapeHtml(d.title) + "</a></li>";
+    }).join("");
+    return "<div class='chatbot-sources'><p><strong>来源索引：</strong></p><ol>" + items + "</ol></div>";
+  }
+
+  function buildContext(ranked) {
+    return ranked.map(function (x, idx) {
+      const d = x.doc;
+      const chunk = (d.content || d.summary || "").slice(0, 900);
+      return [
+        "[" + (idx + 1) + "] 标题：" + d.title,
+        "链接：" + d.permalink,
+        "摘要：" + (d.summary || "").slice(0, 240),
+        "内容片段：" + chunk
+      ].join("\n");
+    }).join("\n\n");
+  }
+
+  async function callLlm(question, ranked) {
+    const endpoint = endpointEl.value.trim();
+    const model = modelEl.value.trim();
+    const apiKey = keyEl.value.trim();
+    const timeoutSec = Math.max(3, Math.min(60, Number(timeoutEl.value || 12)));
+
+    if (!endpoint || !model) {
+      throw new Error("模型配置不完整");
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(function () {
+      controller.abort();
+    }, timeoutSec * 1000);
+
+    const systemPrompt = [
+      "你是博客问答助手。必须优先使用提供的文章上下文回答。",
+      "要求：",
+      "1) 回答简洁明确，先给结论再给依据；",
+      "2) 只能使用上下文信息，不要编造；",
+      "3) 每个关键结论后面必须附引用编号，如[1]、[2]；",
+      "4) 只允许引用给定上下文中的编号，不得杜撰来源；",
+      "5) 若上下文不足，请明确说明信息不足并仍给出可用来源编号。"
+    ].join("\n");
+
+    const contextText = buildContext(ranked);
+    const userPrompt = [
+      "用户问题：",
+      question,
+      "",
+      "可用上下文：",
+      contextText
+    ].join("\n");
+
+    const headers = { "Content-Type": "application/json" };
+    if (apiKey) headers.Authorization = "Bearer " + apiKey;
+
+    const payload = {
+      model: model,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ],
+      temperature: 0.2,
+      max_tokens: 500
+    };
+
+    try {
+      const res = await fetch(endpoint.replace(/\/+$/, "") + "/v1/chat/completions", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+
+      if (!res.ok) {
+        throw new Error("模型接口状态异常: " + res.status);
+      }
+      const data = await res.json();
+      const text = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+      if (!text) throw new Error("模型返回为空");
+      return text;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  function renderLlmAnswer(text) {
+    const safe = escapeHtml(text).replace(/\n/g, "<br>");
+    return "<p><strong>模型回答：</strong></p><p>" + safe + "</p>";
+  }
+
+  async function answer(question) {
+    const q = (question || "").trim();
+    if (!q) return;
+
+    const ranked = retrieve(q);
+    const localHtml = renderLocalMatches(ranked);
+    const sourceHtml = renderSources(ranked);
+
+    if (!useLlmEl.checked || !ranked.length) {
+      appendMessage("bot", localHtml + sourceHtml);
+      return;
+    }
+
+    const pending = appendMessage("bot", "<p>正在基于本地匹配结果生成大模型回答...</p>");
+    try {
+      const llmText = await callLlm(q, ranked);
+      pending.innerHTML = renderLlmAnswer(llmText) + sourceHtml + localHtml;
+    } catch (err) {
+      pending.innerHTML =
+        "<p><strong>模型超时或不可用，已自动回退到本地检索结果。</strong></p>" +
+        "<p class='chatbot-note'>原因：" + escapeHtml(err && err.message ? err.message : "unknown") + "</p>" +
+        sourceHtml +
+        localHtml;
+    }
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  loadConfig();
+
+  fetch("/index.json")
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      docs = (data || []).map(function (d) {
+        return {
+          title: d.title || "",
+          permalink: d.permalink || "#",
+          summary: stripHtml(d.summary || ""),
+          content: stripHtml(d.content || "")
+        };
+      });
+      appendMessage("bot", "<p>文章索引加载完成，可开始提问。</p>");
+    })
+    .catch(function () {
+      appendMessage("bot", "<p>索引加载失败，请稍后刷新重试。</p>");
+    });
+
+  formEl.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const q = (inputEl.value || "").trim();
+    if (!q) return;
+    appendMessage("user", "<p>" + escapeHtml(q) + "</p>");
+    inputEl.value = "";
+    answer(q);
+  });
+})();
+</script>
+{{- end }}
