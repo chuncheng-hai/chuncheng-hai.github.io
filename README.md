@@ -51,6 +51,37 @@ disable_first_line_indent: true
   - `source_url`
   - `license`
 
+## 文章文件命名规范（已启用）
+
+- 目录：`content/posts/`
+- 文件名：`YYYY-MM-DD-文章标识.md`
+  - 示例：`2026-02-26-yu-jun.md`
+- 目的：让编辑器文件列表按时间自然排序，便于批量维护。
+- 为保证历史链接不变：
+  - 文章 front matter 中保留/新增 `slug`
+  - URL 继续使用 `slug`，不依赖文件名
+
+### 新文章 slug 规范（建议强制）
+
+- 以后新建文章时，建议都显式填写 `slug`。
+- 规则：
+  - 使用小写英文、数字、连字符 `-`
+  - 不包含空格和中文
+  - 示例：`slug: how-to-build-blog`
+- 原因：
+  - 文件名可调整（如增加日期前缀），但链接不会变
+  - 有利于外链、搜索引擎和历史引用稳定
+
+示例 front matter：
+
+```yaml
+title: 如何构建博客
+date: 2026-03-03 22:00:00 +0800
+slug: how-to-build-blog
+categories: [工程效率]
+tags: [hugo, blog]
+```
+
 ## Skills（简体中文版）
 
 本仓库的技能目录：`.skills/`
@@ -119,6 +150,21 @@ disable_first_line_indent: true
 
 > Worker 会暴露 `POST /` 接口，接收 `{question, contexts}`，返回 `{answer}`。
 > 默认示例使用免费端点 `text.pollinations.ai`，无需前端暴露任何模型配置。
+
+### 部署踩坑记录（本项目实测）
+
+1. `wrangler` 未安装或损坏：
+   - 现象：`wrangler not found` 或 `@cloudflare/workerd-darwin-arm64 could not be found`
+   - 处理：重装 `wrangler`，必要时移除全局损坏版本后重装。
+2. 非交互环境无法直接 deploy：
+   - 现象：提示必须设置 `CLOUDFLARE_API_TOKEN`
+   - 处理：改为交互式 OAuth 登录（`wrangler login`）或显式配置 API Token。
+3. 首次发布需要注册 `workers.dev` 子域名：
+   - 现象：提示先注册子域名后才能发布。
+   - 处理：按提示完成注册（本项目为 `chuncheng-hai-bot.workers.dev`）。
+4. 联调时命令行偶发超时：
+   - 现象：`curl` 超时但 Worker 已部署成功。
+   - 处理：优先以浏览器实际访问 `/chatbot/` 验证；超时场景前端会自动回退本地检索。
 
 ### 一键部署脚本（推荐）
 
