@@ -5,6 +5,7 @@ title: Ubuntu服务器如何科学上网
 date: 2026-03-03 16:00:00 +0800
 
 slug: ubuntu-server-mihomo
+description: "wget https://app."
 
 series: ["Linux与运维实践"]
 categories: [Ops,Linux]
@@ -17,7 +18,6 @@ author: Chuncheng Hai
 
 toc: true
 ---
-
 ```bash
 # 打开本机代理，通过浏览器或命令行工具wget下载mihomo与Country.mmdb数据文件
 wget https://app.chongjin01.icu/Linux/Debian_Ubuntu/mihomo-linux-amd64-v3

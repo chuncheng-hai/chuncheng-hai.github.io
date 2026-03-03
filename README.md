@@ -61,6 +61,22 @@ disable_first_line_indent: true
   - 文章 front matter 中保留/新增 `slug`
   - URL 继续使用 `slug`，不依赖文件名
 
+## 文章 Front Matter 规范（已启用）
+
+- 每篇文章必须包含：
+  - `title`
+  - `date`
+  - `slug`
+  - `description`
+- `description` 用于：
+  - 文章页标题下方摘要
+  - 首页/搜索页摘要
+  - SEO 元信息（OpenGraph/Twitter 卡片）
+- `slug` 规则（强制）：
+  - 全小写
+  - 只使用 `a-z`、`0-9`、`-`
+  - 不允许空格、下划线、引号、`.md` 后缀
+
 ### 新文章 slug 规范（建议强制）
 
 - 以后新建文章时，建议都显式填写 `slug`。
@@ -71,6 +87,19 @@ disable_first_line_indent: true
 - 原因：
   - 文件名可调整（如增加日期前缀），但链接不会变
   - 有利于外链、搜索引擎和历史引用稳定
+
+### 旧文章 slug 优化规则（已启用）
+
+- 当旧 slug 过长或可读性差时，可改为更短、更见名知意的 slug。
+- 修改 slug 时，必须在 front matter 增加 `aliases` 保留旧路径，避免历史外链失效。
+
+示例：
+
+```yaml
+slug: cs-math
+aliases:
+  - /posts/relationship-cs-and-math/
+```
 
 示例 front matter：
 

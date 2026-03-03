@@ -5,6 +5,7 @@ title: 如何科学上网
 date: 2026-02-23 10:00:00 +0800
 
 slug: how-to-skip-gfw
+description: "安装代理软件，Mihomo"
 
 categories: [工具]
 
@@ -15,10 +16,7 @@ disable_first_line_indent: true
 author: Chuncheng Hai
 
 toc: true
-
 ---
-
-
 1. 安装代理软件，[Mihomo](https://github.com/mihomo-party-org/clash-party/releases)
 2. 寻找合适机场
 3. 导入订阅链接，选择美区节点

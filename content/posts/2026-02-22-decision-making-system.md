@@ -5,6 +5,7 @@ title: 如何构建决策系统
 date: 2026-02-22 21:00:00 +0800
 
 slug: decision-making-system
+description: "每年/月/日，最重要的事情，只有一件。"
 
 categories: [决策]
 
@@ -15,9 +16,7 @@ disable_first_line_indent: true
 author: Chuncheng Hai
 
 toc: true
-
 ---
-
 每年/月/日，最重要的事情，只有一件。可做可不做的，坚决不做  
 MVP 最小可行产品  
 MVS 最小可行服务  

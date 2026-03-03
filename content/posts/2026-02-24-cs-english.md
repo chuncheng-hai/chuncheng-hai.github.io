@@ -4,7 +4,10 @@ title: 谈谈写程序与学英语
 
 date: 2026-02-24 17:00:00 +0800
 
-slug: relationship-cs-and-en
+slug: cs-english
+aliases:
+  - /posts/relationship-cs-and-en/
+description: "原文作者： 宋劲杉"
 
 
 series: ["转载"]
@@ -17,7 +20,6 @@ disable_first_line_indent: true
 
 toc: true
 ---
-
 > 原文作者： 宋劲杉  
 > 原文链接： [谈谈写程序与学英语](https://akaedu.github.io/readme/3.html)  
 

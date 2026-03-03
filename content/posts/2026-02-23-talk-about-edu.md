@@ -5,6 +5,7 @@ title: 谈谈教育
 date: 2026-02-23 10:00:00 +0800
 
 slug: talk-about-edu
+description: "教育就是一棵树摇动一棵树，一朵云推动一朵云，一个灵魂唤醒另一个灵魂。"
 
 categories: [随笔,教育]
 
@@ -15,9 +16,7 @@ disable_first_line_indent: true
 author: Chuncheng Hai
 
 toc: true
-
 ---
-
 教育是何？
 教育就是一棵树摇动一棵树，一朵云推动一朵云，一个灵魂唤醒另一个灵魂。
 > 学习不是灌满一桶水, 而是点燃一团火!  

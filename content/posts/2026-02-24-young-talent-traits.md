@@ -4,7 +4,10 @@ title: 张一鸣：我遇到的优秀年轻人的5个特质
 
 date: 2026-02-24 16:00:00 +0800
 
-slug: zhang-yi-ming-2016-today's-headlines
+slug: young-talent-traits
+aliases:
+  - /posts/zhang-yi-ming-2016-todays-headlines/
+description: "各位都非常年轻，我今天来的时候挺有压力。"
 
 categories: [演讲,张一鸣]
 
@@ -13,9 +16,7 @@ tags: [演讲,张一鸣]
 disable_first_line_indent: true
 
 toc: true
-
 ---
-
 大家好！
 
 各位都非常年轻，我今天来的时候挺有压力。因为我毕业快11年了，看到你们，真是觉得“长江后浪推前浪”。

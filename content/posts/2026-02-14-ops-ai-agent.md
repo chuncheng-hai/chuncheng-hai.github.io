@@ -5,7 +5,10 @@ author: Chuncheng Hai
 
 date: 2026-02-14 10:00:00 +0800
 
-slug: how-to-build-ops-ai-agent
+slug: ops-ai-agent
+aliases:
+  - /posts/how-to-build-ops-ai-agent/
+description: "部署硬件要求：至少8C16G，100GB SSD"
 
 series: ["Linux与运维实践"]
 
@@ -21,9 +24,6 @@ mermaid: false
 
 toc: true
 ---
-
-
-
 > 部署硬件要求：至少8C16G，100GB SSD  
 > 操作系统：推荐Ubuntu 22.04  
 

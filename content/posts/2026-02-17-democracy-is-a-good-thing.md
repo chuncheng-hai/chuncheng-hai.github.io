@@ -5,6 +5,7 @@ title: 民主是个好东西
 date: 2026-02-17 23:00:00 +0800
 
 slug: democracy-is-a-good-thing
+description: "原文作者**：俞可平"
 
 series: ["转载"]
 
@@ -20,7 +21,6 @@ toc: true
 
 comments: true
 ---
-
 > **原文作者**：俞可平
 >
 > **转载链接**：[民主是个好东西](https://web.archive.org/web/20070118233128/http://news.xinhuanet.com/comments/2007-01/08/content_5578110.htm)

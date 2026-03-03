@@ -4,7 +4,10 @@ title: 跨境电商自学指南
 
 date: 2026-02-22 16:00:00 +0800
 
-slug: cross-border-e-commerce-self-study-guide
+slug: cross-border-guide
+aliases:
+  - /posts/cross-border-e-commerce-self-study-guide/
+description: "选一个国家，新手优先选第一梯队美国、欧洲、东南亚"
 
 series: ["自学指南"]
 categories: [跨境电商]
@@ -17,7 +20,6 @@ author: Chuncheng Hai
 
 toc: true
 ---
-
 选一个国家，新手优先选第一梯队美国、欧洲、东南亚
 第三梯队：俄罗斯
 选一个平台

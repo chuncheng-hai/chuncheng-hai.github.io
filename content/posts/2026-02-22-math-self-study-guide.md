@@ -5,6 +5,7 @@ title: 数学自学指南
 date: 2026-02-22 19:00:00 +0800
 
 slug: math-self-study-guide
+description: "课程名称：数学分析"
 
 series: ["自学指南"]
 categories: [数学]
@@ -17,7 +18,6 @@ author: Chuncheng Hai
 
 toc: true
 ---
-
 ## 数学分析
 
 课程名称：数学分析  

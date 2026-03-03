@@ -5,6 +5,7 @@ title: 逻辑学自学指南
 date: 2026-02-22 19:00:00 +0800
 
 slug: logic-self-study-guide
+description: "《牛津通识：简明逻辑》"
 
 series: ["自学指南"]
 
@@ -18,7 +19,6 @@ author: Chuncheng Hai
 
 toc: true
 ---
-
 ## 逻辑学入门
 
 《牛津通识：简明逻辑》

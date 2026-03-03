@@ -5,6 +5,7 @@ title: ESL自学指南
 date: 2026-02-22 16:00:00 +0800
 
 slug: esl-self-study-guide
+description: "ESL(English as second language)"
 
 series: ["自学指南"]
 categories: [ESL]

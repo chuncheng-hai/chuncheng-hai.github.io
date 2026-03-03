@@ -5,6 +5,7 @@ title: 段永平博客合集
 date: 2026-02-23 16:00:00 +0800
 
 slug: duan-yong-ping-blog
+description: "哈，突然觉得⽤这种⽅式回复也好[大笑]。"
 
 categories: [投资,巴菲特,段永平]
 
@@ -13,9 +14,7 @@ tags: [投资,巴菲特,段永平]
 disable_first_line_indent: true
 
 toc: true
-
 ---
-
 ## 什么人适合做股票投资 (2010-02-04)
 
 哈，突然觉得⽤这种⽅式回复也好[大笑]。

@@ -5,6 +5,7 @@ title: AI自学指南
 date: 2026-02-22 19:00:00 +0800
 
 slug: ai-self-study-guide
+description: "吴恩达 - AI for Everyone"
 
 series: ["自学指南"]
 categories: [AI,LLM]
@@ -17,7 +18,6 @@ author: Chuncheng Hai
 
 toc: true
 ---
-
 ## 人工智能科普
 
 - [吴恩达 - AI for Everyone](https://www.deeplearning.ai/courses/ai-for-everyone/)  

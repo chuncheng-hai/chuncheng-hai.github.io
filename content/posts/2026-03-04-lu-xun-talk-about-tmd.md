@@ -5,6 +5,7 @@ title: 论"他妈的！"
 date: 2026-03-04 01:00:00 +0800
 
 slug: lu-xun-talk-about-tmd
+description: "转载链接**：《论“他妈的！”》"
 
 series: ["转载"]
 categories: [鲁迅]
@@ -16,7 +17,6 @@ disable_first_line_indent: true
 
 toc: true
 ---
-
 > **转载链接**：[《论“他妈的！”》](https://zh.wikisource.org/zh-hans/%E8%AB%96%E3%80%8C%E4%BB%96%E5%AA%BD%E7%9A%84%EF%BC%81%E3%80%8D)  
 > **作者**：鲁迅  
 

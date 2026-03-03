@@ -6,6 +6,7 @@ author: Sam Altman
 date: 2026-02-14 10:00:00 +0800
 
 slug: startup-playbook
+description: "原文作者： Sam Altman"
 
 series: ["转载"]
 
@@ -23,7 +24,6 @@ pin: true
 
 toc: true
 ---
-
 > 原文作者： Sam Altman  
 > 原文链接： [playbook.samaltman.com](https://playbook.samaltman.com/)  
 > 中文链接： [Sam Altman的创业手册](https://jxp73q7qjsg.feishu.cn/docx/WCNZdKDa4o2eUrxK5ElcfBXEnah)  

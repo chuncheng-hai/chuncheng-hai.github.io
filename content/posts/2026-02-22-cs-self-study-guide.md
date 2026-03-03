@@ -5,6 +5,7 @@ title: CS自学指南
 date: 2026-02-22 16:00:00 +0800
 
 slug: cs-self-study-guide
+description: "CS(Computer Science)"
 
 series: ["自学指南"]
 categories: [CS]
@@ -17,7 +18,6 @@ author: Chuncheng Hai
 
 toc: true
 ---
-
 CS(Computer Science)
 
 第二件事情：学会提问(批判性思维)，因为无论提问的对象是人还是AI大模型，高质量的回答总是出现在高质量的问题后，阅读[提问的智慧](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/main/README-zh_CN.md#%E6%8F%90%E9%97%AE%E7%9A%84%E6%99%BA%E6%85%A7)  

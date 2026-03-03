@@ -4,7 +4,10 @@ title: 你为什么不能成为巴菲特
 
 date: 2026-02-23 22:00:00 +0800
 
-slug: mark-sellers_you-want-to-be-the-next-warren-buffett
+slug: why-not-buffett
+aliases:
+  - /posts/mark-sellers-you-want-to-be-the-next-warren-buffett/
+description: "中文常译为《你为什么不能成为巴菲特》或《巴菲特的七条“经济护城河”》"
 
 post_type: reprint
 

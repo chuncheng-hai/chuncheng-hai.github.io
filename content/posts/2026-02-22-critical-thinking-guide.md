@@ -4,7 +4,10 @@ title: 批判性思维自学指南
 
 date: 2026-02-22 16:00:00 +0800
 
-slug: critical-thinking-self-study-guide
+slug: critical-thinking-guide
+aliases:
+  - /posts/critical-thinking-self-study-guide/
+description: "课程名称：批判性思维——方法和实践(2026春)"
 
 series: ["自学指南"]
 categories: [批判性思维,逻辑学]
@@ -17,7 +20,6 @@ author: Chuncheng Hai
 
 toc: true
 ---
-
 ## 批判性思维入门
 
 - 课程名称：批判性思维——方法和实践(2026春)

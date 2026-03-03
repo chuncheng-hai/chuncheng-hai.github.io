@@ -5,6 +5,7 @@ title: 数据库自学指南
 date: 2026-02-22 19:00:00 +0800
 
 slug: db-self-study-guide
+description: "基于问题意识，阅读《MySQL必知必会》"
 
 series: ["自学指南"]
 categories: [MySQL]
@@ -17,8 +18,6 @@ author: Chuncheng Hai
 
 toc: true
 ---
-
-
 ## MySQL
 
 基于问题意识，阅读《MySQL必知必会》  

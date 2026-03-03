@@ -5,6 +5,7 @@ title: 如何基于GitHub搭建静态博客
 date: 2026-02-22 18:00:00 +0800
 
 slug: how-to-build-blog
+description: "为何要写博客？"
 
 categories: [建站]
 
@@ -15,9 +16,7 @@ disable_first_line_indent: true
 author: Chuncheng Hai
 
 toc: true
-
 ---
-
 为何要写博客？
 《如何变得有思想：阮一峰博客文集》序言
 

@@ -3,7 +3,10 @@ title: Don't fall into the anti-AI hype
 
 date: 2026-02-21 22:47:00 +0800
 
-slug: Don't-fall-into-the-anti-AI-hype
+slug: anti-ai-hype
+aliases:
+  - /posts/dont-fall-into-the-anti-ai-hype/
+description: "原文作者**：antirez"
 
 series: ["转载与编译"]
 
@@ -19,7 +22,6 @@ layout: post
 
 toc: true
 ---
-
 > **原文作者**：antirez  
 > **原文链接**：[Don't fall into the anti-AI hype](https://antirez.com/news/158)
 

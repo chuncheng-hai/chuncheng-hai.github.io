@@ -5,6 +5,7 @@ title: 经济学自学指南
 date: 2026-02-22 19:00:00 +0800
 
 slug: econ-self-study-guide
+description: "课程名称：MIT 14.01 – Principles of Microeconomics"
 
 series: ["自学指南"]
 categories: [经济学]
@@ -17,7 +18,6 @@ author: Chuncheng Hai
 
 toc: true
 ---
-
 ## 经济学入门
 
 - 课程名称：MIT 14.01 – Principles of Microeconomics  

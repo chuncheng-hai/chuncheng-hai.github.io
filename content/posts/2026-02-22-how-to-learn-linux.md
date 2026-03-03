@@ -5,6 +5,7 @@ title: 如何学习Linux云计算运维
 date: 2026-02-22 16:00:00 +0800
 
 slug: how-to-learn-linux
+description: "Linux Unix"
 
 series: ["Linux与运维实践"]
 categories: [Linux]
@@ -17,7 +18,6 @@ author: Chuncheng Hai
 
 toc: true
 ---
-
 Linux Unix
 Linux指内核(kernel)
 发行套件
