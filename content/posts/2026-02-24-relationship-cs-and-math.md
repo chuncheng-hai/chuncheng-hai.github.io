@@ -75,3 +75,8 @@ toc: true
 
 《具体数学》（Graham, Knuth, Patashnik）开头章节  
 《离散数学及其应用》（Rosen）基础部分 Khan Academy 逻辑与集合部分
+
+## 参考资料
+
+1. [CS自学指南](https://csdiy.wiki/)  
+2. [HackWay](https://hackway.org/docs/math/intro)  
