@@ -33,12 +33,27 @@ if ! $WRANGLER_CMD whoami >/dev/null 2>&1; then
   exit 2
 fi
 
-echo "[step] 检查 OPENAI_API_KEY secret（可选）"
-if ! $WRANGLER_CMD secret list 2>/dev/null | rg -q "OPENAI_API_KEY"; then
-  echo "[warn] 未检测到 OPENAI_API_KEY，将按 wrangler.toml 的无密钥端点部署。"
-  echo "[info] 若你后续切换到需要密钥的模型端点，再执行："
-  echo "  cd $WORKER_DIR"
-  echo "  $WRANGLER_CMD secret put OPENAI_API_KEY"
+PROVIDER="$(rg -n '^\s*LLM_PROVIDER\s*=' wrangler.toml -N -m1 | sed -E 's/.*=\s*"([^"]+)".*/\1/' | tr '[:upper:]' '[:lower:]')"
+if [ -z "$PROVIDER" ]; then
+  PROVIDER="deepseek"
+fi
+
+echo "[step] 检查模型密钥 secret（provider=$PROVIDER）"
+SECRET_LIST="$($WRANGLER_CMD secret list 2>/dev/null || true)"
+if [ "$PROVIDER" = "qwen" ]; then
+  if ! printf "%s" "$SECRET_LIST" | rg -q "QWEN_API_KEY"; then
+    echo "[todo] 未检测到 QWEN_API_KEY，请先执行："
+    echo "  cd $WORKER_DIR"
+    echo "  $WRANGLER_CMD secret put QWEN_API_KEY"
+    exit 3
+  fi
+else
+  if ! printf "%s" "$SECRET_LIST" | rg -q "DEEPSEEK_API_KEY"; then
+    echo "[todo] 未检测到 DEEPSEEK_API_KEY，请先执行："
+    echo "  cd $WORKER_DIR"
+    echo "  $WRANGLER_CMD secret put DEEPSEEK_API_KEY"
+    exit 3
+  fi
 fi
 
 echo "[step] 部署 Worker"

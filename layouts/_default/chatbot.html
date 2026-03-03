@@ -1,8 +1,8 @@
 {{- define "main" }}
-<article class="chatbot-page" data-api="{{ site.Params.chatbot.apiProxy | default "" }}" data-timeout="{{ site.Params.chatbot.requestTimeoutSec | default 12 }}">
+<article class="chatbot-page" data-api="{{ site.Params.chatbot.apiProxy | default "" }}" data-timeout="{{ site.Params.chatbot.requestTimeoutSec | default 12 }}" data-max-articles="{{ site.Params.chatbot.maxArticles | default 80 }}">
   <header class="page-header">
-    <h1>博客问答助手（RAG + 大模型）</h1>
-    <p>先检索站内文章，再由后端大模型整合回答。默认启用引用溯源模式（[1][2]）。若后端超时或失败，自动回退为本地匹配结果。</p>
+    <h1>博客问答助手（后端 DeepSeek / Qwen）</h1>
+    <p>前端仅提交问题与文章列表，由后端大模型完成检索与回答。默认启用引用溯源模式（[1][2]）。</p>
   </header>
 
   <section class="chatbot-shell" aria-label="博客问答">
@@ -32,6 +32,7 @@
   const pageEl = document.querySelector(".chatbot-page");
   const CHAT_API = (pageEl && pageEl.dataset.api ? pageEl.dataset.api : "").trim();
   const API_TIMEOUT_SEC = Math.max(3, Math.min(60, Number(pageEl && pageEl.dataset.timeout ? pageEl.dataset.timeout : 12)));
+  const MAX_ARTICLES = Math.max(10, Math.min(200, Number(pageEl && pageEl.dataset.maxArticles ? pageEl.dataset.maxArticles : 80)));
   let docs = [];
 
   function escapeHtml(s) {
@@ -45,42 +46,6 @@
 
   function stripHtml(s) {
     return (s || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-  }
-
-  function normalizeText(s) {
-    return (s || "")
-      .toLowerCase()
-      .replace(/[，。！？、；：,.!?;:()\[\]{}"'`~@#$%^&*_+=<>|\\/]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  function tokenize(s) {
-    const raw = normalizeText(s);
-    const set = new Set();
-
-    // 英文/数字词（长度>=2）
-    const en = raw.match(/[a-z0-9][a-z0-9-]{1,}/g) || [];
-    en.forEach(function (t) { set.add(t); });
-
-    // 中文连续短语（长度>=2）
-    const zh = raw.match(/[\u4e00-\u9fff]{2,}/g) || [];
-    zh.forEach(function (phrase) {
-      set.add(phrase);
-      // 同时加入双字词，提升“高可用”这类短语命中能力
-      if (phrase.length >= 4) {
-        for (let i = 0; i < phrase.length - 1; i++) {
-          set.add(phrase.slice(i, i + 2));
-        }
-      }
-    });
-
-    // 停用词，降低噪声
-    ["相关文章", "有哪些", "是什么", "怎么", "如何", "以及", "关于", "文章"].forEach(function (w) {
-      set.delete(w);
-    });
-
-    return Array.from(set).filter(function (t) { return t.length >= 2; });
   }
 
   function asArray(v) {
@@ -98,121 +63,34 @@
     return div;
   }
 
-  function scoreDoc(qTokens, doc) {
-    if (!qTokens.length) return 0;
-    let score = 0;
-    let matched = 0;
-    const title = doc.title.toLowerCase();
-    const summary = doc.summary.toLowerCase();
-    const content = doc.content.toLowerCase();
-    const tokenHit = new Set();
-
-    qTokens.forEach(function (t) {
-      let h = false;
-      if (title.includes(t)) { score += 12; h = true; }
-      if (summary.includes(t)) { score += 5; h = true; }
-      if (content.includes(t)) { score += 2; h = true; }
-      if (h) tokenHit.add(t);
-    });
-
-    matched = tokenHit.size;
-    // 关键词较多时，至少命中2个词才认为相关，防止“高频词误召回”
-    if (qTokens.length >= 3 && matched < 2) return 0;
-    if (qTokens.length >= 5 && matched < 3) return 0;
-    if (score < 8) return 0;
-    return score;
-  }
-
-  function intentBoost(question, doc) {
-    const q = normalizeText(question);
-    const title = normalizeText(doc.title);
-    const meta = normalizeText(
-      []
-        .concat(asArray(doc.series))
-        .concat(asArray(doc.categories))
-        .concat(asArray(doc.tags))
-        .join(" ")
-    );
-
-    let boost = 0;
-
-    const hit = function (arr) {
-      return arr.some(function (k) { return q.includes(k); });
-    };
-
-    // Linux/运维/高可用意图
-    if (hit(["linux", "运维", "高可用", "keepalived", "freeswitch", "服务器", "性能分析"])) {
-      if (meta.includes("linux与运维实践")) boost += 28;
-      if (title.includes("linux") || title.includes("高可用") || title.includes("keepalived") || title.includes("freeswitch")) boost += 20;
-      if (meta.includes("linux") || meta.includes("运维") || meta.includes("高可用")) boost += 12;
-    }
-
-    // 转载/双语/演讲意图
-    if (hit(["转载", "编译", "双语", "演讲", "名教", "胡适"])) {
-      if (meta.includes("转载与编译")) boost += 26;
-      if (title.includes("名教") || title.includes("创业手册")) boost += 18;
-    }
-
-    // 自学指南意图
-    if (hit(["自学", "指南", "路线", "学习路径"])) {
-      if (meta.includes("自学指南")) boost += 26;
-      if (title.includes("self-study-guide") || title.includes("自学")) boost += 16;
-    }
-
-    return boost;
-  }
-
-  function retrieve(question) {
-    const qTokens = tokenize(question);
-    const ranked = docs
-      .map(function (d) {
-        const base = scoreDoc(qTokens, d);
-        if (base <= 0) return { doc: d, score: 0 };
-        const bonus = intentBoost(question, d);
-        return { doc: d, score: base + bonus };
-      })
-      .filter(function (x) { return x.score > 0; })
-      .sort(function (a, b) { return b.score - a.score; })
-      .slice(0, 4);
-    return ranked;
-  }
-
-  function renderLocalMatches(ranked) {
-    if (!ranked.length) {
-      return "<p>本地未命中相关文章。建议换关键词，或前往 <a href='/search/'>搜索页</a>。</p>";
-    }
-    const items = ranked.map(function (x) {
-      const d = x.doc;
-      const snippet = escapeHtml((d.summary || d.content || "").slice(0, 140));
-      return "<li><a href='" + d.permalink + "'>" + escapeHtml(d.title) + "</a><p>" + snippet + "...</p></li>";
-    }).join("");
-    return "<p>本地匹配到这些文章：</p><ol class='chatbot-answers'>" + items + "</ol>";
-  }
-
-  function renderSources(ranked) {
-    if (!ranked.length) return "";
-    const items = ranked.map(function (x, idx) {
-      const d = x.doc;
-      return "<li>[" + (idx + 1) + "] <a href='" + d.permalink + "'>" + escapeHtml(d.title) + "</a></li>";
+  function renderSources(sources) {
+    if (!sources || !sources.length) return "";
+    const items = sources.map(function (s, idx) {
+      const title = s.title || ("来源 " + (idx + 1));
+      const link = s.permalink || "#";
+      const id = s.id || (idx + 1);
+      return "<li>[" + id + "] <a href='" + link + "'>" + escapeHtml(title) + "</a></li>";
     }).join("");
     return "<div class='chatbot-sources'><p><strong>来源索引：</strong></p><ol>" + items + "</ol></div>";
   }
 
-  function buildContext(ranked) {
-    return ranked.map(function (x, idx) {
-      const d = x.doc;
-      const chunk = (d.content || d.summary || "").slice(0, 900);
+  function buildArticleList() {
+    return docs.slice(0, MAX_ARTICLES).map(function (d, idx) {
       return {
         id: idx + 1,
         title: d.title,
         permalink: d.permalink,
-        summary: (d.summary || "").slice(0, 240),
-        content: chunk
+        summary: (d.summary || "").slice(0, 260),
+        series: asArray(d.series),
+        tags: asArray(d.tags),
+        categories: asArray(d.categories),
+        section: d.section || "",
+        date: d.date || ""
       };
     });
   }
 
-  async function callLlm(question, ranked) {
+  async function callLlm(question) {
     if (!CHAT_API) {
       throw new Error("后端问答接口未配置");
     }
@@ -228,7 +106,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: question,
-          contexts: buildContext(ranked)
+          articles: buildArticleList()
         }),
         signal: controller.signal
       });
@@ -238,8 +116,9 @@
       }
       const data = await res.json();
       const text = data && data.answer ? data.answer : "";
+      const sources = data && Array.isArray(data.sources) ? data.sources : [];
       if (!text) throw new Error("模型返回为空");
-      return text;
+      return { text: text, sources: sources };
     } finally {
       clearTimeout(timer);
     }
@@ -254,25 +133,20 @@
     const q = (question || "").trim();
     if (!q) return;
 
-    const ranked = retrieve(q);
-    const localHtml = renderLocalMatches(ranked);
-    const sourceHtml = renderSources(ranked);
-
-    if (!CHAT_API || !ranked.length) {
-      appendMessage("bot", localHtml + sourceHtml);
+    if (!CHAT_API) {
+      appendMessage("bot", "<p>后端问答接口未配置，请联系管理员。</p><p>你也可先用 <a href='/search/'>搜索页</a>。</p>");
       return;
     }
 
-    const pending = appendMessage("bot", "<p>正在基于本地匹配结果生成大模型回答...</p>");
+    const pending = appendMessage("bot", "<p>正在调用后端大模型进行检索与回答...</p>");
     try {
-      const llmText = await callLlm(q, ranked);
-      pending.innerHTML = renderLlmAnswer(llmText) + sourceHtml + localHtml;
+      const llm = await callLlm(q);
+      pending.innerHTML = renderLlmAnswer(llm.text) + renderSources(llm.sources);
     } catch (err) {
       pending.innerHTML =
-        "<p><strong>后端模型超时或不可用，已自动回退到本地检索结果。</strong></p>" +
+        "<p><strong>后端模型超时或不可用。</strong></p>" +
         "<p class='chatbot-note'>原因：" + escapeHtml(err && err.message ? err.message : "unknown") + "</p>" +
-        sourceHtml +
-        localHtml;
+        "<p>请稍后重试，或先使用 <a href='/search/'>搜索页</a>。</p>";
     }
     logEl.scrollTop = logEl.scrollHeight;
   }
@@ -289,13 +163,14 @@
           series: asArray(d.series),
           tags: asArray(d.tags),
           categories: asArray(d.categories),
-          section: d.section || ""
+          section: d.section || "",
+          date: d.date || ""
         };
       });
       if (CHAT_API) {
-        appendMessage("bot", "<p>文章索引加载完成，已连接后端模型，可开始提问。</p>");
+        appendMessage("bot", "<p>文章索引加载完成，已连接后端模型（DeepSeek/Qwen 可切换），可开始提问。</p>");
       } else {
-        appendMessage("bot", "<p>文章索引加载完成。当前为本地检索模式（未配置后端模型接口）。</p>");
+        appendMessage("bot", "<p>文章索引加载完成，但后端接口未配置。</p>");
       }
     })
     .catch(function () {

@@ -28,6 +28,7 @@ theme = "PaperMod"
   [params.chatbot]
     apiProxy = "https://blog-chatbot-proxy.chuncheng-hai-bot.workers.dev"
     requestTimeoutSec = 12
+    maxArticles = 80
 
   [params.homeInfoParams]
     Title = "Chuncheng's Blog"

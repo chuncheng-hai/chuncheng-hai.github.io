@@ -6,6 +6,7 @@
       "content" .Plain
       "permalink" .Permalink
       "summary" .Summary
+      "date" .Date
       "series" (.Params.series | default (slice))
       "tags" (.Params.tags | default (slice))
       "categories" (.Params.categories | default (slice))
@@ -14,4 +15,3 @@
   {{- end -}}
 {{- end -}}
 {{- $.Scratch.Get "index" | jsonify -}}
-

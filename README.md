@@ -104,55 +104,63 @@ tags: [hugo, blog]
 - 质量巡检：`“上线前做一遍内容质量检查”`
 - 编程协作：`“给我一套让 ChatGPT 编程的最佳实践提示词”`
 
-## 博客问答助手（RAG + LLM）
+## 博客问答助手（后端 DeepSeek / Qwen）
 
 - 页面：`/chatbot/`
-- 机制：
-  - 先做本地文章检索（`/index.json`）
-  - 本地检索策略：中文短语/双字词 + 英文词匹配，带多关键词命中阈值，减少误召回
-  - 第二层优化：按意图做主题优先重排（如 Linux/运维/高可用 问题优先 `Linux与运维实践` 相关文章）
-  - `index.json` 额外提供 `series/tags/categories/section` 用于重排加权
-  - 再调用后端代理（由后端转发到 OpenAI 兼容模型）
-  - 默认启用“引用溯源模式”：回答按 `[1][2]` 标注，且展示可点击来源索引
-  - 若模型超时/失败，自动回退为本地匹配结果
+- 当前机制：
+  - 前端读取文章索引（`/index.json`）
+  - 将 `question + articles` 发送给后端 Worker
+  - 后端按配置调用 DeepSeek 或阿里 Qwen
+  - 返回 `answer + sources`（来源索引）
+  - 默认启用引用溯源（`[1][2]`）
 
-### 安全改造说明
+### 安全策略（API Key）
 
-- 前端页面不再展示模型端点、模型名、API Key。
-- 模型配置转移到后端（示例：Cloudflare Worker）。
-- 前端只读取 `hugo.toml` 中的后端代理地址：
-  - `[params.chatbot].apiProxy`
-  - `[params.chatbot].requestTimeoutSec`
+- API Key 仅存放在后端 secret，不放前端、不放 `hugo.toml`、不进 Git。
+- 前端只持有 Worker 地址，不接触模型密钥。
+- 使用 Wrangler secret 注入：
+  - `wrangler secret put DEEPSEEK_API_KEY`
+  - `wrangler secret put QWEN_API_KEY`
 
-### 免费后端示例（Cloudflare Worker）
+### 后端配置（Cloudflare Worker）
 
-后端模板位置：
+后端文件：
 
 - `backend/cloudflare-worker/worker.js`
+- `backend/cloudflare-worker/wrangler.toml`
 - `backend/cloudflare-worker/wrangler.toml.example`
 
-部署步骤（免费）：
+`wrangler.toml` 关键变量：
+
+- `LLM_PROVIDER = "deepseek"` 或 `"qwen"`
+- `DEEPSEEK_BASE_URL` / `DEEPSEEK_MODEL`
+- `QWEN_BASE_URL` / `QWEN_MODEL`
+- `TIMEOUT_MS`
+- `MAX_ARTICLES`
+
+### 部署步骤
 
 1. 安装 Wrangler 并登录：
    - `npm i -g wrangler`
    - `wrangler login`
-2. 进入目录并初始化配置：
+2. 初始化：
    - `cd backend/cloudflare-worker`
    - `cp wrangler.toml.example wrangler.toml`
-3. 注入密钥（不要写入仓库）：
-   - `wrangler secret put OPENAI_API_KEY`（可选，默认免费端点可不填）
+3. 注入密钥（按 provider 选择）：
+   - DeepSeek：`wrangler secret put DEEPSEEK_API_KEY`
+   - Qwen：`wrangler secret put QWEN_API_KEY`
 4. 发布：
    - `wrangler deploy`
-5. 将部署得到的 URL 写入 `hugo.toml`：
+5. 将 Worker URL 写入 `hugo.toml`：
 
 ```toml
 [params.chatbot]
   apiProxy = "https://your-worker.your-subdomain.workers.dev"
   requestTimeoutSec = 12
+  maxArticles = 80
 ```
 
-> Worker 会暴露 `POST /` 接口，接收 `{question, contexts}`，返回 `{answer}`。
-> 默认示例使用免费端点 `text.pollinations.ai`，无需前端暴露任何模型配置。
+> Worker `POST /` 接口接收 `{question, articles}`，返回 `{answer, sources, provider, model}`。
 
 ### 部署踩坑记录（本项目实测）
 
@@ -167,7 +175,7 @@ tags: [hugo, blog]
    - 处理：按提示完成注册（本项目为 `chuncheng-hai-bot.workers.dev`）。
 4. 联调时命令行偶发超时：
    - 现象：`curl` 超时但 Worker 已部署成功。
-   - 处理：优先以浏览器实际访问 `/chatbot/` 验证；超时场景前端会自动回退本地检索。
+   - 处理：优先以浏览器实际访问 `/chatbot/` 验证；接口超时时前端会提示重试。
 
 ### 一键部署脚本（推荐）
 
@@ -178,7 +186,7 @@ tags: [hugo, blog]
 用途：
 
 - 自动检查 Wrangler
-- 自动检查登录状态与 secret
+- 自动检查登录状态与 provider 对应 secret
 - 自动部署 Worker
 - 自动把 `workers.dev` URL 回填到 `hugo.toml` 的 `params.chatbot.apiProxy`
 
