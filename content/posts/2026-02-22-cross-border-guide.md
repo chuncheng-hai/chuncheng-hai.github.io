@@ -10,9 +10,8 @@ aliases:
 description: "本文面向自学者梳理跨境电商学习的起点背景与常见误区，给出分阶段目标、资料选择、练习方式和复盘方法，帮助读者建立长期可执行的学习路径。"
 
 series: ["自学指南"]
-categories: [跨境电商]
-
-tags: [跨境电商]
+categories: [学习指南]
+tags: [跨境电商, 自学指南]
 
 disable_first_line_indent: true
 

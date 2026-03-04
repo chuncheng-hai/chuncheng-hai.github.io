@@ -8,9 +8,8 @@ description: "文章从大同这块试验田(续写版)的背景问题出发，�
 
 series: ["转载与编译"]
 
-categories: [历史, 大同]
-
-tags: [历史]
+categories: [人文社科]
+tags: [历史, 大同]
 
 disable_first_line_indent: true
 

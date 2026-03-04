@@ -13,9 +13,6 @@
       </span>
       {{- end }}
     </h1>
-    {{- if .Description }}
-    <div class="post-description">{{ .Description }}</div>
-    {{- end }}
     {{- if not (.Param "hideMeta") }}
     <div class="post-meta">
       {{- partial "post_meta.html" . -}}
@@ -71,6 +68,21 @@
     {{- partial "share_icons.html" . -}}
     {{- end }}
   </footer>
+
+  {{- $related := first 6 (where (site.RegularPages.Related .) "Permalink" "ne" .Permalink) -}}
+  {{- if gt (len $related) 0 }}
+  <section class="related-posts">
+    <h2>相关文章</h2>
+    <ul>
+      {{- range $related }}
+      <li>
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        <span>{{ .Date.Format "2006-01-02" }}</span>
+      </li>
+      {{- end }}
+    </ul>
+  </section>
+  {{- end }}
 
   {{- if (.Param "comments") }}
   {{- partial "comments.html" . }}

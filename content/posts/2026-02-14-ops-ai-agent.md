@@ -12,9 +12,8 @@ description: "文章围绕如何构建内网命令行 Ai Agent的真实问题展
 
 series: ["Linux与运维实践"]
 
-categories: [AI，Ops]
-
-tags: [AI, Ops]
+categories: [技术实践]
+tags: [AI, Ops, 运维]
 
 disable_first_line_indent: true
 

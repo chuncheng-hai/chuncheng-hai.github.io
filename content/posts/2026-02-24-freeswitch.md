@@ -8,9 +8,8 @@ slug: freeswitch
 description: "文章围绕呼叫中心之FreeSWITCH的真实问题展开，先说明问题出现的背景与约束条件，再拆解排查思路、方案取舍与落地步骤，并结合呼叫中心、FreeSIWTCH场景，帮助读者把方法直接迁移到自己的工程实践中。"
 
 series: ["Linux与运维实践"]
-categories: [呼叫中心,FreeSIWTCH]
-
-tags: [呼叫中心,FreeSIWTCH]
+categories: [技术实践]
+tags: [呼叫中心, FreeSWITCH]
 
 disable_first_line_indent: true
 

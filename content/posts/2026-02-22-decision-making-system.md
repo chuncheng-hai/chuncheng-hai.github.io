@@ -7,8 +7,7 @@ date: 2026-02-22 21:00:00 +0800
 slug: decision-making-system
 description: "文章围绕如何构建决策系统的真实问题展开，先说明问题出现的背景与约束条件，再拆解排查思路、方案取舍与落地步骤，并结合决策场景，帮助读者把方法直接迁移到自己的工程实践中。"
 
-categories: [决策]
-
+categories: [效率方法]
 tags: [决策]
 
 disable_first_line_indent: true

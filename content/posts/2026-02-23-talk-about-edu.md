@@ -7,9 +7,8 @@ date: 2026-02-23 10:00:00 +0800
 slug: talk-about-edu
 description: "文章从谈谈教育的背景问题出发，系统梳理核心观点、推理结构与实践建议，并结合随笔、教育语境，帮助读者在较短时间内建立完整认知，并用于后续学习或决策。"
 
-categories: [随笔,教育]
-
-tags: [随笔,教育]
+categories: [人文社科]
+tags: [随笔, 教育]
 
 disable_first_line_indent: true
 

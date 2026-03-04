@@ -1,0 +1,31 @@
+.related-posts {
+  margin: 2rem 0 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--code-bg);
+}
+
+.related-posts h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.1rem;
+}
+
+.related-posts ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.related-posts li {
+  margin: 0.45rem 0;
+}
+
+.related-posts a {
+  text-decoration: none;
+}
+
+.related-posts span {
+  margin-left: 0.5rem;
+  color: var(--secondary);
+  font-size: 0.9rem;
+}

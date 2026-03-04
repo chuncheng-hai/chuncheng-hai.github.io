@@ -12,9 +12,22 @@ theme = "PaperMod"
   category = "categories"
   series = "series"
 
+[related]
+  includeNewer = true
+  threshold = 20
+  toLower = true
+
+  [[related.indices]]
+    name = "tags"
+    weight = 100
+
+  [[related.indices]]
+    name = "categories"
+    weight = 60
+
 [params]
   author = "Chuncheng Hai"
-  description = "技术写作、人文社科转载与系统化学习笔记"
+  description = "技术写作、人文社科、学习笔记"
   ShowReadingTime = true
   ShowWordCount = true
   ShowShareButtons = true

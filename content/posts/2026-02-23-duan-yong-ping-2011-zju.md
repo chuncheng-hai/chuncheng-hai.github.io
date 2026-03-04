@@ -7,9 +7,8 @@ date: 2026-02-23 22:00:00 +0800
 slug: duan-yong-ping-2011-zju
 description: "文章围绕段永平给毕业生的讲话的发言语境与时代背景展开，提炼其关于成长、决策与行动的方法论，并串联关键观点之间的逻辑关系，便于读者形成可执行的个人实践框架。"
 
-categories: [演讲,段永平]
-
-tags: [演讲,段永平]
+categories: [人物演讲]
+tags: [演讲, 段永平]
 
 disable_first_line_indent: true
 

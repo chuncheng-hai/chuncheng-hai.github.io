@@ -9,9 +9,8 @@ description: "本文面向自学者梳理逻辑学学习的起点背景与常见
 
 series: ["自学指南"]
 
-categories: [逻辑学]
-
-tags: [逻辑学]
+categories: [学习指南]
+tags: [逻辑学, 自学指南]
 
 disable_first_line_indent: true
 

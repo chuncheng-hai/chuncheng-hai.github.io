@@ -69,7 +69,6 @@ disable_first_line_indent: true
   - `slug`
   - `description`
 - `description` 用于：
-  - 文章页标题下方摘要
   - 首页/列表页卡片预览（优先）
   - 搜索页摘要
   - SEO 元信息（OpenGraph/Twitter 卡片）
@@ -83,8 +82,10 @@ disable_first_line_indent: true
 - 首页/列表页卡片文案来源：
   - 优先：front matter `description`
   - 回退：Hugo 自动 `summary`
+- 正文页（single）不显示 `description`，避免与正文开头信息重复
 - 模板位置：
   - `layouts/_default/list.html`
+  - `layouts/_default/single.html`
 - `slug` 规则（强制）：
   - 全小写
   - 只使用 `a-z`、`0-9`、`-`
@@ -123,6 +124,38 @@ slug: how-to-build-blog
 categories: [工程效率]
 tags: [hugo, blog]
 ```
+
+## 相关文章推荐（按标签）
+
+- 已在文章底部增加“相关文章”模块。
+- 推荐逻辑：
+  - 使用 Hugo Related 功能
+  - 权重优先 `tags`，其次 `categories`
+  - 自动排除当前文章，最多展示 6 篇
+- 关键配置：
+  - `hugo.toml` 的 `[related]` 与 `[[related.indices]]`
+  - 文章模板：`layouts/_default/single.html`
+  - 样式：`assets/css/extended/related-posts.css`
+
+## 分类与标签优化（已执行）
+
+- 发现问题：
+  - 原先 `categories` 与 `tags` 高度重合，信息冗余，导航价值低。
+- 处理策略：
+  - `categories` 收敛为“单一主分类”（用于浏览与归档）
+  - `tags` 保留细粒度关键词（用于检索与关联）
+  - 避免 category 与同名 tag 同时出现
+- 当前主分类集合：
+  - `技术实践`
+  - `学习指南`
+  - `效率方法`
+  - `商业投资`
+  - `人物演讲`
+  - `人文社科`
+  - `随笔思考`
+- 后续写作建议：
+  - 每篇仅 1 个 category
+  - 每篇 2-8 个 tags，优先“主题词 + 人名/技术名 + 体裁词”
 
 ## Skills（简体中文版）
 

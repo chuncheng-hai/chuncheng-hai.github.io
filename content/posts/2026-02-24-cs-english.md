@@ -12,9 +12,8 @@ description: "文章从谈谈写程序与学英语的背景问题出发，系统
 
 series: ["转载"]
 
-categories: [CS,英语]
-
-tags: [CS,英语]
+categories: [技术实践]
+tags: [CS, 英语]
 
 disable_first_line_indent: true
 

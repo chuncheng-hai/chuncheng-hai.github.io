@@ -7,8 +7,7 @@ date: 2026-03-04 01:00:00 +0800
 slug: dont-be-a-fake-worker
 description: "文章从不做伪工作者的背景问题出发，系统梳理核心观点、推理结构与实践建议，并结合吴军语境，帮助读者在较短时间内建立完整认知，并用于后续学习或决策。"
 
-categories: [吴军]
-
+categories: [随笔思考]
 tags: [吴军]
 
 disable_first_line_indent: true

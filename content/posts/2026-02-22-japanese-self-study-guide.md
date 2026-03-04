@@ -9,9 +9,8 @@ description: "本文面向自学者梳理日语学习的起点背景与常见误
 
 series: ["自学指南"]
 
-categories: [日语]
-
-tags: [日语]
+categories: [学习指南]
+tags: [日语, 自学指南]
 
 disable_first_line_indent: true
 

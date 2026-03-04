@@ -8,9 +8,8 @@ slug: how-to-learn-linux
 description: "文章围绕如何学习Linux云计算运维的真实问题展开，先说明问题出现的背景与约束条件，再拆解排查思路、方案取舍与落地步骤，并结合Linux场景，帮助读者把方法直接迁移到自己的工程实践中。"
 
 series: ["Linux与运维实践"]
-categories: [Linux]
-
-tags: [Linux]
+categories: [技术实践]
+tags: [Linux, 运维]
 
 disable_first_line_indent: true
 

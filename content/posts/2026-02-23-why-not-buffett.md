@@ -17,9 +17,8 @@ source_author: Mark Sellers
 
 series: ["转载"]
 
-categories: [投资,巴菲特]
-
-tags: [投资,巴菲特]
+categories: [商业投资]
+tags: [投资, 巴菲特, 转载]
 
 disable_first_line_indent: true
 
