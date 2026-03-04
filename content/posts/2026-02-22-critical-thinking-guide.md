@@ -33,16 +33,21 @@ toc: true
 
 - 课程名称：十五分钟逻辑学：
 - 课程链接：[ttps://www.youtube.com/playlist?list=PLO-VYxpl-IZxxO9mPCmCP_3wTOHjt7Efh](https://www.youtube.com/playlist?list=PLO-VYxpl-IZxxO9mPCmCP_3wTOHjt7Efh)
+- 配合书籍:《简单的逻辑学》 谬误识别 偷换概念
 学习 传统形式逻辑的同一律、矛盾律、拍中律、充足理由律
+
+## 论证
+
+- 课程名称：牛津大学公开课：批判性思维入门
+- 课程链接：[https://www.bilibili.com/video/BV1hb4y1h7Xt/?spm_id_from=333.1391.0.0&vd_source=6f65e5458d8f1daecbbb1874a16d01b2](https://www.bilibili.com/video/BV1hb4y1h7Xt/?spm_id_from=333.1391.0.0&vd_source=6f65e5458d8f1daecbbb1874a16d01b2)
+- 配合书籍：《论证是一门学问》  实用论证指南
+
 
 ## 常见谬误
 
-- 《简单的逻辑学》 谬误识别 偷换概念
 - 《思考，快与慢》（卡尼曼）——认知偏差
-- 《论证是一门学问》  实用论证指南
 - 《逻辑与哲学》（蒂德曼）
 - 《系统之美》（梅多斯）——系统思维训练
-
 
 ---
 五毛党培训教材：  
