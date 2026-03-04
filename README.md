@@ -66,6 +66,9 @@ disable_first_line_indent: true
   - `source_author`
   - `source_url`
   - `license`
+- 独立页面（如 `content/about.md`）建议添加：
+  - `disable_first_line_indent: true`（关闭首行缩进）
+  - 默认不显示文章页 footer（标签、相关文章、上一篇/下一篇、分享按钮）
 
 ## 文章文件命名规范（已启用）
 
@@ -153,6 +156,9 @@ tags: [hugo, blog]
   - 相关文章
   - 上一篇/下一篇
   - 分享按钮
+- 作用范围：
+  - 仅 `content/posts` 下文章页显示
+  - `about` 等独立页面不显示该 footer 区域
 - 文章页展示样式（footer）：
   - 四个区块使用独立容器（`.footer-block`）
   - 区块间采用显式留白，不再“挤在一堆”

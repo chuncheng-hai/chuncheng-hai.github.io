@@ -1,4 +1,5 @@
 {{- define "main" }}
+{{- $isPost := eq .Section "posts" -}}
 
 <article class="post-single {{ if eq .Params.post_type "reprint" }}article--reprint{{ else }}article--original{{ end }}{{ if .Params.disable_first_line_indent }} no-first-indent{{ end }}">
   <header class="post-header">
@@ -54,6 +55,7 @@
   </div>
   {{- end }}
 
+  {{- if $isPost }}
   <footer class="post-footer">
     {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
     {{- $related := first 6 (where (site.RegularPages.Related .) "Permalink" "ne" .Permalink) -}}
@@ -88,6 +90,7 @@
     </section>
     {{- end }}
   </footer>
+  {{- end }}
 
   {{- if (.Param "comments") }}
   {{- partial "comments.html" . }}
