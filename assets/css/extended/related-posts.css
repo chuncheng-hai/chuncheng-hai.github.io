@@ -1,5 +1,27 @@
+.post-footer {
+  margin-top: 2.2rem;
+  padding-top: 1.2rem;
+}
+
+.post-footer .footer-block + .footer-block {
+  margin-top: 1.4rem;
+}
+
+.post-footer .footer-tags {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--entry);
+}
+
+.post-footer .post-tags {
+  margin: 0;
+  padding: 0;
+  row-gap: 0.45rem;
+}
+
 .related-posts {
-  margin: 2rem 0 0;
+  margin: 0;
   padding: 1rem 1.1rem;
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -28,4 +50,23 @@
   margin-left: 0.5rem;
   color: var(--secondary);
   font-size: 0.9rem;
+}
+
+.post-footer .paginav {
+  margin: 0;
+}
+
+.post-footer .share-buttons {
+  margin: 0;
+}
+
+.post-footer .footer-share {
+  padding-top: 1rem;
+  border-top: 1px dashed var(--border);
+}
+
+@media (max-width: 700px) {
+  .post-footer .footer-block + .footer-block {
+    margin-top: 1.05rem;
+  }
 }

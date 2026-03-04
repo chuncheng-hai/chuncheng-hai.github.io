@@ -11,6 +11,22 @@
 - 主题：PaperMod
 - 部署：GitHub Pages（GitHub Actions）
 
+## 首页可视化配置（中文注释已补全）
+
+- 首页现仅保留第一个动效区块（Hero）。
+- “内容版图”“创作节奏”两个区块已移除。
+- 常改项都在 `hugo.toml`：
+  - `[params.homeHero]`：第一屏标题、描述、按钮、chips、头像卡片文案
+  - `[params.assets]`：浏览器标签图标（favicon）
+- 当前 favicon 已设置为圆形头像：`/images/favicon-round.svg`
+  - 采用“自包含 SVG（内嵌头像数据）”方式，避免浏览器标签页出现黑块。
+- `avatarRole` 可选：
+  - 不配置 `avatarRole` 时，首页头像下方不会显示副标题文案。
+- 首页头像姓名文案：
+  - 已在模板中移除 `avatarName` 显示，避免与浮动提示重叠。
+- 首页浮动提示（`floatingNote`）排版：
+  - 使用原始悬浮样式（绝对定位）。
+
 ## 本地开发
 
 1. 启动预览
@@ -132,10 +148,19 @@ tags: [hugo, blog]
   - 使用 Hugo Related 功能
   - 权重优先 `tags`，其次 `categories`
   - 自动排除当前文章，最多展示 6 篇
+- 文章页展示顺序（footer）：
+  - 标签
+  - 相关文章
+  - 上一篇/下一篇
+  - 分享按钮
+- 文章页展示样式（footer）：
+  - 四个区块使用独立容器（`.footer-block`）
+  - 区块间采用显式留白，不再“挤在一堆”
+  - 分享区与上方内容使用虚线分隔
 - 关键配置：
   - `hugo.toml` 的 `[related]` 与 `[[related.indices]]`
   - 文章模板：`layouts/_default/single.html`
-  - 样式：`assets/css/extended/related-posts.css`
+  - 样式：`assets/css/extended/related-posts.css`（同时控制 footer 分区间距）
 
 ## 分类与标签优化（已执行）
 

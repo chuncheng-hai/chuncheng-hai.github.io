@@ -26,7 +26,9 @@ theme = "PaperMod"
     weight = 60
 
 [params]
+  # 作者名（显示在文章元信息）
   author = "Chuncheng Hai"
+  # 全站默认描述（用于 SEO 与社交卡片）
   description = "技术写作、人文社科、学习笔记"
   ShowReadingTime = true
   ShowWordCount = true
@@ -44,8 +46,41 @@ theme = "PaperMod"
     maxArticles = 80
 
   [params.homeInfoParams]
-    Title = "Chuncheng's Blog"
-    Content = "个人成长、技术写作。"
+    # 首页标题（若下面配置了 homeHero.title，会优先使用 homeHero）
+    Title = ""
+    # 首页简介（若下面配置了 homeHero.content，会优先使用 homeHero）
+    Content = ""
+
+  # 首页第一个动效区块（Hero）配置
+  # 想改首页第一屏文案/按钮/头像，主要改这里
+  [params.homeHero]
+    # 小标题（主标题上方）
+    kicker = "CHUNCHENG HAI · THINK IN SYSTEMS"
+    # 主标题与描述
+    title = "Chuncheng's Blog"
+    content = "改变世界、改变自己"
+    # 三个按钮：文案 + 链接
+    primaryBtnText = "开始搜索"
+    primaryBtnUrl = "/search/"
+    secondaryBtnText = "浏览系列"
+    secondaryBtnUrl = "/series/"
+    thirdBtnText = "文章归档"
+    thirdBtnUrl = "/archives/"
+    # 胶囊标签（可增减）
+    chips = ["人文社科", "技术写作","投资理财","自学指南","Linux & DevOps","LLM & Agent"]
+    # 头像卡片
+    avatar = "/images/profile-picture.jpg"
+    avatarName = "Chuncheng Hai"
+    # 头像旁提示
+    floatingNote = "日拱一卒，功不唐捐"
+
+  # 浏览器标签左上角图标（favicon）
+  # 已设置为圆形头像版本（SVG）
+  [params.assets]
+    favicon = "/images/favicon-round.svg"
+    favicon16x16 = "/images/favicon-round.svg"
+    favicon32x32 = "/images/favicon-round.svg"
+    apple_touch_icon = "/images/profile-picture.jpg"
 
 [[menu.main]]
   identifier = "archives"

@@ -56,33 +56,38 @@
 
   <footer class="post-footer">
     {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
-    <ul class="post-tags">
-      {{- range ($.GetTerms $tags) }}
-      <li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
-      {{- end }}
-    </ul>
+    {{- $related := first 6 (where (site.RegularPages.Related .) "Permalink" "ne" .Permalink) -}}
+    <section class="footer-block footer-tags">
+      <ul class="post-tags">
+        {{- range ($.GetTerms $tags) }}
+        <li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
+        {{- end }}
+      </ul>
+    </section>
+    {{- if gt (len $related) 0 }}
+    <section class="footer-block related-posts">
+      <h2>相关文章</h2>
+      <ul>
+        {{- range $related }}
+        <li>
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          <span>{{ .Date.Format "2006-01-02" }}</span>
+        </li>
+        {{- end }}
+      </ul>
+    </section>
+    {{- end }}
     {{- if (.Param "ShowPostNavLinks") }}
-    {{- partial "post_nav_links.html" . }}
+    <section class="footer-block footer-nav">
+      {{- partial "post_nav_links.html" . }}
+    </section>
     {{- end }}
     {{- if (and site.Params.ShowShareButtons (ne .Params.disableShare true)) }}
-    {{- partial "share_icons.html" . -}}
+    <section class="footer-block footer-share">
+      {{- partial "share_icons.html" . -}}
+    </section>
     {{- end }}
   </footer>
-
-  {{- $related := first 6 (where (site.RegularPages.Related .) "Permalink" "ne" .Permalink) -}}
-  {{- if gt (len $related) 0 }}
-  <section class="related-posts">
-    <h2>相关文章</h2>
-    <ul>
-      {{- range $related }}
-      <li>
-        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-        <span>{{ .Date.Format "2006-01-02" }}</span>
-      </li>
-      {{- end }}
-    </ul>
-  </section>
-  {{- end }}
 
   {{- if (.Param "comments") }}
   {{- partial "comments.html" . }}
