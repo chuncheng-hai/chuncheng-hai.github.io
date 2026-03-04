@@ -58,7 +58,7 @@ theme = "PaperMod"
     kicker = "CHUNCHENG HAI · THINK IN SYSTEMS"
     # 主标题与描述
     title = "Chuncheng's Blog"
-    content = "改变世界、改变自己"
+    content = "改变自己、改变世界"
     # 三个按钮：文案 + 链接
     primaryBtnText = "开始搜索"
     primaryBtnUrl = "/search/"
