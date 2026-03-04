@@ -8,7 +8,7 @@ aliases:
   - /posts/dont-fall-into-the-anti-ai-hype/
 description: "本文为转载整理，先交代Don't fall into the anti-AI hype的讨论背景，再按原文逻辑归纳核心论点与关键证据，并补充阅读线索，帮助读者快速把握主题价值与现实启发。"
 
-series: ["转载与编译"]
+series: ["转载"]
 
 categories: [技术实践]
 tags: [AI, 转载]
