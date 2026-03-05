@@ -8,8 +8,8 @@ slug: buffett-florida-university.md
 
 description: "巴菲特在佛罗里达大学的演讲"
 
-categories: [人物演讲]
-tags: [投资, 巴菲特, 演讲, 成长]
+categories: [文章转载]
+tags: [投资, 巴菲特, 演讲]
 
 disable_first_line_indent: true
 

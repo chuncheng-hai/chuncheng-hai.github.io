@@ -85,3 +85,7 @@ MVS 最小可行服务
 
 先看business module，再看现金流  
 
+做正确的事情
+[世界的确是草台班子，可草台不等于没有商业价值](https://mp.weixin.qq.com/s/5dzKorcTB-JsQcySktYBSg)
+这个世界奖励的是探路，即使仅仅探通了A1-A300，没打通A301到B507，在资本眼中也有价值
+
