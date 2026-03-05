@@ -1,0 +1,14 @@
+{{- $role := (.Get "role" | default "all") -}}
+{{- $lang := (.Get "lang" | default "bash") -}}
+{{- $title := (.Get "title" | default "") -}}
+{{- $target := (.Get "target" | default "") -}}
+{{- $roleMap := dict "master" "Master" "node1" "Node1" "node2" "Node2" "all" "All Nodes" -}}
+{{- $roleLabel := index $roleMap $role | default (upper $role) -}}
+<div class="cmd-block cmd-{{ $role }}">
+  <div class="cmd-head">
+    <span class="cmd-badge">{{ $roleLabel }}</span>
+    {{- with $target }}<span class="cmd-target">{{ . }}</span>{{ end }}
+    {{- with $title }}<span class="cmd-title">{{ . }}</span>{{ end }}
+  </div>
+  {{- highlight (strings.TrimSpace .Inner) $lang "" -}}
+</div>

@@ -70,6 +70,26 @@ disable_first_line_indent: true
   - `disable_first_line_indent: true`（关闭首行缩进）
   - 默认不显示文章页 footer（标签、相关文章、上一篇/下一篇、分享按钮）
 
+### 分布式命令块标注（推荐）
+
+- 已新增 Hugo 短代码：`layouts/shortcodes/cmd.html`
+- 用于标注命令执行节点，替代 `# 在 master 执行` 这类注释。
+- 支持角色：`master`、`node1`、`node2`、`all`
+- 样式文件：`assets/css/extended/cmd-block.css`
+  - 代码块统一渲染为圆角矩形（普通代码块 + cmd 代码块）
+
+示例：
+
+```markdown
+{{< cmd role="master" target="k8s-master" title="初始化集群（仅主节点）" >}}
+kubeadm init --apiserver-advertise-address=192.168.1.10
+{{< /cmd >}}
+
+{{< cmd role="all" target="master, node1, node2" title="每台机器都执行" >}}
+apt update && apt install -y containerd
+{{< /cmd >}}
+```
+
 ## 文章文件命名规范（已启用）
 
 - 目录：`content/posts/`
