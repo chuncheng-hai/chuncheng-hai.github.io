@@ -5,7 +5,7 @@ title: 乐理自学指南
 date: 2026-02-22 19:00:00 +0800
 
 slug: pialo-self-study-guide
-description: "本文面向自学者梳理乐理学习的起点背景与常见误区，给出分阶段目标、资料选择、练习方式和复盘方法，帮助读者建立长期可执行的学习路径。"
+description: "本文面向自学者梳理乐理学习"
 
 series: ["自学指南"]
 categories: [学习指南]
@@ -17,3 +17,12 @@ author: Chuncheng Hai
 
 toc: true
 ---
+
+
+1  2  3  4   5   6 7  
+do re mi fa sol la si
+
+简谱
+五线谱
+下加一线
+中央C do  
