@@ -1,0 +1,9 @@
+{{- if eq .Type "abc" -}}
+  <div class="abcjs-block">
+    <div class="abcjs-sheet"></div>
+    <script type="text/plain" class="abcjs-source">{{- .Inner -}}</script>
+  </div>
+{{- else -}}
+  {{- $result := transform.HighlightCodeBlock . -}}
+  {{- $result.Wrapped -}}
+{{- end -}}

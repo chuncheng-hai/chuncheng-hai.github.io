@@ -90,6 +90,76 @@ apt update && apt install -y containerd
 {{< /cmd >}}
 ```
 
+## 五线谱工作流（ABC / LilyPond）
+
+- 谱例源文件目录：`assets/scores/`
+- 预渲染输出目录：`static/generated/scores/`
+- 渲染脚本：`scripts/render_scores.sh`
+
+依赖安装（macOS）：
+
+```bash
+brew install lilypond
+```
+
+说明：
+- Homebrew 当前没有 `abc2svg` 公式。
+- `abcscore` 已支持从 `assets/scores/*.abc` 自动回退到 `abcjs` 渲染，所以即使未安装 `abc2svg` 也能显示五线谱。
+- `lilyscore` 仍建议使用 `lilypond` 预渲染 SVG（出版级排版）。
+
+执行渲染：
+
+```bash
+./scripts/render_scores.sh
+```
+
+在 Markdown 文章中引用：
+
+```markdown
+{{< abcscore src="templates/c-major-scale.abc" title="C大调音阶（ABC）" caption="每日热身 72 BPM" >}}
+
+{{< lilyscore src="templates/c-major-scale.ly" title="C大调音阶（LilyPond）" caption="出版级排版版本" >}}
+```
+
+快速草稿模式（无需预渲染）：
+
+````markdown
+```abc
+X:1
+T:C Major Scale
+M:4/4
+K:C
+C D E F | G A B c |
+```
+````
+
+## 数学排版工作流（KaTeX）
+
+- 开关：文章 front matter 加 `math: true`
+- 行内公式：`$a^2+b^2=c^2$`
+- 块级公式：`$$ ... $$`
+- 也支持：`\(...\)` 与 `\[...\]`
+
+内置常用宏：
+- `\R \N \Z \Q \C`
+- `\E \Var \Cov`
+- `\argmax \argmin`
+
+结构化笔记 shortcodes：
+
+```markdown
+{{< theorem title="定理名称" >}}
+这里写定理，支持公式：
+$$
+f(x)=x^2
+$$
+{{< /theorem >}}
+
+{{< proof >}}
+这里写证明过程。
+{{< /proof >}}
+```
+
 ## 文章文件命名规范（已启用）
 
 - 目录：`content/posts/`

@@ -1,0 +1,85 @@
+{{- $enableAbc := false -}}
+{{- $enableMath := false -}}
+{{- if .IsPage -}}
+  {{- $enableAbc = or
+      (.Param "abcjs")
+      (in .RawContent "```abc")
+      (in .RawContent "{{< abcscore")
+      (in .RawContent "{{% abcscore")
+  -}}
+  {{- $enableMath = or
+      (.Param "math")
+      (in .RawContent "$$")
+      (in .RawContent "\\(")
+      (in .RawContent "\\[")
+      (in .RawContent "{{< theorem")
+      (in .RawContent "{{% theorem")
+      (in .RawContent "{{< proof")
+      (in .RawContent "{{% proof")
+  -}}
+{{- end -}}
+{{- if $enableAbc -}}
+  <style>
+    .abcjs-block {
+      margin: 1rem 0;
+    }
+    .abcjs-sheet svg {
+      max-width: 100%;
+      height: auto;
+    }
+    .score-figure {
+      margin: 1rem 0 1.25rem;
+      padding: 0.8rem;
+      border: 1px solid var(--code-border, #e5e7eb);
+      border-radius: 12px;
+      background: var(--theme, #fff);
+    }
+    .score-caption {
+      margin-top: 0.7rem;
+      color: var(--secondary, #6b7280);
+      font-size: 0.9rem;
+    }
+    .score-missing {
+      margin: 0.5rem 0 0;
+      padding: 0.6rem 0.7rem;
+      border: 1px dashed #f59e0b;
+      border-radius: 10px;
+      background: #fffbeb;
+      color: #92400e;
+      font-size: 0.88rem;
+    }
+    .score-svg {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .score-svg img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+  </style>
+{{- end -}}
+{{- if $enableMath -}}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <style>
+    .katex-display {
+      margin: 1rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 0.15rem;
+    }
+    .math-block {
+      margin: 1rem 0;
+      padding: 0.8rem 0.95rem;
+      border: 1px solid var(--code-border, #e5e7eb);
+      border-radius: 12px;
+      background: var(--entry, #fff);
+    }
+    .math-block-title {
+      margin-bottom: 0.45rem;
+      color: var(--secondary, #6b7280);
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+  </style>
+{{- end -}}

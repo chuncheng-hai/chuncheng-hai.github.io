@@ -1,0 +1,29 @@
+{{- $src := .Get "src" | default "" -}}
+{{- $caption := .Get "caption" | default "" -}}
+{{- $title := .Get "title" | default "" -}}
+
+{{- $outBase := "" -}}
+{{- $svgRel := "" -}}
+{{- $svgDisk := "" -}}
+{{- $hasSvg := false -}}
+
+{{- if $src -}}
+  {{- $outBase = strings.TrimSuffix ".ly" $src -}}
+  {{- $svgRel = printf "/generated/scores/%s.svg" $outBase -}}
+  {{- $svgDisk = printf "static/generated/scores/%s.svg" $outBase -}}
+  {{- $hasSvg = fileExists $svgDisk -}}
+{{- end -}}
+
+<figure class="score-figure">
+  {{- with $title -}}<div><strong>{{ . }}</strong></div>{{- end -}}
+  <div class="score-svg">
+    {{- if $hasSvg -}}
+      <img src="{{ $svgRel }}" alt="{{ or $title $caption "LilyPond score" }}" loading="lazy">
+    {{- else -}}
+      <div class="score-missing">
+        未找到预渲染谱例：{{ $svgDisk }}。先执行 `scripts/render_scores.sh` 生成 SVG。
+      </div>
+    {{- end -}}
+  </div>
+  {{- with $caption -}}<figcaption class="score-caption">{{ . }}</figcaption>{{- end -}}
+</figure>

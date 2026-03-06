@@ -1,0 +1,49 @@
+{{- $src := .Get "src" | default "" -}}
+{{- $caption := .Get "caption" | default "" -}}
+{{- $title := .Get "title" | default "" -}}
+{{- $render := .Get "render" | default "svg" -}}
+{{- $inline := strings.TrimSpace .Inner -}}
+{{- $srcBody := "" -}}
+
+{{- $outBase := "" -}}
+{{- $svgRel := "" -}}
+{{- $svgDisk := "" -}}
+{{- $hasSvg := false -}}
+{{- $srcDisk := "" -}}
+{{- $hasSrcFile := false -}}
+
+{{- if $src -}}
+  {{- $outBase = strings.TrimSuffix ".abc" $src -}}
+  {{- $svgRel = printf "/generated/scores/%s.svg" $outBase -}}
+  {{- $svgDisk = printf "static/generated/scores/%s.svg" $outBase -}}
+  {{- $hasSvg = fileExists $svgDisk -}}
+  {{- $srcDisk = printf "assets/scores/%s" $src -}}
+  {{- $hasSrcFile = fileExists $srcDisk -}}
+  {{- if $hasSrcFile -}}
+    {{- $srcBody = strings.TrimSpace (readFile $srcDisk) -}}
+  {{- end -}}
+{{- end -}}
+
+<figure class="score-figure">
+  {{- with $title -}}<div><strong>{{ . }}</strong></div>{{- end -}}
+  <div class="score-svg">
+    {{- if and (ne $render "js") $hasSvg -}}
+      <img src="{{ $svgRel }}" alt="{{ or $title $caption "ABC score" }}" loading="lazy">
+    {{- else if $inline -}}
+      <div class="abcjs-block">
+        <div class="abcjs-sheet"></div>
+        <script type="text/plain" class="abcjs-source">{{- $inline -}}</script>
+      </div>
+    {{- else if $srcBody -}}
+      <div class="abcjs-block">
+        <div class="abcjs-sheet"></div>
+        <script type="text/plain" class="abcjs-source">{{- $srcBody -}}</script>
+      </div>
+    {{- else -}}
+      <div class="score-missing">
+        未找到可用谱例。请检查 `{{ $srcDisk }}` 是否存在，或在 shortcode 内直接写 ABC 内容。
+      </div>
+    {{- end -}}
+  </div>
+  {{- with $caption -}}<figcaption class="score-caption">{{ . }}</figcaption>{{- end -}}
+</figure>

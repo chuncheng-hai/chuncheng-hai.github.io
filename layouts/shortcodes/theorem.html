@@ -1,0 +1,7 @@
+{{- $title := .Get "title" | default "定理" -}}
+<div class="math-block theorem-block">
+  <div class="math-block-title">{{ $title }}</div>
+  <div class="math-block-body">
+    {{- .Inner | markdownify -}}
+  </div>
+</div>

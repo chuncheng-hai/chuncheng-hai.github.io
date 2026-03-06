@@ -1,0 +1,104 @@
+{{- $enableAbc := false -}}
+{{- $enableMath := false -}}
+{{- if .IsPage -}}
+  {{- $enableAbc = or
+      (.Param "abcjs")
+      (in .RawContent "```abc")
+      (in .RawContent "{{< abcscore")
+      (in .RawContent "{{% abcscore")
+  -}}
+  {{- $enableMath = or
+      (.Param "math")
+      (in .RawContent "$$")
+      (in .RawContent "\\(")
+      (in .RawContent "\\[")
+      (in .RawContent "{{< theorem")
+      (in .RawContent "{{% theorem")
+      (in .RawContent "{{< proof")
+      (in .RawContent "{{% proof")
+  -}}
+{{- end -}}
+{{- if $enableAbc -}}
+  <script defer src="https://cdn.jsdelivr.net/npm/abcjs@6.4.4/dist/abcjs-basic-min.js"></script>
+  <script>
+    (function () {
+      function renderAbcBlocks() {
+        if (!window.ABCJS || typeof window.ABCJS.renderAbc !== "function") return;
+
+        document.querySelectorAll(".abcjs-block").forEach(function (block) {
+          if (block.dataset.rendered === "1") return;
+
+          var source = block.querySelector(".abcjs-source");
+          var target = block.querySelector(".abcjs-sheet");
+          if (!source || !target) return;
+
+          var notation = (source.textContent || "").trim();
+          if (!notation) return;
+
+          try {
+            window.ABCJS.renderAbc(target, notation, { responsive: "resize" });
+            block.dataset.rendered = "1";
+          } catch (err) {
+            console.error("abcjs render failed", err);
+          }
+        });
+      }
+
+      function boot() {
+        renderAbcBlocks();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot, { once: true });
+      } else {
+        boot();
+      }
+      window.addEventListener("load", renderAbcBlocks, { once: true });
+    })();
+  </script>
+{{- end -}}
+{{- if $enableMath -}}
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <script>
+    (function () {
+      function renderMath() {
+        if (!window.renderMathInElement) return;
+        window.renderMathInElement(document.body, {
+          throwOnError: false,
+          strict: "ignore",
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "\\[", right: "\\]", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\(", right: "\\)", display: false }
+          ],
+          macros: {
+            "\\R": "\\mathbb{R}",
+            "\\N": "\\mathbb{N}",
+            "\\Z": "\\mathbb{Z}",
+            "\\Q": "\\mathbb{Q}",
+            "\\C": "\\mathbb{C}",
+            "\\E": "\\mathbb{E}",
+            "\\Var": "\\mathrm{Var}",
+            "\\Cov": "\\mathrm{Cov}",
+            "\\argmax": "\\operatorname*{arg\\,max}",
+            "\\argmin": "\\operatorname*{arg\\,min}"
+          },
+          ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+        });
+      }
+
+      function boot() {
+        renderMath();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot, { once: true });
+      } else {
+        boot();
+      }
+      window.addEventListener("load", renderMath, { once: true });
+    })();
+  </script>
+{{- end -}}

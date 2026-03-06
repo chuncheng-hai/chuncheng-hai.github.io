@@ -16,7 +16,43 @@ disable_first_line_indent: true
 author: Chuncheng Hai
 
 toc: true
+math: true
 ---
+
+## 数学排版模板（可直接复用）
+
+行内公式示例：设随机变量 $X \sim \mathcal{N}(\mu,\sigma^2)$，则标准化后 $Z=\frac{X-\mu}{\sigma}$。  
+
+块级公式示例：
+
+$$
+\int_a^b f'(x)\,dx = f(b)-f(a)
+$$
+
+多行推导示例：
+
+$$
+\begin{aligned}
+\E[X] &= \sum_x x p(x) \\
+\Var(X) &= \E[X^2] - (\E[X])^2
+\end{aligned}
+$$
+
+{{< theorem title="定理（柯西不等式）" >}}
+对任意向量 $u,v\in\R^n$，有
+$$
+|\langle u,v \rangle| \le \|u\|_2 \|v\|_2.
+$$
+{{< /theorem >}}
+
+{{< proof >}}
+对任意实数 $t$，函数
+$$
+g(t)=\|u-tv\|_2^2\ge 0
+$$
+是关于 $t$ 的二次多项式。其判别式不大于 $0$，整理得结论成立。
+{{< /proof >}}
+
 ## 数学分析
 
 课程名称：数学分析  
