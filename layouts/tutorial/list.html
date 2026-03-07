@@ -1,0 +1,95 @@
+{{- define "main" -}}
+{{- $root := site.GetPage "section" "tutorial" -}}
+{{- $current := .CurrentSection -}}
+{{- $isRoot := and $root (eq .RelPermalink $root.RelPermalink) -}}
+
+{{- if $isRoot }}
+<section class="tutorial-home">
+  <header class="page-header">
+    <h1>{{ .Title }}</h1>
+    {{- with .Description }}<div class="post-description">{{ . }}</div>{{ end }}
+  </header>
+  {{- if .Content }}
+  <div class="post-content">
+    {{- if not (.Param "disableAnchoredHeadings") }}
+    {{- partial "anchored_headings.html" .Content -}}
+    {{- else }}{{ .Content }}{{ end }}
+  </div>
+  {{- end }}
+  <div class="tutorial-home-list">
+    {{- range $s := $root.Sections.ByWeight }}
+    <a class="tutorial-home-item" href="{{ $s.RelPermalink }}">{{ $s.Title }}</a>
+    {{- end }}
+  </div>
+</section>
+{{- else }}
+<script>document.body.classList.add("tutorial-book");</script>
+<div class="tutorial-shell tutorial-book-shell">
+  <aside class="tutorial-sidebar">
+    <div class="tutorial-sidebar-top">
+      <div class="tutorial-sidebar-title">{{ .Title }}目录</div>
+      <button class="tutorial-sidebar-toggle" type="button" aria-expanded="true" aria-label="折叠目录">«</button>
+    </div>
+    <nav class="tutorial-series-nav">
+      {{- range $p := .RegularPages.ByWeight }}
+      <a class="tutorial-nav-item {{ if eq $.RelPermalink $p.RelPermalink }}active{{ end }}" href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
+      {{- end }}
+    </nav>
+  </aside>
+
+  <main class="tutorial-main">
+    <header class="tutorial-head">
+      <a class="tutorial-exit" href="/tutorial/">← 返回教程首页</a>
+      {{ partial "breadcrumbs.html" . }}
+      <h1>{{ .Title }}</h1>
+      {{- with .Description }}<p>{{ . }}</p>{{ end -}}
+    </header>
+
+    {{- if .Content }}
+    <section class="tutorial-content">
+      {{- if not (.Param "disableAnchoredHeadings") }}
+      {{- partial "anchored_headings.html" .Content -}}
+      {{- else }}{{ .Content }}{{ end }}
+    </section>
+    {{- end }}
+
+    {{- if .IsSection }}
+    <section class="tutorial-listing">
+      <h2>本系列目录</h2>
+      {{- range .RegularPages.ByWeight }}
+      <article class="tutorial-list-item">
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        {{- with .Description }}<p>{{ . }}</p>{{ end }}
+      </article>
+      {{- end }}
+    </section>
+    {{- end }}
+  </main>
+</div>
+<script>
+  (function () {
+    var shell = document.querySelector(".tutorial-book-shell");
+    var btn = document.querySelector(".tutorial-sidebar-toggle");
+    if (!shell || !btn) return;
+
+    var key = "tutorialSidebarCollapsed";
+    var collapsed = localStorage.getItem(key) === "1";
+
+    function applyState() {
+      shell.classList.toggle("is-collapsed", collapsed);
+      btn.setAttribute("aria-expanded", (!collapsed).toString());
+      btn.setAttribute("aria-label", collapsed ? "展开目录" : "折叠目录");
+      btn.textContent = collapsed ? "»" : "«";
+    }
+
+    btn.addEventListener("click", function () {
+      collapsed = !collapsed;
+      localStorage.setItem(key, collapsed ? "1" : "0");
+      applyState();
+    });
+
+    applyState();
+  })();
+</script>
+{{- end }}
+{{- end -}}

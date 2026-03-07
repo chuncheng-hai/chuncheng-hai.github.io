@@ -1,0 +1,114 @@
+.diary-calendar-card {
+  margin: 1rem 0 1.4rem;
+  padding: 1rem 1rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--entry);
+}
+
+.diary-calendar-head h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.diary-calendar-head p {
+  margin: 0.35rem 0 0.8rem;
+  color: var(--secondary);
+  font-size: 0.92rem;
+}
+
+.diary-calendar {
+  overflow-x: auto;
+}
+
+.diary-month-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 13px;
+  gap: 3px;
+  margin-bottom: 0.3rem;
+  min-width: max-content;
+}
+
+.diary-month-cell {
+  width: 13px;
+  height: 16px;
+  font-size: 10px;
+  color: var(--secondary);
+  transform: translateX(-1px);
+  white-space: nowrap;
+}
+
+.diary-day-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 13px);
+  grid-auto-columns: 13px;
+  gap: 3px;
+  min-width: max-content;
+}
+
+.day-cell {
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  background: #ebedf0;
+}
+
+.day-cell.lvl1 { background: #9be9a8; }
+.day-cell.lvl2 { background: #40c463; }
+.day-cell.lvl3 { background: #30a14e; }
+.day-cell.outside { opacity: 0.25; }
+
+.diary-calendar-legend {
+  margin-top: 0.7rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--secondary);
+  font-size: 0.78rem;
+}
+
+.diary-calendar-legend i {
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.diary-calendar-legend .lvl0 { background: #ebedf0; }
+.diary-calendar-legend .lvl1 { background: #9be9a8; }
+.diary-calendar-legend .lvl2 { background: #40c463; }
+.diary-calendar-legend .lvl3 { background: #30a14e; }
+
+.diary-list {
+  margin-top: 1.2rem;
+}
+
+.diary-list h2 {
+  margin-bottom: 0.7rem;
+  font-size: 1.1rem;
+}
+
+.diary-entry {
+  display: flex;
+  gap: 0.8rem;
+  align-items: baseline;
+  padding: 0.4rem 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.diary-entry time {
+  flex: 0 0 auto;
+  color: var(--secondary);
+  font-size: 0.9rem;
+}
+
+.diary-entry a {
+  text-decoration: none;
+}
+
+.diary-entry a:hover {
+  text-decoration: underline;
+}

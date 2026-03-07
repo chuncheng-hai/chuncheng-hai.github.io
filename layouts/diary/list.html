@@ -1,0 +1,135 @@
+{{- define "main" -}}
+{{- $pages := .RegularPages.ByDate.Reverse -}}
+{{- $counts := dict -}}
+{{- $links := dict -}}
+{{- range $pages -}}
+  {{- $key := .Date.Format "2006-01-02" -}}
+  {{- $current := index $counts $key | default 0 -}}
+  {{- $counts = merge $counts (dict $key (add $current 1)) -}}
+  {{- if not (isset $links $key) -}}
+    {{- $links = merge $links (dict $key .RelPermalink) -}}
+  {{- end -}}
+{{- end -}}
+
+<header class="page-header">
+  <h1>{{ .Title }}</h1>
+  {{- with .Description }}
+  <div class="post-description">{{ . | markdownify }}</div>
+  {{- end }}
+</header>
+
+{{- if .Content }}
+<div class="post-content">
+  {{- if not (.Param "disableAnchoredHeadings") }}
+  {{- partial "anchored_headings.html" .Content -}}
+  {{- else }}{{ .Content }}{{ end }}
+</div>
+{{- end }}
+
+<section class="diary-calendar-card">
+  <div class="diary-calendar-head">
+    <h2>日记打卡日历</h2>
+    <p>近 365 天：有日志变绿，无日志留白。</p>
+  </div>
+  <div
+    id="diary-calendar"
+    class="diary-calendar"
+    data-counts='{{ $counts | jsonify }}'
+    data-links='{{ $links | jsonify }}'
+    data-days="365"></div>
+  <div class="diary-calendar-legend">
+    <span>少</span>
+    <i class="lvl0"></i>
+    <i class="lvl1"></i>
+    <i class="lvl2"></i>
+    <i class="lvl3"></i>
+    <span>多</span>
+  </div>
+</section>
+
+<section class="diary-list">
+  <h2>日记列表</h2>
+  {{- if gt (len $pages) 0 }}
+  {{- range $pages }}
+  <article class="diary-entry">
+    <time datetime='{{ .Date.Format "2006-01-02" }}'>{{ .Date.Format "2006-01-02" }}</time>
+    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+  </article>
+  {{- end }}
+  {{- else }}
+  <p>还没有日记，写下第一篇吧。</p>
+  {{- end }}
+</section>
+
+<script>
+  (function () {
+    var root = document.getElementById("diary-calendar");
+    if (!root) return;
+    var counts = {};
+    var links = {};
+    try { counts = JSON.parse(root.dataset.counts || "{}"); } catch (e) {}
+    try { links = JSON.parse(root.dataset.links || "{}"); } catch (e) {}
+    var days = Number(root.dataset.days || "365");
+    if (!Number.isFinite(days) || days < 1) days = 365;
+
+    var ms = 24 * 60 * 60 * 1000;
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    var start = new Date(today.getTime() - (days - 1) * ms);
+    var gridStart = new Date(start);
+    gridStart.setDate(start.getDate() - start.getDay());
+
+    var monthRow = document.createElement("div");
+    monthRow.className = "diary-month-row";
+    var dayGrid = document.createElement("div");
+    dayGrid.className = "diary-day-grid";
+
+    function toKey(d) {
+      var y = d.getFullYear();
+      var m = String(d.getMonth() + 1).padStart(2, "0");
+      var dd = String(d.getDate()).padStart(2, "0");
+      return y + "-" + m + "-" + dd;
+    }
+
+    function level(count) {
+      if (!count) return 0;
+      if (count === 1) return 1;
+      if (count === 2) return 2;
+      return 3;
+    }
+
+    var cursor = new Date(gridStart);
+    var weekIndex = -1;
+    var lastMonth = -1;
+
+    while (cursor <= today) {
+      if (cursor.getDay() === 0) {
+        weekIndex += 1;
+        var monthCell = document.createElement("span");
+        monthCell.className = "diary-month-cell";
+        if (cursor >= start && cursor.getMonth() !== lastMonth) {
+          monthCell.textContent = (cursor.getMonth() + 1) + "月";
+          lastMonth = cursor.getMonth();
+        }
+        monthRow.appendChild(monthCell);
+      }
+
+      var key = toKey(cursor);
+      var count = Number(counts[key] || 0);
+      var cell = document.createElement(count > 0 && links[key] ? "a" : "span");
+      cell.className = "day-cell lvl" + level(count);
+      if (cursor < start || cursor > today) cell.classList.add("outside");
+      cell.title = key + " · " + count + " 篇";
+      if (count > 0 && links[key]) {
+        cell.href = links[key];
+        cell.setAttribute("aria-label", key + " 日记");
+      }
+      dayGrid.appendChild(cell);
+      cursor = new Date(cursor.getTime() + ms);
+    }
+
+    root.appendChild(monthRow);
+    root.appendChild(dayGrid);
+  })();
+</script>
+{{- end -}}
