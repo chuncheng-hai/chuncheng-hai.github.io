@@ -1,6 +1,6 @@
 ---
 
-title: 钢琴自学指南
+title: 钢琴小白学习指南
 
 date: 2026-02-22 19:00:00 +0800
 
@@ -19,13 +19,28 @@ toc: true
 abcjs: true
 ---
 
+## 入门
 
+### 基础乐理
+
+音乐中有如下七个音
 1  2  3  4   5   6 7  
-do re mi fa sol la si
-             G  F
+唱名 do re mi fa sol la si
+     D        G  F
+
+### 熟悉琴键
+
+钢琴的琴键七个一组，分为白键和黑键
+中央C(C大调基础位置)
+
+### 坐姿手型 
+
+C大调 → 四个和弦（C Am F G） → 左手柱式 → 右手旋律 → 加简单的分解/节奏型 → 不断换歌练
 
 简谱
-五线谱
+
+### 认五线谱
+
 下加一线
 中央C do  
 高三低二
@@ -40,22 +55,8 @@ do re mi fa sol la si
 四分音符
 八分音符
 
-## 谱例记录模板（推荐）
+指法
+小汤姆逊
+拜厄
+车尔尼 599
 
-先在 `assets/scores/` 维护谱例源文件，再在文章里引用：
-
-```markdown
-{{</* abcscore src="templates/c-major-scale.abc" title="C大调音阶（ABC）" caption="每日热身 72 BPM" */>}}
-
-{{</* lilyscore src="templates/c-major-scale.ly" title="C大调音阶（LilyPond）" caption="出版级排版版本" */>}}
-```
-
-下面是快速草稿模式（直接在 Markdown 内写 ABC）：
-
-```abc
-X:1
-T:C Major Scale
-M:4/4
-K:C
-C D E F | G A B c |
-```
