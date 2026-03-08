@@ -1,7 +1,7 @@
 {{- define "main" -}}
 {{- $root := site.GetPage "section" "tutorial" -}}
 {{- $series := .CurrentSection -}}
-{{- $pages := $series.RegularPages.ByWeight -}}
+{{- $pages := $series.RegularPages.ByTitle -}}
 {{- $scratch := newScratch -}}
 {{- $scratch.Set "idx" -1 -}}
 {{- range $i, $p := $pages -}}

@@ -149,6 +149,30 @@
   margin-top: 0.95rem;
 }
 
+.tutorial-content a {
+  color: #1a73e8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+.tutorial-content a:hover {
+  color: #0b57d0;
+}
+
+.tutorial-content blockquote {
+  margin: 1rem 0;
+  padding: 0.45rem 0.9rem;
+  border-left: 4px solid #c7c7c7;
+  background: #f5f6f7;
+  border-radius: 8px;
+  color: #4a4a4a;
+}
+
+.tutorial-content blockquote p {
+  margin: 0;
+}
+
 .tutorial-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -203,6 +227,14 @@
 
 .tutorial-pager a {
   text-decoration: none;
+}
+
+.tutorial-pager .tutorial-prev {
+  margin-right: auto;
+}
+
+.tutorial-pager .tutorial-next {
+  margin-left: auto;
 }
 
 body.tutorial-book .header,
