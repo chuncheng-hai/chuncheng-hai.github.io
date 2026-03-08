@@ -1,6 +1,6 @@
 ---
 title: "如何部署 OpenClaw：完整指南"
-date: 2026-03-09 01:20:00 +0800
+date: 2026-03-09 01:00:00 +0800
 slug: "how-to-deploy-openclaw"
 description: "一步步教你如何在 Mac 上部署 OpenClaw"
 categories: [技术实践]
