@@ -1,26 +1,28 @@
 ---
 
-title: openclaw部署调试教程
+title: 基于telegram的openclaw 源码编译部署调试教程
 
 date: 2026-03-08 13:00:00 +0800
 
-slug: openclaw
+slug: openclaw-telegram
 
-description: "龙虾手册"
+description: "基于telegram的openclaw 源码编译部署调试教程，关键在于channels配置的proxy和allowFrom"
 
 categories: [技术实践]
 
-tags: [openclaw]
+tags: [openclaw,telegram]
 
 disable_first_line_indent: true
 
 toc: true
 ---
 
-## 基于MAC部署
+## 基于MAC M3 部署
 
 芯片：Apple M3
-系统：
+系统：Tahoe 26.3
+
+### 编译安装
 
 ```zsh
 # git克隆openclaw源码
@@ -45,6 +47,7 @@ pnpm build
 pnpm openclaw onboard --install-daemon
 ```
 
+### 初始化配置
 
 ◆  I understand this is personal-by-default and shared/multi-user use requires lock-down. Continue?
 │  ● Yes / ○ No
@@ -215,6 +218,65 @@ sudo ln -s $(pwd)/openclaw.mjs /usr/local/bin/openclaw
 openclaw gateway install --force
 openclaw gateway restart
 ```
+
+### 代理与DM access配置
+
+OpenClaw 连接到真实的即时通讯平台。将收到的私信视为不可信输入。
+需要DM配对
+获取配对码(pair code)
+
+```zsh
+openclaw pairing approve <channel> <code>
+```
+
+```
+ "allowFrom": [
+        telegram用户id
+      ],
+"proxy": "http://127.0.0.1:7892"
+```
+
+allowFrom 解决的是 谁可以聊天
+pair code 解决的是 哪个客户端可以成为设备
+
+## openclaw 进阶
+
+BOOT.md 是 openclaw 启动时最先读取的文件
+
+- 初始化 agent
+- 加载 skills
+- 设置基本规则
+- 定义系统提示词
+
+SLOU.md
+限制 openclaw权限
+
+openclaw/
+│
+├─ BOOT.md
+├─ SLOU.md
+├─ AGENTS.md
+├─ TASKS.md
+│
+├─ skills/
+│   ├─ shell/
+│   ├─ docker/
+│   ├─ kubernetes/
+│   └─ git/
+│
+└─ runbooks/
+    └─ INCIDENTS.md
+
+
+BOOT.md
+   ↓
+加载 Skills
+   ↓
+加载 Policies (SLOU)
+   ↓
+加载 Agent rules
+   ↓
+等待任务
 
 
 参考：

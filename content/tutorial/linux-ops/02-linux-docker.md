@@ -7,15 +7,15 @@ weight: 1
 
 
 ## MySQL
+
 主从配置
 
+MySQL 最大连接数
 TiDB
 Doris
 
-web中间件
-Nginx
-Tomcat
-Keepalived高可用
+
+
 
 
 
