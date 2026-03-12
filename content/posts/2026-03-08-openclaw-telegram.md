@@ -239,6 +239,13 @@ openclaw pairing approve <channel> <code>
 allowFrom 解决的是 谁可以聊天
 pair code 解决的是 哪个客户端可以成为设备
 
+### 对接飞书
+
+```zsh
+# 启用 Feishu 插件
+openclaw plugins enable feishu
+```
+
 ## openclaw 进阶
 
 BOOT.md 是 openclaw 启动时最先读取的文件
