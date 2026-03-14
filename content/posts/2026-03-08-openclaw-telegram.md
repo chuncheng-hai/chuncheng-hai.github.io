@@ -22,6 +22,8 @@ toc: true
 芯片：Apple M3
 系统：Tahoe 26.3
 
+`npm install -g openclaw@latest --registry=https://registry.npmmirror.com`
+
 ### 编译安装
 
 ```zsh
@@ -245,6 +247,12 @@ pair code 解决的是 哪个客户端可以成为设备
 # 启用 Feishu 插件
 openclaw plugins enable feishu
 ```
+
+打开飞书开放平台 https://open.feishu.cn/app 点击"创建企业自建应用"
+
+`openclaw channels add`
+
+详见[OpenClaw 接入飞书](https://www.runoob.com/ai-agent/openclaw-feishu.html)
 
 ## openclaw 进阶
 

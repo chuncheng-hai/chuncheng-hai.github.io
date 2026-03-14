@@ -5,9 +5,8 @@ title: 跨境电商自学指南
 date: 2026-02-22 16:00:00 +0800
 
 slug: cross-border-guide
-aliases:
-  - /posts/cross-border-e-commerce-self-study-guide/
-description: "本文面向自学者梳理跨境电商学习的起点背景与常见误区，给出分阶段目标、资料选择、练习方式和复盘方法，帮助读者建立长期可执行的学习路径。"
+
+description: "自建跨境电商独立站记录"
 
 series: ["自学指南"]
 categories: [学习指南]
@@ -19,8 +18,9 @@ author: Chuncheng Hai
 
 toc: true
 ---
-选一个国家，新手优先选第一梯队美国、欧洲、东南亚
+选一个目标国家或地区，新手优先选第一梯队美国、欧洲、东南亚
 第三梯队：俄罗斯
+
 选一个平台
 选产品(退货率低)
 货盘
@@ -48,3 +48,19 @@ toc: true
 
 
 渡客出海
+
+## 搭建独立站
+
+### 部署WordPress
+
+### 安装并配置WooCommerce插件
+
+选品并上架第一款产品
+配置PayPal收款
+
+## 投流
+
+拍摄视频
+发布TiKTok获取自然流
+
+配置一件代发

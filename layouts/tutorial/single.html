@@ -1,5 +1,11 @@
 {{- define "main" -}}
 {{- $root := site.GetPage "section" "tutorial" -}}
+{{- $currentSection := .CurrentSection -}}
+{{- $sections := slice -}}
+{{- if $root -}}
+  {{- $sections = $root.Sections.ByTitle -}}
+{{- end -}}
+
 {{- $series := .CurrentSection -}}
 {{- $pages := $series.RegularPages.ByTitle -}}
 {{- $scratch := newScratch -}}
@@ -20,67 +26,191 @@
 {{- end -}}
 
 <script>document.body.classList.add("tutorial-book");</script>
-<div class="tutorial-shell tutorial-book-shell">
-  <aside class="tutorial-sidebar">
-    <div class="tutorial-sidebar-top">
-      <div class="tutorial-sidebar-title">{{ $series.Title }}目录</div>
-      <button class="tutorial-sidebar-toggle" type="button" aria-expanded="true" aria-label="折叠目录">«</button>
+
+<div class="tutorial-app" data-tutorial-app>
+  <header class="tutorial-topbar" role="banner">
+    <div class="tutorial-topbar__inner">
+      <button class="tutorial-burger" type="button" aria-label="打开目录" aria-controls="tutorial-sidebar" aria-expanded="false" data-tutorial-burger>☰</button>
+      <a class="tutorial-brand" href="/tutorial/">教程</a>
+      <a class="tutorial-brand tutorial-brand--muted" href="/">博客</a>
+      <div class="tutorial-topbar__spacer"></div>
+      <form class="tutorial-search" action="/search/" method="get" role="search">
+        <input class="tutorial-search__input" type="search" name="q" placeholder="搜索教程与文章" maxlength="64" aria-label="search">
+        <button class="tutorial-search__btn" type="submit" aria-label="search">⌕</button>
+      </form>
+      <button class="tutorial-theme" type="button" aria-label="切换主题" data-tutorial-theme>Theme</button>
     </div>
-    <nav class="tutorial-series-nav">
-      {{- range $p := $pages }}
-      <a class="tutorial-nav-item {{ if eq $.RelPermalink $p.RelPermalink }}active{{ end }}" href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
-      {{- end }}
-    </nav>
-  </aside>
+  </header>
 
-  <main class="tutorial-main">
-    <header class="tutorial-head">
-      <a class="tutorial-exit" href="/tutorial/">← 返回教程首页</a>
-      {{ partial "breadcrumbs.html" . }}
-      <h1>{{ .Title }}</h1>
-      {{- with .Description }}<p>{{ . }}</p>{{ end -}}
-      <div class="tutorial-meta">{{ partial "post_meta.html" . }}</div>
-    </header>
+  <div class="tutorial-shell tutorial-book-shell" data-tutorial-shell>
+    <aside class="tutorial-sidebar" id="tutorial-sidebar" aria-label="Tutorial navigation">
+      <div class="tutorial-sidebar-top">
+        <div class="tutorial-sidebar-title">目录</div>
+        <button class="tutorial-sidebar-toggle" type="button" aria-expanded="true" aria-label="折叠目录" data-tutorial-collapse>«</button>
+      </div>
 
-    <article class="tutorial-content">
-      {{- if not (.Param "disableAnchoredHeadings") }}
-      {{- partial "anchored_headings.html" .Content -}}
-      {{- else }}{{ .Content }}{{ end }}
-    </article>
+      <nav class="tutorial-tree">
+        {{- range $s := $sections -}}
+          {{- $sid := printf "sec-%s" ($s.RelPermalink | urlize) -}}
+          {{- $activeSection := and $currentSection (eq $currentSection.RelPermalink $s.RelPermalink) -}}
+          <section class="tutorial-tree__section" data-section-id="{{ $sid }}" {{ if $activeSection }}data-active-section="1"{{ end }}>
+            <div class="tutorial-tree__head">
+              <button class="tutorial-tree__twisty" type="button" aria-label="折叠" aria-controls="{{ $sid }}-list" aria-expanded="true" data-tutorial-twisty>▾</button>
+              <a class="tutorial-tree__title {{ if $activeSection }}is-active{{ end }}" href="{{ $s.RelPermalink }}">{{ $s.Title }}</a>
+            </div>
+            <div class="tutorial-tree__list" id="{{ $sid }}-list">
+              {{- range $p := $s.RegularPages.ByTitle -}}
+                <a class="tutorial-tree__item {{ if eq $.RelPermalink $p.RelPermalink }}active{{ end }}" href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
+              {{- end -}}
+            </div>
+          </section>
+        {{- end -}}
+      </nav>
+    </aside>
 
-    <nav class="tutorial-pager">
-      {{- with $prev }}
-      <a class="tutorial-prev" href="{{ .RelPermalink }}">← {{ .Title }}</a>
-      {{- end }}
-      {{- with $next }}
-      <a class="tutorial-next" href="{{ .RelPermalink }}">{{ .Title }} →</a>
-      {{- end }}
-    </nav>
-  </main>
+    <main class="tutorial-main">
+      <header class="tutorial-head">
+        <a class="tutorial-exit" href="/tutorial/">← 返回教程首页</a>
+        {{ partial "breadcrumbs.html" . }}
+        <h1>{{ .Title }}</h1>
+        {{- with .Description }}<p>{{ . }}</p>{{ end -}}
+        <div class="tutorial-meta">{{ partial "post_meta.html" . }}</div>
+      </header>
+
+      <article class="tutorial-content">
+        {{- if not (.Param "disableAnchoredHeadings") }}
+        {{- partial "anchored_headings.html" .Content -}}
+        {{- else }}{{ .Content }}{{ end }}
+      </article>
+
+      <nav class="tutorial-pager">
+        {{- with $prev }}
+        <a class="tutorial-prev" href="{{ .RelPermalink }}">← {{ .Title }}</a>
+        {{- end }}
+        {{- with $next }}
+        <a class="tutorial-next" href="{{ .RelPermalink }}">{{ .Title }} →</a>
+        {{- end }}
+      </nav>
+    </main>
+
+    <aside class="tutorial-toc" aria-label="On this page">
+      <div class="tutorial-toc__title">On this page</div>
+      <div class="tutorial-toc__body">
+        {{- if .TableOfContents -}}
+          {{ .TableOfContents }}
+        {{- end -}}
+      </div>
+    </aside>
+  </div>
 </div>
+
 <script>
   (function () {
-    var shell = document.querySelector(".tutorial-book-shell");
-    var btn = document.querySelector(".tutorial-sidebar-toggle");
-    if (!shell || !btn) return;
+    var app = document.querySelector("[data-tutorial-app]");
+    var shell = document.querySelector("[data-tutorial-shell]");
+    var burger = document.querySelector("[data-tutorial-burger]");
+    var collapseBtn = document.querySelector("[data-tutorial-collapse]");
+    var themeBtn = document.querySelector("[data-tutorial-theme]");
+    if (!app || !shell) return;
 
-    var key = "tutorialSidebarCollapsed";
-    var collapsed = localStorage.getItem(key) === "1";
+    var collapsedKey = "tutorialSidebarCollapsed";
+    var collapsed = localStorage.getItem(collapsedKey) === "1";
 
-    function applyState() {
+    function applyCollapsed() {
       shell.classList.toggle("is-collapsed", collapsed);
-      btn.setAttribute("aria-expanded", (!collapsed).toString());
-      btn.setAttribute("aria-label", collapsed ? "展开目录" : "折叠目录");
-      btn.textContent = collapsed ? "»" : "«";
+      if (collapseBtn) {
+        collapseBtn.setAttribute("aria-expanded", (!collapsed).toString());
+        collapseBtn.setAttribute("aria-label", collapsed ? "展开目录" : "折叠目录");
+        collapseBtn.textContent = collapsed ? "»" : "«";
+      }
     }
 
-    btn.addEventListener("click", function () {
-      collapsed = !collapsed;
-      localStorage.setItem(key, collapsed ? "1" : "0");
-      applyState();
+    if (collapseBtn) {
+      collapseBtn.addEventListener("click", function () {
+        collapsed = !collapsed;
+        localStorage.setItem(collapsedKey, collapsed ? "1" : "0");
+        applyCollapsed();
+      });
+    }
+
+    function setSidebarOpen(open) {
+      app.classList.toggle("is-sidebar-open", open);
+      if (burger) burger.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) document.body.classList.add("tutorial-no-scroll");
+      else document.body.classList.remove("tutorial-no-scroll");
+    }
+
+    if (burger) {
+      burger.addEventListener("click", function () {
+        var open = !app.classList.contains("is-sidebar-open");
+        setSidebarOpen(open);
+      });
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setSidebarOpen(false);
     });
 
-    applyState();
+    app.addEventListener("click", function (e) {
+      var target = e.target;
+      if (!target) return;
+      if (target.closest && target.closest(".tutorial-sidebar")) return;
+      if (target.closest && target.closest("[data-tutorial-burger]")) return;
+      if (app.classList.contains("is-sidebar-open")) setSidebarOpen(false);
+    });
+
+    document.querySelectorAll(".tutorial-tree__section").forEach(function (sec) {
+      var sid = sec.getAttribute("data-section-id") || "";
+      if (!sid) return;
+
+      var key = "tutorialSectionCollapsed:" + sid;
+      var twisty = sec.querySelector("[data-tutorial-twisty]");
+      var list = sec.querySelector(".tutorial-tree__list");
+      if (!twisty || !list) return;
+
+      // Default: keep active section open.
+      var isActive = sec.getAttribute("data-active-section") === "1";
+      var isCollapsed = localStorage.getItem(key) === "1";
+      if (isActive) isCollapsed = false;
+
+      function apply() {
+        sec.classList.toggle("is-section-collapsed", isCollapsed);
+        twisty.setAttribute("aria-expanded", (!isCollapsed).toString());
+        twisty.textContent = isCollapsed ? "▸" : "▾";
+      }
+
+      twisty.addEventListener("click", function () {
+        isCollapsed = !isCollapsed;
+        localStorage.setItem(key, isCollapsed ? "1" : "0");
+        apply();
+      });
+
+      apply();
+    });
+
+    // Theme toggle compatible with PaperMod.
+    function applyThemeBtn() {
+      if (!themeBtn) return;
+      var isDark = document.body.classList.contains('dark');
+      themeBtn.textContent = isDark ? 'Light' : 'Dark';
+    }
+
+    if (themeBtn) {
+      themeBtn.addEventListener("click", function () {
+        var isDark = document.body.classList.contains('dark');
+        if (isDark) {
+          document.body.classList.remove('dark');
+          localStorage.setItem('pref-theme', 'light');
+        } else {
+          document.body.classList.add('dark');
+          localStorage.setItem('pref-theme', 'dark');
+        }
+        applyThemeBtn();
+      });
+      applyThemeBtn();
+    }
+
+    applyCollapsed();
   })();
-</script>
++</script>
 {{- end -}}
