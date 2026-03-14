@@ -21,6 +21,7 @@ toc: true
 
 Nginx
 
+
 ## 四层传输层TCP与UDP端口转发
 
 HAproxy
@@ -28,3 +29,9 @@ HAproxy
 ## 三层网络层端口转发
 
 iptables
+
+```bash
+echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
+sysctl -p
+
+```
