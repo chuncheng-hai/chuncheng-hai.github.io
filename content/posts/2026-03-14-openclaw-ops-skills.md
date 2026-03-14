@@ -88,6 +88,6 @@ Agent注意：仅提供排查结论与修复建议，禁止执行破坏性或状
 - **故障现象 (Symptom)**：(例：支付接口响应超时，监控告警 CPU 使用率达 99%)
 - **初步定位 (Root Cause/Suspect)**：(例：发现 PID 1234 的 Java 进程发生 GC 风暴 / /var 目录 Inode 100% 导致无法写入日志)
 - **已执行排查 (Actions Taken)**：(例：已抓取 jstack dump / 已确认业务日志报错为 Connection Refused)
-- **临时止血建议 (Mitigation)**：(例：建议重启 XX 服务 / 建议清理 /var/log 下的归档日志释放空间)
+- **临时止血建议 (Mitigation)**：(例：建议重启 XX 服务 / 建议清理 /var/log 下的归档日志释放空间并给出相关操作具体命令)
 - **后续根本原因分析建议 (Follow-up)**：(例：需研发介入分析 dump 文件检查内存泄漏)
 ```
