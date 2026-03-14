@@ -20,27 +20,37 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    #env:
-      #FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true     # 先强制测试 Node 24
+
+    env:
+      HUGO_VERSION: "0.157.0"          # ← 建议更新到此版本或更高（extended 支持 Sass/SCSS 等）
+      # 如果你坚持用旧版： HUGO_VERSION: "0.147.4"
+
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v5
         with:
-          submodules: recursive
+          submodules: recursive          # 保持原样，如果你用了 Hugo modules 或 themes as submodule
 
-      - uses: actions/configure-pages@v5
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
+      - name: Install Hugo
+        run: |
+          wget -O hugo.tar.gz "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.tar.gz"
+          tar -xzf hugo.tar.gz hugo
+          chmod +x hugo
+          mkdir -p ~/.local/bin
+          mv hugo ~/.local/bin/
+          echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
-      # 选项B：改用官方 Hugo action（推荐长期）
-      - name: Setup Hugo
-        uses: gohugoio/hugo-action@v0.0.3
-        with:
-          hugo-version: "0.147.4"
-          extended: true
+      - name: Verify Hugo version
+        run: hugo version
 
       - name: Build
         run: hugo --minify --gc
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: public
 
@@ -51,5 +61,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - id: deployment
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
