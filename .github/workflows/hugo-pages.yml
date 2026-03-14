@@ -20,17 +20,26 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    #env:
+      #FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true     # 先强制测试 Node 24
     steps:
       - uses: actions/checkout@v5
         with:
           submodules: recursive
+
       - uses: actions/configure-pages@v5
-      - uses: peaceiris/actions-hugo@v3
+
+
+      # 选项B：改用官方 Hugo action（推荐长期）
+      - name: Setup Hugo
+        uses: gohugoio/hugo-action@v0.0.3
         with:
           hugo-version: "0.147.4"
           extended: true
+
       - name: Build
         run: hugo --minify --gc
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: public
