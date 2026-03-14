@@ -26,6 +26,7 @@ jobs:
 
     env:
       HUGO_VERSION: "0.157.0"          # ← 建议更新到此版本或更高（extended 支持 Sass/SCSS 等）
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
       # 如果你坚持用旧版： HUGO_VERSION: "0.147.4"
 
     steps:
@@ -58,6 +59,8 @@ jobs:
           path: public
 
   deploy:
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
