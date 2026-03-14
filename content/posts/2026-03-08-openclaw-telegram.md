@@ -21,9 +21,11 @@ toc: true
 芯片：Apple M3
 系统：Tahoe 26.3
 
+### npm淘宝镜像安装
+
 `npm install -g openclaw@latest --registry=https://registry.npmmirror.com`
 
-### 编译安装
+### 源码编译安装
 
 ```zsh
 # git克隆openclaw源码
