@@ -1,20 +1,29 @@
 ---
 
-title: 春城诗词精选
+title: 春城诗词选
 
 date: 2026-03-08 00:00:00 +0800
 
 slug: chuncheng-poetry-selection
-description: "个人诗词摘录与简注合集。持续在同一篇 Markdown 中增补，统一保存阅读、注释与摘录。"
+description: "摘录个人喜欢的诗词，方便回顾。"
 
-tags: [诗词, 唐诗, 摘录]
+tags: [诗词,摘录]
 
 disable_first_line_indent: true
 author: Chuncheng Hai
 toc: true
 ---
 
-> 说明：本页为持续更新的诗词合集，后续新条目直接在本文追加。
+<div class="poem-entry">
+  <p class="poem-title">《拟行路难·其四》</p>
+  <p class="poem-meta">鲍照 （南北朝）</p>
+  <p class="poem-body">
+泻水置平地，各自东西南北流。<br>
+人生亦有命，安能行叹复坐愁。<br>
+酌酒以自宽，举杯断绝歌路难。<br>
+心非木石岂无感，吞声踯躅不敢言。<br>
+  </p>
+</div>
 
 <div class="poem-entry">
   <p class="poem-title">《野望》</p>
@@ -36,6 +45,41 @@ toc: true
   </p>
 </div>
 
+<div class="poem-entry">
+  <p class="poem-title">《暮江吟》</p>
+  <p class="poem-meta">白居易（唐）</p>
+  <p class="poem-body">
+一道残阳铺水中，半江瑟瑟半江红。<br>
+可怜九月初三夜，露似真珠月似弓。
+  </p>
+</div>
+
+<div class="poem-entry">
+  <p class="poem-title">《题都城南庄》</p>
+  <p class="poem-meta">崔护（唐）</p>
+  <p class="poem-body">
+去年今日此门中，人面桃花相映红。<br>
+人面不知何处去，桃花依旧笑春风。
+  </p>
+</div>
+
+<div class="poem-entry">
+  <p class="poem-title">《蝶恋花·庭院深深深几许》</p>
+  <p class="poem-meta">欧阳修（宋）</p>
+  <p class="poem-body">
+庭院深深深几许，杨柳堆烟，帘幕无重数。玉勒雕鞍游冶处，楼高不见章台路。<br>
+雨横风狂三月暮，门掩黄昏，无计留春住。泪眼问花花不语，乱红飞过秋千去。
+  </p>
+</div>
+
+<div class="poem-entry">
+  <p class="poem-title">《丑奴儿·书博山道中壁》</p>
+  <p class="poem-meta">辛弃疾（宋）</p>
+  <p class="poem-body">
+少年不识愁滋味，爱上层楼。爱上层楼，为赋新词强说愁。<br>
+而今识尽愁滋味，欲说还休。欲说还休，却道“天凉好个秋”！
+  </p>
+</div>
 
 <div class="poem-entry">
   <p class="poem-title">《死水》</p>
@@ -65,6 +109,73 @@ toc: true
 这里断不是美的所在，<br>
 不如让给丑恶来开垦，<br>
 看它造出个什么世界。<br>
+  </p>
+</div>
+
+<div class="poem-entry">
+  <p class="poem-title">《七绝·呈父亲》</p>
+  <p class="poem-meta">毛泽东</p>
+  <p class="poem-body poem-body--center-left">
+孩儿立志出乡关，学不成名誓不还。<br>
+埋骨何须桑梓地，人生无处不青山。
+  </p>
+</div>
+
+<div class="poem-entry">
+  <p class="poem-title">《沁园春·长沙》</p>
+  <p class="poem-meta">毛泽东</p>
+  <p class="poem-body poem-body--center-left">
+独立寒秋，湘江北去，橘子洲头。<br>
+看万山红遍，层林尽染；漫江碧透，百舸争流。<br>
+鹰击长空，鱼翔浅底，万类霜天竞自由。<br>
+怅寥廓，问苍茫大地，谁主沉浮？<br>
+<br>
+携来百侣曾游。忆往昔峥嵘岁月稠。<br>
+恰同学少年，风华正茂；书生意气，挥斥方遒。<br>
+指点江山，激扬文字，粪土当年万户侯。<br>
+曾记否，到中流击水，浪遏飞舟？
+  </p>
+</div>
+
+<div class="poem-entry">
+  <p class="poem-title">《念奴娇·昆仑》</p>
+  <p class="poem-meta">毛泽东</p>
+  <p class="poem-body poem-body--center-left">
+横空出世，莽昆仑，阅尽人间春色。飞起玉龙三百万，搅得周天寒彻。夏日消溶，江河横溢，人或为鱼鳖。千秋功罪，谁人曾与评说？<br>
+而今我谓昆仑，不要这高，不要这多雪。安得倚天抽宝剑，把汝裁为三截？一截遗欧，一截赠美，一截还东国。太平世界，环球同此凉热。
+  </p>
+</div>
+
+<div class="poem-entry">
+  <p class="poem-title">《清平乐·六盘山》</p>
+  <p class="poem-meta">毛泽东</p>
+  <p class="poem-body poem-body--center-left">
+天高云淡，望断南飞雁。不到长城非好汉，屈指行程二万。<br>
+六盘山上高峰，红旗漫卷西风。今日长缨在手，何时缚住苍龙？
+  </p>
+</div>
+
+<div class="poem-entry">
+  <p class="poem-title">《沁园春·雪》</p>
+  <p class="poem-meta">毛泽东</p>
+  <p class="poem-body poem-body--center-left">
+北国风光，千里冰封，万里雪飘。<br>
+望长城内外，惟余莽莽；大河上下，顿失滔滔。(余 通：馀)<br>
+山舞银蛇，原驰蜡象，欲与天公试比高。(原驰 一作：原驱)<br>
+须晴日，看红装素裹，分外妖娆。<br>
+江山如此多娇，引无数英雄竞折腰。<br>
+惜秦皇汉武，略输文采；唐宗宋祖，稍逊风骚。<br>
+一代天骄，成吉思汗，只识弯弓射大雕。<br>
+俱往矣，数风流人物，还看今朝。
+  </p>
+</div>
+
+<div class="poem-entry">
+  <p class="poem-title">《浪淘沙·北戴河》</p>
+  <p class="poem-meta">毛泽东</p>
+  <p class="poem-body poem-body--center-left">
+大雨落幽燕，白浪滔天，秦皇岛外打鱼船。一片汪洋都不见，知向谁边？<br>
+往事越千年，魏武挥鞭，东临碣石有遗篇。萧瑟秋风今又是，换了人间。
   </p>
 </div>
 
@@ -153,5 +264,15 @@ toc: true
 正在缀满没有遮拦的天空。<br>
 那是五千年的象形文字，<br>
 那是未来人们凝视的眼睛。<br>
+  </p>
+</div>
+
+<div class="poem-entry">
+  <p class="poem-title">《念奴娇·追思焦裕禄》</p>
+  <p class="poem-meta">习近平</p>
+  <p class="poem-body poem-body--center-left">
+中夜，读《人民呼唤焦裕禄》一文，是时霁月如银，文思萦系……<br>
+魂飞万里，盼归来，此水此山此地。百姓谁不爱好官？把泪焦桐成雨。生也沙丘，死也沙丘，父老生死系。暮雪朝霜，毋改英雄意气！<br>
+依然月明如昔，思君夜夜，肝胆长如洗。路漫漫其修远矣，两袖清风来去。为官一任，造福一方，遂了平生意。绿我涓滴，会它千顷澄碧。
   </p>
 </div>
