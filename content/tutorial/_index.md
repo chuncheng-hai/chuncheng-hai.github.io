@@ -1,8 +1,7 @@
 ---
 title: 教程
-description: 分系列教程阅读区，按目录连续学习，像读电子书一样浏览。
+description: 教程系列已迁移到外部仓库，点击对应链接跳转。
 layout: list
 ---
 
-欢迎来到教程专区。  
-这里按系列组织内容，建议从每个系列的第 1 篇开始连续阅读。
+- [动手学Linux运维](https://github.com/chuncheng-hai/linux-ops-tutorial/tree/main)

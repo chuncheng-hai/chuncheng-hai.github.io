@@ -7,7 +7,6 @@ date: 2026-03-08 00:00:00 +0800
 slug: chuncheng-poetry-selection
 description: "个人诗词摘录与简注合集。持续在同一篇 Markdown 中增补，统一保存阅读、注释与摘录。"
 
-categories: [人文社科]
 tags: [诗词, 唐诗, 摘录]
 
 disable_first_line_indent: true

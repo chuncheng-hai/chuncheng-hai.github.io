@@ -9,7 +9,6 @@ theme = "PaperMod"
 
 [taxonomies]
   tag = "tags"
-  category = "categories"
   series = "series"
 
 [related]
@@ -21,9 +20,6 @@ theme = "PaperMod"
     name = "tags"
     weight = 100
 
-  [[related.indices]]
-    name = "categories"
-    weight = 60
 
 [params]
   # 作者名（显示在文章元信息）
@@ -87,12 +83,6 @@ theme = "PaperMod"
   name = "归档"
   url = "/archives/"
   weight = 10
-
-[[menu.main]]
-  identifier = "categories"
-  name = "分类"
-  url = "/categories/"
-  weight = 20
 
 [[menu.main]]
   identifier = "tags"

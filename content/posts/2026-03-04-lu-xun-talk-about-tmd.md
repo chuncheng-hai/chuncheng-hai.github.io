@@ -8,7 +8,6 @@ slug: lu-xun-talk-about-tmd
 description: "文章从论'他妈的！的背景问题出发，系统梳理核心观点、推理结构与实践建议，并结合鲁迅语境，帮助读者在较短时间内建立完整认知，并用于后续学习或决策。"
 
 series: ["转载"]
-categories: [人文社科]
 tags: [鲁迅]
 
 disable_first_line_indent: true

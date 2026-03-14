@@ -8,7 +8,6 @@ slug: pialo-self-study-guide
 description: "本文记录笔者的钢琴学习过程"
 
 series: ["自学指南"]
-categories: [学习指南]
 tags: [音乐,钢琴, 自学指南]
 
 disable_first_line_indent: true

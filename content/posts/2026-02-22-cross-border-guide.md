@@ -9,7 +9,6 @@ slug: cross-border-guide
 description: "自建跨境电商独立站记录"
 
 series: ["自学指南"]
-categories: [学习指南]
 tags: [跨境电商, 自学指南]
 
 disable_first_line_indent: true

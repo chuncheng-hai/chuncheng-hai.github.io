@@ -10,7 +10,6 @@ description: "本文为转载整理，先交代Startup Playbook (创业手册)�
 
 series: ["转载"]
 
-categories: [商业投资]
 tags: [Startup, Sam Altman, YC, 创业, 转载]
 
 post_type: reprint

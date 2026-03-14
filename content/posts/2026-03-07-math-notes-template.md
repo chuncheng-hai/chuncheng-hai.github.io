@@ -8,7 +8,6 @@ slug: math-notes-template
 description: "面向自学者的数学笔记模板，统一定义、定理、例题、错题复盘四段式记录结构，便于长期迭代。"
 
 series: ["自学指南"]
-categories: [学习指南]
 tags: [数学, 笔记模板, 自学指南]
 
 disable_first_line_indent: true

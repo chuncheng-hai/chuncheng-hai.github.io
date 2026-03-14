@@ -83,7 +83,6 @@
         summary: (d.summary || "").slice(0, 260),
         series: asArray(d.series),
         tags: asArray(d.tags),
-        categories: asArray(d.categories),
         section: d.section || "",
         date: d.date || ""
       };
@@ -162,7 +161,6 @@
           content: stripHtml(d.content || ""),
           series: asArray(d.series),
           tags: asArray(d.tags),
-          categories: asArray(d.categories),
           section: d.section || "",
           date: d.date || ""
         };

@@ -7,7 +7,6 @@ date: 2026-02-23 22:00:00 +0800
 slug: duan-yong-ping-2011-zju
 description: "2011年，段永平在浙大的演讲"
 
-categories: [文章转载]
 tags: [演讲, 段永平]
 
 disable_first_line_indent: true

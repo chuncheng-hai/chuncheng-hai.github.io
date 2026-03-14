@@ -9,7 +9,6 @@ description: "文章从服务如何高可用?的背景问题出发，系统梳�
 
 series: ["Linux与运维实践"]
 
-categories: [技术实践]
 tags: [HA, 高可用]
 
 disable_first_line_indent: true

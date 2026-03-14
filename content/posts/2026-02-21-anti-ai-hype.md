@@ -10,7 +10,6 @@ description: "本文为转载整理，先交代Don't fall into the anti-AI hype�
 
 series: ["转载"]
 
-categories: [技术实践]
 tags: [AI, 转载]
 
 author: Chuncheng Hai

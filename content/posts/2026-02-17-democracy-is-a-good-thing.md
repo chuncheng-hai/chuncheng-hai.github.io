@@ -9,7 +9,6 @@ description: "本文为转载整理，先交代民主是个好东西的讨论背
 
 series: ["转载"]
 
-categories: [人文社科]
 tags: [政治, 民主, 转载]
 
 post_type: reprint

@@ -9,7 +9,6 @@
       "date" .Date
       "series" (.Params.series | default (slice))
       "tags" (.Params.tags | default (slice))
-      "categories" (.Params.categories | default (slice))
       "section" .Section
     ) -}}
   {{- end -}}

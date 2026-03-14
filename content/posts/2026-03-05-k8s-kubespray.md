@@ -10,7 +10,6 @@ description: "基于Kubespray的K8S三节点Kubernetes集群部署 Kubernetes学
 
 series: ["Linux与运维实践"]
 
-categories: [技术实践]
 
 tags: [Linux,Kubernetes,云原生]
 

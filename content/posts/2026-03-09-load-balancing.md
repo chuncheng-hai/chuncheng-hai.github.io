@@ -10,7 +10,6 @@ description: "负载均衡最佳实践"
 
 series: ["认知与表达"]
 
-categories: [技术实践]
 
 tags: [LB,Nginx,HAproxy]
 

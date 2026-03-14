@@ -8,7 +8,6 @@ slug: openclaw-telegram
 
 description: "基于telegram的openclaw 源码编译部署调试教程，关键在于channels配置的proxy和allowFrom"
 
-categories: [技术实践]
 
 tags: [openclaw,telegram]
 

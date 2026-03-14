@@ -1,4 +1,3 @@
-
 ---
 
 title: 我的自学工程
@@ -9,7 +8,6 @@ slug: self-learning-project
 description: "自学是一门工程"
 
 series: ["自学指南"]
-categories: [学习指南]
 tags: [自学指南]
 
 disable_first_line_indent: true
