@@ -8,8 +8,7 @@ slug: load-balancing
 
 description: "负载均衡最佳实践"
 
-series: ["认知与表达"]
-
+series: ["Linux与运维实践"]
 
 tags: [LB,Nginx,HAproxy]
 
