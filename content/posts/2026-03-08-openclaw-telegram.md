@@ -1,12 +1,12 @@
 ---
 
-title: 基于telegram的openclaw 源码编译部署调试教程
+title: OpenClaw 部署调试教程
 
 date: 2026-03-08 13:00:00 +0800
 
 slug: openclaw-telegram
 
-description: "基于telegram的openclaw 源码编译部署调试教程，关键在于channels配置的proxy和allowFrom"
+description: "OpenClaw 部署调试教程"
 
 
 tags: [openclaw,telegram]
@@ -50,7 +50,17 @@ pnpm build
 pnpm openclaw onboard --install-daemon
 ```
 
-### 初始化配置
+## 基于Windows 11部署
+
+浏览器打开 https://nodejs.org/dist/v24.14.0/node-v24.14.0-x64.msi 链接下载并安装Node.js
+
+以管理员身份打开PowerShell
+
+npm install -g openclaw@latest --registry=https://registry.npmmirror.com
+
+openclaw onboard --install-daemon
+
+## 初始化配置
 
 ◆  I understand this is personal-by-default and shared/multi-user use requires lock-down. Continue?
 │  ● Yes / ○ No

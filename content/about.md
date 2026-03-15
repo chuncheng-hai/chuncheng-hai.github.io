@@ -5,9 +5,11 @@ draft = false
 disable_first_line_indent = true
 +++
 
->Linux & DevOps工程师  | AI & Agent爱好者 |  INTJ思考者  
+> INTJ ｜Linux 工程师 | AI 爱好者
 
-- GitHub: [https://github.com/chuncheng-hai](https://github.com/chuncheng-hai)
-- 哔哩哔哩: [https://space.bilibili.com/647385854?spm_id_from=333.1007.0.0](https://space.bilibili.com/647385854?spm_id_from=333.1007.0.0)
-- CSDN：[https://blog.csdn.net/m0_61947256?type=blog](https://blog.csdn.net/m0_61947256?type=blog)
-- 邮箱: [chunchenghai@outlook.com](mailto:chunchenghai@outlook.com)
+找到我
+
+- 我的邮箱: chunchenghai@outlook.com
+- [我的GitHub](https://github.com/chuncheng-hai)
+- [我的BiliBili](https://space.bilibili.com/647385854?spm_id_from=333.1007.0.0)
+- [我的CSDN](https://blog.csdn.net/m0_61947256?type=blog)
