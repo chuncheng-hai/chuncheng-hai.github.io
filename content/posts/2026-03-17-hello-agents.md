@@ -21,6 +21,8 @@ toc: true
 
 ## Task1
 
+Task1 Python环境配置外加run一个demo，比较简单
+
 ```bash
 # clone 项目
 git colne https://github.com/datawhalechina/hello-agents.git
@@ -62,5 +64,6 @@ vim FirstAgentTest.py
 
 python FirstAgentTest.py
 ```
+调用成功的截图示例
 
-{{< figure src="/images/hello-agents/task1.png " width="800" >}}
+{{< figure src="/images/hello-agents/task1.png" width="800" >}}
