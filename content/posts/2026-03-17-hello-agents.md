@@ -59,7 +59,7 @@ BASE_URL=https://aihubmix.com/v1
 MODEL_ID=coding-glm-5-turbo-free
 EOF
 
-增加load_dotenv()加载 .env 逻辑，实现model相关变量由python程序外部环境变量导入
+增加load_dotenv()加载 .env 逻辑，实现model相关变量由python程序外部环境变量导入，详见 https://github.com/chuncheng-hai/hello-agents/blob/main/code/chapter1/FirstAgentTest.py
 vim FirstAgentTest.py
 
 python FirstAgentTest.py
