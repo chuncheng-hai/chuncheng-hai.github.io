@@ -190,3 +190,4 @@ terraform destroy
 
 - [Terraform配置指南](https://support.huaweicloud.com/intl/zh-cn/devg-cci2/cci_05_0034.html)
 - [华为云 provider](https://github.com/huaweicloud/terraform-provider-huaweicloud/releases)
+- [在MacOS系统上安装Cloud CLI](https://support.huaweicloud.com/intl/zh-cn/ally-visitor-1-usermanual-hcli/hcli_02_003_03.html)
