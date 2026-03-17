@@ -1,12 +1,12 @@
 ---
 
-title: Terraform
+title: Terraform简明教程
 
 date: 2026-03-17 17:00:00 +0800
 
-slug: terraform-huaweicloud
+slug: terraform
 
-description: "华为云配置Terraform"
+description: "Terraform配置"
 
 series: ["Linux与运维实践"]
 
