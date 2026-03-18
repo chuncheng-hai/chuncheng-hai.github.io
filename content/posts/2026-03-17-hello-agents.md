@@ -19,7 +19,7 @@ toc: true
 
 [Hello-Agents在线阅读地址](https://datawhalechina.github.io/hello-agents/#/)
 
-## Task1
+## Task01
 
 Task1 Python环境配置外加run一个demo，比较简单
 
@@ -71,6 +71,7 @@ python code/chapter1/FirstAgentTest.py
 
 {{< figure src="/images/hello-agents/task1.png" width="800" >}}
 
+## Task02
 
 ```python
 cd hello-agents/task
