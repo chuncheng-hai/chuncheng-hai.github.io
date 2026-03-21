@@ -330,7 +330,7 @@ You: I am a DevOps engineer
 Therapist: cc, Being a devops engineer sounds interesting. Tell me more.
 ```
 
-## task03
+## Task03
 
 下载Qwen模型时，网络可能会异常，可以配置国内主流 Hugging Face 镜像平台。
 - [HF-Mirror](https://hf-mirror.com) 目前国内最主流的 Hugging Face 公益镜像站
@@ -341,10 +341,16 @@ Therapist: cc, Being a devops engineer sounds interesting. Tell me more.
 # 安装依赖
 uv pip  install transformers torch  -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-# 配置国内HF-Mirror镜像
+# 配置国内HF-Mirror镜像（非侵入式）
 export HF_ENDPOINT='https://hf-mirror.com'
 
 wget https://github.com/chuncheng-hai/hello-agents/blob/main/task/task03_qwen.py
 python  task03_qwen.py
 ```
+
+镜像加速原理
+AutoModelForCausalLM.from_pretrained(model_id)背后的实际调用链
+transformers -> huggingface_hub 基于HF_ENDPOINT变量构造并发送HTTP 请求
+将请求的https://huggingface.co/Qwen/Qwen1.5-0.5B-Chat改为https://hf-mirror.com/Qwen/Qwen1.5-0.5B-Chat
+
 {{< figure src="/images/hello-agents/task03_qwen.png" width="800" >}}
