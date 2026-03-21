@@ -165,6 +165,7 @@ if __name__ == '__main__':
             break
         response = respond(user_input)
         print(f"Therapist: {response}")
+EOF
 ```
 
 ```bash
@@ -328,3 +329,22 @@ Therapist: cc, Hello cc, how can I assist you today?
 You: I am a DevOps engineer                            
 Therapist: cc, Being a devops engineer sounds interesting. Tell me more.
 ```
+
+## task03
+
+下载Qwen模型时，网络可能会异常，可以配置国内主流 Hugging Face 镜像平台。
+- [HF-Mirror](https://hf-mirror.com) 目前国内最主流的 Hugging Face 公益镜像站
+- [阿里魔搭社区（ModelScope）](https://modelscope.cn)
+
+
+```bash
+# 安装依赖
+uv pip  install transformers torch  -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 配置国内HF-Mirror镜像
+export HF_ENDPOINT='https://hf-mirror.com'
+
+wget https://github.com/chuncheng-hai/hello-agents/blob/main/task/task03_qwen.py
+python  task03_qwen.py
+```
+{{< figure src="/images/hello-agents/task03_qwen.png" width="800" >}}
