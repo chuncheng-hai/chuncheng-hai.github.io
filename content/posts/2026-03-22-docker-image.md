@@ -3,7 +3,7 @@
 title: Docker镜像构建最佳实践
 date: 2026-03-22 23:00:00 +0800
 
-slug: short-message
+slug: docker-image
 
 description: "Dockerfile"
 
