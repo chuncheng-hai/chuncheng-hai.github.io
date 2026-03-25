@@ -7,3 +7,13 @@
   {{- $result := transform.HighlightCodeBlock . -}}
   {{- $result.Wrapped -}}
 {{- end -}}
+
+{{ if eq .Language "mermaid" }}
+<div class="mermaid">
+{{ .Inner | safeHTML }}
+</div>
+{{ else }}
+<pre><code class="language-{{ .Language }}">
+{{ .Inner }}
+</code></pre>
+{{ end }}
