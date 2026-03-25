@@ -1,19 +1,20 @@
-{{- if eq .Type "abc" -}}
+{{- /* ---------- 1. Mermaid ---------- */ -}}
+{{- if eq .Options.lang "mermaid" -}}
+  <div class="mermaid">
+    {{- .Inner | safeHTML -}}
+  </div>
+
+{{- /* ---------- 2. ABC ---------- */ -}}
+{{- else if eq .Type "abc" -}}
   <div class="abcjs-block">
     <div class="abcjs-sheet"></div>
-    <script type="text/plain" class="abcjs-source">{{- .Inner -}}</script>
+    <script type="text/plain" class="abcjs-source">
+      {{- .Inner -}}
+    </script>
   </div>
+
+{{- /* ---------- 3. 默认高亮 ---------- */ -}}
 {{- else -}}
   {{- $result := transform.HighlightCodeBlock . -}}
   {{- $result.Wrapped -}}
 {{- end -}}
-
-{{ if eq .Language "mermaid" }}
-<div class="mermaid">
-{{ .Inner | safeHTML }}
-</div>
-{{ else }}
-<pre><code class="language-{{ .Language }}">
-{{ .Inner }}
-</code></pre>
-{{ end }}
