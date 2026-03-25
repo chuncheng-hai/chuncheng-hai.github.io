@@ -1,5 +1,6 @@
 {{- $enableAbc := false -}}
 {{- $enableMath := false -}}
+{{- $enableMermaid := false -}}
 {{- if .IsPage -}}
   {{- $enableAbc = or
       (.Param "abcjs")
@@ -16,6 +17,10 @@
       (in .RawContent "{{% theorem")
       (in .RawContent "{{< proof")
       (in .RawContent "{{% proof")
+  -}}
+  {{- $enableMermaid = or
+      (.Param "mermaid")
+      (in .RawContent "```mermaid")
   -}}
 {{- end -}}
 {{- if $enableAbc -}}
@@ -56,6 +61,27 @@
       max-width: 100%;
       height: auto;
       display: block;
+    }
+  </style>
+{{- end -}}
+{{- if $enableMermaid -}}
+  <style>
+    .post-content .mermaid,
+    .tutorial-content .mermaid {
+      margin: 1.25rem 0;
+      padding: 1rem;
+      border: 1px solid var(--code-border, #e5e7eb);
+      border-radius: 12px;
+      background: var(--entry, #fff);
+      overflow-x: auto;
+    }
+
+    .post-content .mermaid svg,
+    .tutorial-content .mermaid svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto;
     }
   </style>
 {{- end -}}

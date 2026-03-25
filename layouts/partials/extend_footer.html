@@ -1,5 +1,6 @@
 {{- $enableAbc := false -}}
 {{- $enableMath := false -}}
+{{- $enableMermaid := false -}}
 {{- if .IsPage -}}
   {{- $enableAbc = or
       (.Param "abcjs")
@@ -16,6 +17,10 @@
       (in .RawContent "{{% theorem")
       (in .RawContent "{{< proof")
       (in .RawContent "{{% proof")
+  -}}
+  {{- $enableMermaid = or
+      (.Param "mermaid")
+      (in .RawContent "```mermaid")
   -}}
 {{- end -}}
 {{- if $enableAbc -}}
@@ -54,6 +59,88 @@
         boot();
       }
       window.addEventListener("load", renderAbcBlocks, { once: true });
+    })();
+  </script>
+{{- end -}}
+{{- if $enableMermaid -}}
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+
+    (function () {
+      var lastTheme = "";
+
+      function getTheme() {
+        return document.body.classList.contains("dark") ? "dark" : "default";
+      }
+
+      function collectTargets() {
+        return Array.from(document.querySelectorAll("pre code.language-mermaid, code.language-mermaid")).map(function (code) {
+          var pre = code.closest("pre");
+          return pre || code;
+        });
+      }
+
+      function upgradeBlocks() {
+        collectTargets().forEach(function (node, index) {
+          if (node.classList.contains("mermaid")) return;
+
+          var source = node.querySelector ? node.querySelector("code.language-mermaid") : null;
+          var text = source ? source.textContent : node.textContent;
+          if (!text) return;
+
+          var container = document.createElement("div");
+          container.className = "mermaid";
+          container.dataset.mermaidId = "mermaid-" + index;
+          container.textContent = text.trim();
+          node.replaceWith(container);
+        });
+      }
+
+      async function renderMermaid(force) {
+        upgradeBlocks();
+
+        var theme = getTheme();
+        if (!force && lastTheme === theme) return;
+        lastTheme = theme;
+
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: theme,
+          securityLevel: "loose"
+        });
+
+        document.querySelectorAll(".mermaid").forEach(function (node) {
+          node.removeAttribute("data-processed");
+        });
+
+        await mermaid.run({
+          querySelector: ".mermaid"
+        });
+      }
+
+      function boot() {
+        renderMermaid(true).catch(function (err) {
+          console.error("mermaid render failed", err);
+        });
+
+        var observer = new MutationObserver(function () {
+          var theme = getTheme();
+          if (theme === lastTheme) return;
+          renderMermaid(true).catch(function (err) {
+            console.error("mermaid rerender failed", err);
+          });
+        });
+        observer.observe(document.body, {
+          attributes: true,
+          attributeFilter: ["class"]
+        });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot, { once: true });
+      } else {
+        boot();
+      }
     })();
   </script>
 {{- end -}}

@@ -72,6 +72,9 @@ sequenceDiagram
     ESME->>SMSC: submit_sm (destination=13800138000, message="测试短信")
     SMSC-->>ESME: submit_sm_resp (message_id=12345)
 
+    SMSC->>ESME:deliver_sm
+    ESME-->>SMSC:deliver_sm_resp
+    
     ESME->>SMSC: enquire_link
     SMSC-->>ESME: enquire_link_resp
 ```
