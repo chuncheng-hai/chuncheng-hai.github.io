@@ -145,3 +145,11 @@ theme = "PaperMod"
   minMatchCharLength = 2
   limit = 50
   keys = ["title", "permalink", "summary", "content"]
+
+[params.tutorialDropdown]
+  title = "教程"
+  intro = "精选外部教程"
+
+  [[params.tutorialDropdown.items]]
+    name = "动手学 Linux 运维"
+    url = "https://github.com/chuncheng-hai/linux-ops-tutorial/tree/main"
