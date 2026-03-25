@@ -1,6 +1,6 @@
 ---
 
-title: Docker镜像构建最佳实践
+title: Claude Code配置
 date: 2026-03-24 23:00:00 +0800
 
 slug: claude-code
