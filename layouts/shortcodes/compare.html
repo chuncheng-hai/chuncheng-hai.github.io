@@ -1,0 +1,30 @@
+{{- $title := .Get "title" | default "代码与效果对比" -}}
+{{- $leftTitle := .Get "left" | default "代码" -}}
+{{- $rightTitle := .Get "right" | default "运行效果" -}}
+{{- $parts := split .InnerDeindent "<!--split-->" -}}
+{{- $left := "" -}}
+{{- $right := "" -}}
+{{- if ge (len $parts) 1 -}}
+  {{- $left = index $parts 0 | strings.TrimSpace -}}
+{{- end -}}
+{{- if ge (len $parts) 2 -}}
+  {{- $right = index $parts 1 | strings.TrimSpace -}}
+{{- end -}}
+
+<div class="tutorial-compare">
+  <div class="tutorial-compare__title">{{ $title }}</div>
+  <div class="tutorial-compare__grid">
+    <section class="tutorial-compare__panel">
+      <div class="tutorial-compare__label">{{ $leftTitle }}</div>
+      <div class="tutorial-compare__body">
+        {{- $left | markdownify -}}
+      </div>
+    </section>
+    <section class="tutorial-compare__panel">
+      <div class="tutorial-compare__label">{{ $rightTitle }}</div>
+      <div class="tutorial-compare__body">
+        {{- $right | markdownify -}}
+      </div>
+    </section>
+  </div>
+</div>

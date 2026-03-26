@@ -1,6 +1,8 @@
 {{- $enableAbc := false -}}
 {{- $enableMath := false -}}
 {{- $enableMermaid := false -}}
+{{- $enableCompare := false -}}
+{{- $enableQuiz := false -}}
 {{- if .IsPage -}}
   {{- $enableAbc = or
       (.Param "abcjs")
@@ -22,6 +24,114 @@
       (.Param "mermaid")
       (in .RawContent "```mermaid")
   -}}
+  {{- $enableCompare = or
+      (in .RawContent "{{< compare")
+      (in .RawContent "{{% compare")
+  -}}
+  {{- $enableQuiz = or
+      (in .RawContent "{{< quiz")
+      (in .RawContent "{{% quiz")
+  -}}
+{{- end -}}
+{{- if or $enableCompare $enableQuiz -}}
+  <style>
+    .tutorial-compare,
+    .tutorial-quiz {
+      margin: 1.25rem 0;
+      border: 1px solid var(--code-border, #e5e7eb);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(59, 130, 246, 0.06), rgba(255, 255, 255, 0));
+      overflow: hidden;
+    }
+
+    .tutorial-compare__title,
+    .tutorial-quiz__question {
+      padding: 0.95rem 1rem 0.6rem;
+      font-weight: 700;
+    }
+
+    .tutorial-compare__grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      padding: 0 1rem 1rem;
+    }
+
+    .tutorial-compare__panel {
+      min-width: 0;
+      border: 1px solid var(--code-border, #e5e7eb);
+      border-radius: 12px;
+      background: var(--entry, #fff);
+    }
+
+    .tutorial-compare__label {
+      padding: 0.75rem 0.95rem 0;
+      color: var(--secondary, #6b7280);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .tutorial-compare__body {
+      padding: 0.2rem 0.95rem 0.95rem;
+    }
+
+    .tutorial-compare__body > :last-child,
+    .tutorial-quiz__feedback > :last-child {
+      margin-bottom: 0;
+    }
+
+    .tutorial-compare__body pre {
+      margin: 0.75rem 0 0;
+    }
+
+    .tutorial-quiz__options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding: 0 1rem 1rem;
+    }
+
+    .tutorial-quiz__option {
+      appearance: none;
+      border: 1px solid var(--code-border, #d1d5db);
+      border-radius: 999px;
+      background: var(--entry, #fff);
+      color: var(--primary, #111827);
+      cursor: pointer;
+      font: inherit;
+      padding: 0.55rem 1rem;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .tutorial-quiz__option:hover {
+      transform: translateY(-1px);
+      border-color: #3b82f6;
+    }
+
+    .tutorial-quiz__option.is-correct {
+      border-color: #16a34a;
+      background: rgba(22, 163, 74, 0.12);
+      color: #166534;
+    }
+
+    .tutorial-quiz__option.is-wrong {
+      border-color: #dc2626;
+      background: rgba(220, 38, 38, 0.1);
+      color: #991b1b;
+    }
+
+    .tutorial-quiz__feedback {
+      min-height: 1.5rem;
+      padding: 0 1rem 1rem;
+      color: var(--secondary, #6b7280);
+    }
+
+    @media (max-width: 720px) {
+      .tutorial-compare__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 {{- end -}}
 {{- if $enableAbc -}}
   <style>

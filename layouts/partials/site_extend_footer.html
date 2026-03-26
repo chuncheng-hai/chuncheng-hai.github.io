@@ -1,6 +1,7 @@
 {{- $enableAbc := false -}}
 {{- $enableMath := false -}}
 {{- $enableMermaid := false -}}
+{{- $enableQuiz := false -}}
 {{- if .IsPage -}}
   {{- $enableAbc = or
       (.Param "abcjs")
@@ -22,6 +23,55 @@
       (.Param "mermaid")
       (in .RawContent "```mermaid")
   -}}
+  {{- $enableQuiz = or
+      (in .RawContent "{{< quiz")
+      (in .RawContent "{{% quiz")
+  -}}
+{{- end -}}
+{{- if $enableQuiz -}}
+  <script>
+    (function () {
+      function bindQuiz(quiz) {
+        if (quiz.dataset.bound === "1") return;
+        quiz.dataset.bound = "1";
+
+        var correct = Number(quiz.dataset.correct || "1");
+        var explain = quiz.dataset.explain || "";
+        var feedback = quiz.querySelector(".tutorial-quiz__feedback");
+        var buttons = quiz.querySelectorAll(".tutorial-quiz__option");
+        if (!feedback || !buttons.length) return;
+
+        buttons.forEach(function (button) {
+          button.addEventListener("click", function () {
+            var choice = Number(button.dataset.choice || "0");
+            buttons.forEach(function (item) {
+              item.classList.remove("is-correct", "is-wrong");
+            });
+
+            if (choice === correct) {
+              button.classList.add("is-correct");
+              feedback.textContent = explain ? "回答正确。 " + explain : "回答正确。";
+            } else {
+              button.classList.add("is-wrong");
+              var answer = quiz.querySelector('.tutorial-quiz__option[data-choice="' + correct + '"]');
+              if (answer) answer.classList.add("is-correct");
+              feedback.textContent = explain ? "回答不对。 " + explain : "回答不对，再看一眼上面的示例。";
+            }
+          });
+        });
+      }
+
+      function boot() {
+        document.querySelectorAll(".tutorial-quiz").forEach(bindQuiz);
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot, { once: true });
+      } else {
+        boot();
+      }
+    })();
+  </script>
 {{- end -}}
 {{- if $enableAbc -}}
   <script defer src="https://cdn.jsdelivr.net/npm/abcjs@6.4.4/dist/abcjs-basic-min.js"></script>

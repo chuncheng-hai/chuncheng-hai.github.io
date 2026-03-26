@@ -1,0 +1,19 @@
+{{- $question := .Get "question" | default "请选择正确答案" -}}
+{{- $options := split (.Get "options" | default "正确||错误") "||" -}}
+{{- $correct := (.Get "correct" | default "1") | int -}}
+{{- $explain := .Get "explain" | default "" -}}
+
+<div class="tutorial-quiz" data-correct="{{ $correct }}"{{ with $explain }} data-explain="{{ . }}"{{ end }}>
+  <div class="tutorial-quiz__question">{{ $question }}</div>
+  <div class="tutorial-quiz__options">
+    {{- range $index, $option := $options -}}
+      {{- $value := add $index 1 -}}
+      <button
+        class="tutorial-quiz__option"
+        type="button"
+        data-choice="{{ $value }}"
+      >{{ $option | strings.TrimSpace }}</button>
+    {{- end -}}
+  </div>
+  <div class="tutorial-quiz__feedback" aria-live="polite"></div>
+</div>
