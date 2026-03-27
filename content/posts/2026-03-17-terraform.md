@@ -16,9 +16,12 @@ disable_first_line_indent: true
 
 toc: true
 ---
+## 1. Terraform简介
 
-## 安装Terraform
+### 1.1 Terraform
 
+### 1.2 Terraform安装
+Ubuntu 24.04 LTS
 Terraform是以二进制可执行文件发布，只需下载terraform二进制文件，之后将terraform可执行文件添加到系统环境变量PATH中即可。
 
 ```bash
@@ -27,11 +30,148 @@ Terraform是以二进制可执行文件发布，只需下载terraform二进制�
 wget https://releases.hashicorp.com/terraform/1.14.7/terraform_1.14.7_linux_amd64.zip
 # Mac M芯片系列用terraform_1.14.7_darwin_arm64.zip
 wget https://releases.hashicorp.com/terraform/1.14.7/terraform_1.14.7_darwin_arm64.zip
+
+apt install -y unzip
 unzip terraform_1.14.7_linux_amd64.zip
 
 mv terraform /usr/local/bin/
 terraform --version
 ```
+
+### 1.3 一个Terraform的MVP
+
+为避免实际云资源的付费，下面使用 LocalStack 搭配 Terraform 来创建一批虚拟的AWS云资源。
+```bash
+apt  install -y docker.io
+
+docker run \
+  --rm -dit \
+  -p 4566:4566 \
+  -p 4510-4559:4510-4559 \
+  swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/localstack/localstack:latest
+
+# 创建terraform最小学习项目
+mkdir terraform_learn_mvp
+
+wget https://github.com/chuncheng-hai/linux-ops-tutorial/blob/main/code/terraform_learn_mvp.tf
+
+# 配置Terraform Provider 阿里云镜像
+mkdir -p ~/.terraform.d
+cat <<EOF | tee ~/.terraform.d/terraform.rc
+provider_installation {
+  network_mirror {
+    url = "https://mirrors.aliyun.com/terraform/"
+  }
+  direct {
+    exclude = ["registry.terraform.io/*/*"]
+  }
+}
+EOF
+
+terraform init
+
+terraform plan -out=tfplan
+
+terraform apply "tfplan"
+```
+
+Terraform 实现多云编排的方法就是 Provider 插件机制。执行`terraform init`会检测当前目录的.terraform/providers目录下是否存在对于云的provider插件
+
+```bash
+# .terraform/providers/registry.terraform.io/hashicorp/aws/5.100.0/linux_amd64/terraform-provider-aws_v5.100.0_x5
+find . -name terraform-provider-aws*
+
+```
+默认每个Terraform项目执行`terraform init`初始化时都会在当前目录创建.terraform/providers目录存储provider插件，为避免浪费存储资源，实现多个Terraform项目共用同一个providers目录。
+
+```bash
+# 临时方案，配置TF_PLUGIN_CACHE_DIR 环境变量，启用插件缓存
+export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
+
+# 长期方案，使用 CLI 配置文件
+cat <<EOF | sudo tee  ~/.terraformrc
+plugin_cache_dir = "$HOME/.terraform.d/plugin-cache"
+EOF
+```
+多 region
+多账号（多 AK/SK）
+多 endpoint（私有云 / mock / localstack）
+配置多个Provider
+
+terraform.tfstate 状态文件管理
+```bash
+wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+
+sudo apt update && sudo apt install -y consul
+
+# 配置监听IP
+cat <<EOF | sudo tee /etc/consul.d/consul.hcl
+server = true
+bootstrap_expect = 1
+datacenter = "dc1"
+
+bind_addr = "$(ip route get 1.1.1.1 | awk '{print $7}')"
+client_addr = "0.0.0.0"
+advertise_addr = "$(ip route get 1.1.1.1 | awk '{print $7}')"
+data_dir = "/data/consul"
+
+ui_config {
+  enabled = true
+}
+EOF
+
+mkdir -p /data/consul
+chown -R consul:consul /data/consul /etc/consul.d/
+chmod 750 -R /data/consul /etc/consul.d/
+
+consul agent -config-dir=/etc/consul.d/
+```
+
+
+
+```bash
+terraform workspace new test
+terraform workspace list
+terraform workspace select default
+terraform workspace show
+```
+
+## HCL语法
+
+### 变量类型
+
+any
+```hcl
+variable "no_type_constraint" {
+  type = any
+}
+```
+null
+terraform.tfvars文件
+命令行传入
+`terraform apply -var="instance_type=t3.micro"`
+
+复杂类型
+三种集合
+列表
+字典
+集合
+list(object())
+
+optional
+
+## 安装AWS CLI
+```bash
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+aws --version
+```
+
+
 
 使用Terraform管理华为云资源前，需要获取AK（Access Key）/SK（Secret Key），并在Terraform上进行静态凭据或环境变量两种方式配置，从而认证鉴权。
 
@@ -62,19 +202,6 @@ cn-north-4 对应 华北-北京四，更多区域可通过[https://console-intl.
 # 基于环境变量配置Access Key、Secret Key
 export HW_ACCESS_KEY="my-access-key"
 export HW_SECRET_KEY="my-secret-key"
-
-# 配置Terraform Provider 阿里云镜像
-mkdir -p ~/.terraform.d
-cat <<EOF | tee ~/.terraform.d/terraform.rc
-provider_installation {
-  network_mirror {
-    url = "https://mirrors.aliyun.com/terraform/"
-  }
-  direct {
-    exclude = ["registry.terraform.io/*/*"]
-  }
-}
-EOF
 
 # 测试创建资源
 cat <<EOF | tee main.tf 
@@ -178,6 +305,7 @@ EOF
 # 初始化
 terraform init
 
+# 预览即将产生的变更
 terraform plan -out=tfplan
 
 # 创建对应资源，命令执行成功后，登陆华为云Web控制台查看资源是否创建
