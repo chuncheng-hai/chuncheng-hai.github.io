@@ -81,42 +81,15 @@
             </div>
         </div>
         {{- $currentPage := . }}
-        {{- $tutorialDropdown := index site.Params "tutorialdropdown" }}
         <ul id="menu">
             {{- range site.Menus.main }}
-            {{- $menuItemURL := (cond (strings.HasSuffix .URL "/") .URL (printf "%s/" .URL)) | absLangURL }}
-            {{- $pageURL := $currentPage.Permalink | absLangURL }}
-            {{- $isSearch := eq (site.GetPage .KeyName).Layout `search` }}
-            {{- $isTutorial := eq .Identifier "tutorial" }}
-            <li class="{{ if $isTutorial }}menu-item-dropdown{{ end }}">
-                {{- if and $isTutorial $tutorialDropdown (index $tutorialDropdown "items") }}
-                <details class="menu-dropdown">
-                    <summary title="{{ index $tutorialDropdown "title" | default .Name }}">
-                        <span>{{ index $tutorialDropdown "title" | default .Name }}</span>
-                        <svg class="menu-dropdown__chevron" viewBox="0 0 16 16" aria-hidden="true">
-                            <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                    </summary>
-                    <div class="menu-dropdown__panel">
-                        <ul class="menu-dropdown__list">
-                            {{- range index $tutorialDropdown "items" }}
-                            <li>
-                                <a href="{{ .url }}" target="_blank" rel="noopener noreferrer" class="menu-dropdown__link">
-                                    <span class="menu-dropdown__name">{{ .name }}</span>
-                                    <svg class="menu-dropdown__arrow" viewBox="0 0 16 16" aria-hidden="true">
-                                        <path d="M6 4h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                                        <path d="M10.5 10.5L4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    </svg>
-                                </a>
-                            </li>
-                            {{- end }}
-                        </ul>
-                    </div>
-                </details>
-                {{- else }}
-                <a href="{{ .URL | absLangURL }}" title="{{ .Title | default .Name }} {{- cond $isSearch (" (Alt + /)" | safeHTMLAttr) ("" | safeHTMLAttr ) }}"
-                {{- cond $isSearch (" accesskey=/" | safeHTMLAttr) ("" | safeHTMLAttr ) }}>
-                    <span {{- if eq $menuItemURL $pageURL }} class="active" {{- end }}>
+            {{- $menu_item_url := (cond (strings.HasSuffix .URL "/") .URL (printf "%s/" .URL) ) | absLangURL }}
+            {{- $page_url:= $currentPage.Permalink | absLangURL }}
+            {{- $is_search := eq (site.GetPage .KeyName).Layout `search` }}
+            <li>
+                <a href="{{ .URL | absLangURL }}" title="{{ .Title | default .Name }} {{- cond $is_search (" (Alt + /)" | safeHTMLAttr) ("" | safeHTMLAttr ) }}"
+                {{- cond $is_search (" accesskey=/" | safeHTMLAttr) ("" | safeHTMLAttr ) }}>
+                    <span {{- if eq $menu_item_url $page_url }} class="active" {{- end }}>
                         {{- .Pre }}
                         {{- .Name -}}
                         {{ .Post -}}
@@ -130,7 +103,6 @@
                     </svg>
                     {{- end }}
                 </a>
-                {{- end }}
             </li>
             {{- end }}
         </ul>

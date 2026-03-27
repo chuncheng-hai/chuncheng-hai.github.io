@@ -1,0 +1,106 @@
+[[groups]]
+name = "编程语言"
+
+  [[groups.items]]
+  name = "Linux 简明教程"
+  url = "https://github.com/chuncheng-hai/linux-ops-tutorial/tree/main"
+
+  [[groups.items]]
+  name = "Python 简明教程"
+  url = "https://github.com/chuncheng-hai/python-tutorial/tree/main"
+
+  [[groups.items]]
+  name = "C 语言简明教程"
+  url = "https://github.com/chuncheng-hai/c-tutorial/tree/main"
+
+  [[groups.items]]
+  name = "C++ 简明教程"
+  url = "https://github.com/chuncheng-hai/cpp-tutorial/tree/main"
+
+  [[groups.items]]
+  name = "Java 简明教程"
+  url = "https://github.com/chuncheng-hai/java-tutorial/tree/main"
+
+  [[groups.items]]
+  name = "Go 简明教程"
+  url = "https://github.com/chuncheng-hai/go-tutorial/tree/main"
+
+  [[groups.items]]
+  name = "Rust 简明教程"
+  url = "https://github.com/chuncheng-hai/rust-tutorial/tree/main"
+
+[[groups]]
+name = "计算机基础"
+
+  [[groups.items]]
+  name = "数据结构与算法讲义"
+  url = "https://github.com/chuncheng-hai/ds-tutorial/tree/main"
+
+  [[groups.items]]
+  name = "操作系统讲义"
+  url = "https://github.com/chuncheng-hai/os-tutorial/tree/main"
+
+  [[groups.items]]
+  name = "计算机组成原理讲义"
+  url = "https://github.com/chuncheng-hai/computer-organization-tutorial/tree/main"
+
+  [[groups.items]]
+  name = "计算机网络讲义"
+  url = "https://github.com/chuncheng-hai/network-tutorial/tree/main"
+
+  [[groups.items]]
+  name = "设计模式讲义"
+  url = "https://github.com/chuncheng-hai/design-patterns-tutorial/tree/main"
+
+  [[groups.items]]
+  name = "数据库讲义"
+  url = "https://github.com/chuncheng-hai/database-tutorial/tree/main"
+
+[[groups]]
+name = "数学"
+
+  [[groups.items]]
+  name = "数学分析笔记"
+  url = "https://github.com/chuncheng-hai/math-analysis-notes/tree/main"
+
+  [[groups.items]]
+  name = "高等代数笔记"
+  url = "https://github.com/chuncheng-hai/advanced-algebra-notes/tree/main"
+
+  [[groups.items]]
+  name = "实分析笔记"
+  url = "https://github.com/chuncheng-hai/real-analysis-notes/tree/main"
+
+  [[groups.items]]
+  name = "抽象代数笔记"
+  url = "https://github.com/chuncheng-hai/abstract-algebra-notes/tree/main"
+
+  [[groups.items]]
+  name = "常微分方程笔记"
+  url = "https://github.com/chuncheng-hai/ode-notes/tree/main"
+
+[[groups]]
+name = "经济学"
+
+  [[groups.items]]
+  name = "微观经济学笔记"
+  url = "https://github.com/chuncheng-hai/microeconomics-notes/tree/main"
+
+  [[groups.items]]
+  name = "宏观经济学笔记"
+  url = "https://github.com/chuncheng-hai/macroeconomics-notes/tree/main"
+
+  [[groups.items]]
+  name = "计量经济学笔记"
+  url = "https://github.com/chuncheng-hai/econometrics-notes/tree/main"
+
+[[groups]]
+name = "人文"
+
+  [[groups.items]]
+  name = "西方哲学史笔记"
+  url = "https://github.com/chuncheng-hai/history-of-western-philosophy-notes/tree/main"
+
+  [[groups.items]]
+  name = "政治学笔记"
+  url = "https://github.com/chuncheng-hai/political-science-notes/tree/main"
