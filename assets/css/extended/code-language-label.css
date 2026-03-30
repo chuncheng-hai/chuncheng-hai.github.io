@@ -1,0 +1,32 @@
+.post-content .highlight pre code[data-lang]:not([data-lang=""]),
+.post-content > pre code[data-lang]:not([data-lang=""]),
+.tutorial-content .highlight pre code[data-lang]:not([data-lang=""]),
+.tutorial-content > pre code[data-lang]:not([data-lang=""]) {
+  position: relative;
+  padding-top: 2.5rem;
+}
+
+.post-content .highlight pre code[data-lang]:not([data-lang=""])::before,
+.post-content > pre code[data-lang]:not([data-lang=""])::before,
+.tutorial-content .highlight pre code[data-lang]:not([data-lang=""])::before,
+.tutorial-content > pre code[data-lang]:not([data-lang=""])::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: 0.7rem;
+  left: 0.9rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.4rem;
+  padding: 0 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: none;
+  pointer-events: none;
+}

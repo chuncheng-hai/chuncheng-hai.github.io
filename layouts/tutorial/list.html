@@ -1,15 +1,19 @@
 {{- define "main" -}}
+{{- $page := . -}}
 {{- $groups := slice -}}
-{{- with hugo.Data.tutorials.groups -}}
-  {{- $groups = . -}}
-{{- else -}}
-{{- with site.Params.tutorialMenu.groups -}}
-  {{- $groups = . -}}
-{{- else -}}
-  {{- with .Params.groups -}}
+{{- with site.Data.tutorials -}}
+  {{- with .groups -}}
     {{- $groups = . -}}
   {{- end -}}
 {{- end -}}
+{{- if not $groups -}}
+  {{- with site.Params.tutorialMenu.groups -}}
+    {{- $groups = . -}}
+  {{- else -}}
+    {{- with $page.Params.groups -}}
+      {{- $groups = . -}}
+    {{- end -}}
+  {{- end -}}
 {{- end -}}
 
 <section class="tutorial-directory">

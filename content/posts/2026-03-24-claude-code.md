@@ -1,11 +1,11 @@
 ---
 
-title: Claude Code配置
+title: Claude Code简明教程
 date: 2026-03-24 23:00:00 +0800
 
 slug: claude-code
 
-description: "claude-code"
+description: "Claude Code简明教程"
 
 series: ["Linux与运维实践"]
 
@@ -16,14 +16,23 @@ disable_first_line_indent: true
 toc: true
 ---
 
+## 1. 安装Claude Code
+
 ```bash
+# 安装Node.js 版本管理器fnm
+curl -o- https://fnm.vercel.app/install | bash
+# 安装Node.js
+fnm install 24
+node -v 
+npm -v
 
-npm install -g @anthropic-ai/claude-code --registry=https://registry.npmmirror.com
-
+sudo npm install -g @anthropic-ai/claude-code --registry=https://registry.npmmirror.com
 claude --version
 ```
 
-## 配置智谱GLM
+## 2. 配置国内API
+
+### 2.1 智谱GLM
 
 ```bash
 # 配置~/.claude/settings.json
@@ -42,7 +51,7 @@ claude --version
 # 配置~/.claude.json，新增"hasCompletedOnboarding": true
 ```
 
-## 配置minimax
+### 2.2 配置minimax
 
 ```bash
 # 配置~/.claude/settings.json
@@ -62,3 +71,30 @@ claude --version
 
 # 配置~/.claude.json，新增"hasCompletedOnboarding": true
 ```
+
+## 3. Claude Code常用命令
+
+- /model 选择模型
+- /clear 清理上下文
+- /cost 查看花费
+- /doctor 配置检查
+- /compact 压缩会话历史
+Esc结束上次的问题
+
+## 4. Claude Code Cycle
+
+使用Shift+Tab 循环切换模式  
+
+accept edits on 避免生成文件确认  
+plan mode on 规划神器
+执行`claude --dangerously-skip-permissions`可以进入Yolo模式 bypass permissions on 
+
+## 5. CLAUDE.md
+
+plan.md 开发计划
+CLAUDE.md 开发规范
+
+claude -c 选择上次会话
+claude -r 选择历史回话
+
+task.md 批量任务

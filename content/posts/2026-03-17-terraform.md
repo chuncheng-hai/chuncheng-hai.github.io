@@ -18,9 +18,12 @@ toc: true
 ---
 ## 1. Terraform简介
 
+>如何基于Terraform管理云资源，实现基础设施即代码(IaC)？
+
 ### 1.1 Terraform
 
 ### 1.2 Terraform安装
+
 Ubuntu 24.04 LTS
 Terraform是以二进制可执行文件发布，只需下载terraform二进制文件，之后将terraform可执行文件添加到系统环境变量PATH中即可。
 
@@ -35,20 +38,49 @@ apt install -y unzip
 unzip terraform_1.14.7_linux_amd64.zip
 
 mv terraform /usr/local/bin/
+
+# 配置terraform bash命令自动补全
+terraform -install-autocomplete
+
 terraform --version
 ```
 
-### 1.3 一个Terraform的MVP
+### 1.3 一个Terraform的Demo
+
+Terraform项目结构
+
+- main.tf 资源配置文件
+- providers.tf 
+- variables.tf 存储变量
+- outputs.tf
+
+```bash
+mkdir -p ~/terraform-demo && cd ~/terraform-demo
+
+# 创建项目文件
+touch main.tf providers.tf variables.tf outputs.tf
+```
+
+
 
 为避免实际云资源的付费，下面使用 LocalStack 搭配 Terraform 来创建一批虚拟的AWS云资源。
+
 ```bash
 apt  install -y docker.io
 
+# amd64架构容器
 docker run \
   --rm -dit \
   -p 4566:4566 \
   -p 4510-4559:4510-4559 \
   swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/localstack/localstack:latest
+
+# arm架构容器，适用Mac系统
+docker run \
+  --rm -dit \
+  -p 4566:4566 \
+  -p 4510-4559:4510-4559 \
+  swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/localstack/localstack:latest-linuxarm64
 
 # 创建terraform最小学习项目
 mkdir terraform_learn_mvp
@@ -75,6 +107,8 @@ terraform plan -out=tfplan
 terraform apply "tfplan"
 ```
 
+terraform apply -auto-approve
+
 Terraform 实现多云编排的方法就是 Provider 插件机制。执行`terraform init`会检测当前目录的.terraform/providers目录下是否存在对于云的provider插件
 
 ```bash
@@ -82,6 +116,7 @@ Terraform 实现多云编排的方法就是 Provider 插件机制。执行`terra
 find . -name terraform-provider-aws*
 
 ```
+
 默认每个Terraform项目执行`terraform init`初始化时都会在当前目录创建.terraform/providers目录存储provider插件，为避免浪费存储资源，实现多个Terraform项目共用同一个providers目录。
 
 ```bash
@@ -93,6 +128,7 @@ cat <<EOF | sudo tee  ~/.terraformrc
 plugin_cache_dir = "$HOME/.terraform.d/plugin-cache"
 EOF
 ```
+
 多 region
 多账号（多 AK/SK）
 多 endpoint（私有云 / mock / localstack）
@@ -140,7 +176,17 @@ terraform workspace show
 
 ## HCL语法
 
-### 变量类型
+### Unicode 标识符
+
+.tf文件中的标识符基于Unicode编码
+参数名
+
+### 注释
+
+- 单行注释，`#`后的内容为注释
+- 多行注释，`/*`与`*/`之间的内容为注释
+
+### 参数与参数类型
 
 any
 ```hcl
@@ -162,19 +208,49 @@ list(object())
 
 optional
 
-## 安装AWS CLI
-```bash
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
+#### 可选参数注入
 
-aws --version
+Terraform没有传统的if判断，使用表达式
+for_each
+
+### 块
+
+一个块是包含一组其他内容（参数和块）的容器，如：
+
+```hcl
+resource "aws_instance" "ec2" {
+  ami = "ubuntu"
+  network_interce {
+
+  }
+}
 ```
+块类型
+通常分为
+云实例块,包含启动镜像ami 安全组
+resource
+
+.tf 配置文件必须始终使用 UTF-8 编码。分隔符必须使用 ASCII 符号
+Terraform 兼容 Unix 风格的换行符（LF）以及 Windows 风格的换行符（CRLF），但.tf文件在生产实践中一般被git管理，强制统一换行为Unix风格的LF换行符
+.gitattributes
+*.tf eol=lf
+*.tpl eol=lf
+*.sh eol=lf
 
 
+
+[Resource: aws_instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance)
 
 使用Terraform管理华为云资源前，需要获取AK（Access Key）/SK（Secret Key），并在Terraform上进行静态凭据或环境变量两种方式配置，从而认证鉴权。
 
+
+## Terraform配对AWS
+
+## Terraform配对GCP
+
+## Terraform配对阿里云
+
+## Terraform配对腾讯云
 
 ## Terraform配对华为云
 

@@ -29,17 +29,50 @@
 
 ## 本地开发
 
+项目当前统一使用 `Hugo extended v0.147.4`。只要 Hugo 版本一致，`public/` 产物与宿主机是 `macOS / Windows / Linux`、`amd64 / arm64` 无关；差异主要在于你下载哪一个平台对应的 Hugo 可执行文件。
+
 1. 启动预览
 
 ```bash
-HUGO_CACHEDIR="$PWD/.hugo_cache" hugo server -D
+./scripts/hugo.sh server
 ```
 
 2. 生产构建
 
 ```bash
+./scripts/hugo.sh build
+```
+
+3. Windows PowerShell
+
+```powershell
+.\scripts\hugo.ps1 server
+.\scripts\hugo.ps1 build
+```
+
+4. 若你想直接运行原生命令
+
+macOS / Linux:
+
+```bash
+HUGO_CACHEDIR="$PWD/.hugo_cache" hugo server -D
 HUGO_CACHEDIR="$PWD/.hugo_cache" hugo --minify --gc
 ```
+
+Windows PowerShell:
+
+```powershell
+$env:HUGO_CACHEDIR = "$PWD/.hugo_cache"
+hugo server -D
+hugo --minify --gc
+```
+
+5. 跨平台建议
+
+- 始终安装 `extended` 版本 Hugo。
+- 本地与 CI 保持同一版本：`0.147.4`。
+- `amd64` 和 `arm64` 只影响 Hugo 二进制本身，不影响博客生成结果。
+- 若团队里有人在 Windows，有人在 macOS / Linux，优先统一使用仓库里的 `scripts/hugo.sh` 与 `scripts/hugo.ps1`，减少环境差异。
 
 ## 发布流程
 
