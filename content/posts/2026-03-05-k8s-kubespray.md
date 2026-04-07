@@ -36,6 +36,9 @@ ssh-copy-id root@192.168.3.2
 ssh-copy-id root@192.168.3.9
 ssh-copy-id root@192.168.3.10
 
+
+
+
 {{< cmd role="prod-k8s-control-01" title="prod-k8s-control-01 配置主机名" >}}
 
 # 中国大陆备用 https://gh-proxy.com/代理
@@ -64,6 +67,13 @@ EOF
 apt install -y python3-pip git sshpass
 
 uv pip install -r requirements.txt
+
+manage-offline-container-images.sh   create
+manage-offline-container-images.sh   register
+./generate_list.sh
+tree temp
+cd contrib/offline
+./generate_list.sh
 
 cp -rfp inventory/sample inventory/mycluster
 
