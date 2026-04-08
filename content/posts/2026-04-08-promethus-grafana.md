@@ -74,7 +74,7 @@ scrape_configs:
           app: "prometheus"
   - job_name: 'node_exporter'
     static_configs:
-      - targets: ['192.168.3.8:9100']
+      - targets: ['192.168.3.9:9100']
 EOF
 
 cat <<EOF | sudo tee /etc/systemd/system/prometheus.service
