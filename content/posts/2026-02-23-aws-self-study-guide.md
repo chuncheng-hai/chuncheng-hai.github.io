@@ -133,3 +133,27 @@ aws ecr get-login-password \
   --username AWS \
   --password-stdin <account-id>.dkr.ecr.<region>.amazonaws.com
   ```
+
+
+## AWS经典Web三层架构
+
+1. 创建VPC
+2. 创建公有子网、私有子网
+3. 创建安全组
+4. 创建EC2实例 配置AutoS组
+5. 创建GateWay
+6. 创建ELB负载均衡
+7. 创建RDS实例
+
+
+
+
+1. 创建VPC
+2. 创建公有子网、私有子网
+3. 创建安全组
+4. 创建GateWay
+5. 创建ELB负载均衡
+6. 创建EKS集群
+7. 创建RDS实例
+
+
