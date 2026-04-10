@@ -27,7 +27,7 @@ toc: true
 
 prod-repo-mirror-01 为文件代理服务器，用于下载Kubespray离线文件与离线镜像。
 版本选择：
-Kubespray: 2.30.0
+Kubespray: 2.23.3
 calico: v3.30.6
 
 ## 2. 各节点配置
@@ -50,8 +50,19 @@ sudo hostnamectl set-hostname prod-k8s-worker-02
 
 {{< cmd role="prod-k8s-all" title="prod-k8s-all 配置" >}}
 # 关闭 swap、防火墙
-sudo swapoff -a && sudo sed -i '/ swap / s/^/#/' /etc/fstab
-sudo systemctl disable --now ufw
+sudo swapoff -a
+sudo sed -i '/swap/s/^/#/' /etc/fstab
+sudo ufw disable
+update-alternatives --set iptables /usr/sbin/iptables-legacy
+
+# 清理锁
+rm -f /var/lib/dpkg/lock-frontend
+rm -f /var/lib/apt/lists/lock
+dpkg --configure -a
+# 关闭Ubuntu 24.04 自动更新，避免影响系统
+systemctl disable --now  unattended-upgrades
+systemctl disable --now apt-daily.timer
+systemctl disable --now apt-daily-upgrade.timer
 
 # 配置阿里镜像源
 bash <(curl -sSL https://linuxmirrors.cn/main.sh) \
@@ -123,6 +134,28 @@ cat <<EOF | sudo tee /etc/hosts
 192.168.101.44 prod-k8s-worker-01
 192.168.101.45 prod-k8s-worker-02
 EOF
+
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+# 启用 IPv4 数据包转发，允许非对称路由流量，关闭网络检查回程路径避免Pod流量异常，关闭ipv6
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+net.ipv4.conf.all.rp_filter=0
+net.ipv4.conf.default.rp_filter=0
+net.ipv6.conf.all.disable_ipv6=1
+net.ipv6.conf.default.disable_ipv6=1
+EOF
+
+# 应用 sysctl 参数而不重新启动
+sudo sysctl --system
 {{< /cmd >}}
 
 ## 3. kubespray 依赖repo构建
@@ -139,45 +172,37 @@ export no_proxy="localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
 curl -LsSf https://astral.sh/uv/install.sh | sh
 source $HOME/.local/bin/env
 
-# 配置大陆镜像
-export UV_PYTHON_INSTALL_MIRROR="https://registry.npmmirror.com/-/binary/python-build-standalone/"
-
-# 为uv配置阿里pip镜像源
-mkdir -p ~/.config/uv
-cat > ~/.config/uv/uv.toml <<EOF
-index-url = "https://mirrors.aliyun.com/pypi/simple/"
-EOF
-
-wget https://github.com/kubernetes-sigs/kubespray/archive/refs/tags/v2.30.0.tar.gz
-tar -xf v2.30.0.tar.gz
+# 下载kubespray v2.23.3压缩包
+apt  install -y aria2
+aria2c -x 16 -s 16 -k 1M https://github.com/kubernetes-sigs/kubespray/archive/refs/tags/v2.23.3.tar.gz
+tar -xf kubespray-2.23.3.tar.gz
 
 # 将kubespray 目录拷贝至控制节点
-scp -r kubespray-2.30.0 root@prod-k8s-control-01:/opt/
+rsync -avzP kubespray-2.23.3/ root@prod-k8s-control-01:/opt/kubespray-2.23.3
 
-cd kubespray-2.30.0
+cd  kubespray-2.23.3
+# 配置--python拉取大陆镜像
+export UV_PYTHON_INSTALL_MIRROR="https://registry.npmmirror.com/-/binary/python-build-standalone/"
 # 在当前目录基于指定版本创建Python虚拟环境
-uv venv --python 3.11
+uv venv --python 3.9
 # 激活虚拟环境
 source .venv/bin/activate
 
 # pip安装ansible，generate_list.sh脚本执行需要依赖ansible
-uv pip install -r requirements.txt
-
-cd contrib/offline
+uv pip install -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
 
 # 生成temp/files.list 和 temp/images.list 镜像列表文件
-bash generate_list.sh
-apt  install -y tree
-# 查看是否生成files.list与images.list
-tree temp
+bash contrib/offline/generate_list.sh
+# 删除不需要的镜像
+grep -Ev 'cilium|flannel|weave|kube-ovn|kube-router|sig-storage|cephfs|rbd|csi' contrib/offline/temp/images.list > images.filtered.txt
 
 apt install -y wget2
 # 下载所有二进制文件（kubeadm、kubelet、containerd、etcd、CNI 等） 单线程下载： wget -x -P temp/files -i temp/files.list
-wget2 -x -P temp/files -i temp/files.list --max-threads=$(($(nproc) * 2))
+wget2 -x -P files -i contrib/offline/temp/files.list --max-threads=$(($(nproc) * 4))
 
 sudo apt install -y nginx
 sudo mkdir -p /var/www/k8s
-sudo cp -r temp/files/* /var/www/k8s/
+sudo mv files/* /var/www/k8s/
 sudo chown -R www-data:www-data /var/www/k8s
 
 # 配置 nginx代理k8s安装文件
@@ -226,45 +251,29 @@ server {
 }
 EOF
 
+sudo systemctl enable nginx
 sudo systemctl restart nginx
 {{< /cmd >}}
 
 ### 3.2 离线容器镜像repo构建
 {{< cmd role="prod-repo-mirror-01" title="prod-repo-mirror-01 下载kubespray依赖" >}}
-# 生成的temp/images.list 镜像列表文件，包含太多镜像，本文为演示离线部署，故仅保留如下镜像
-cat > temp/images.list << 'EOF'
-registry.k8s.io/kube-apiserver:v1.34.3
-registry.k8s.io/kube-controller-manager:v1.34.3
-registry.k8s.io/kube-scheduler:v1.34.3
-registry.k8s.io/kube-proxy:v1.34.3
-registry.k8s.io/pause:3.10.1
-registry.k8s.io/coredns/coredns:v1.12.1
-quay.io/coreos/etcd:v3.5.26
-quay.io/calico/node:v3.30.6
-quay.io/calico/cni:v3.30.6
-quay.io/calico/kube-controllers:v3.30.6
-quay.io/calico/typha:v3.30.6
-ghcr.io/kube-vip/kube-vip:v1.0.3
-docker.io/library/registry:2.8.1
-docker.io/kubernetesui/dashboard:v2.7.0
-docker.io/kubernetesui/metrics-scraper:v1.0.8
-EOF
-
 # 安装docker，启动镜像仓库存储kubespray部署相关镜像
 apt install -y docker.io
 docker run -d --restart=always -p 5000:5000 --name registry swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/registry:2.8.3
 
 sudo apt install -y skopeo
 
-# 生成目标镜像名称（去掉源仓库前缀，保留最后部分），单线程命令：for image in $(cat temp/images.list); do skopeo --dest-tls-verify=false copy docker://${image} docker://cr.imroc.cc/k8s/${image#*/}; done
-cat temp/images.list | xargs -I {} -P 2 sh -c '
+# 开2个线程同步镜像到内网registry制品库
+cat images.filtered.txt | xargs -I {} -P 2 sh -c '
   echo "Syncing {} ..."
   skopeo copy \
     --retry-times 3 \
     --dest-tls-verify=false \
     docker://{} \
-    docker://127.0.0.1:5000/${1#*/};
+    docker://192.168.101.39:5000/${1#*/};
 ' _ {}
+
+scp $(which uv) root@prod-k8s-control-01:/opt/kubespray-2.23.3
 {{< /cmd >}}
 
 
@@ -272,138 +281,121 @@ cat temp/images.list | xargs -I {} -P 2 sh -c '
 {{< cmd role="prod-k8s-control-01" title="prod-k8s-control-01 配置kubespray" >}}
 # 配置prod-k8s-control-01节点与其它节点的SSH免密
 ssh-keygen -t ed25519 -N ""
+
+PASSWORD='你的root密码'
+
 for host in prod-k8s-control-01 prod-k8s-worker-01 prod-k8s-worker-02; do
-  ssh-copy-id -i ~/.ssh/id_ed25519 root@$host
+  sshpass -p "$PASSWORD" ssh-copy-id \
+    -i ~/.ssh/id_ed25519 \
+    -o StrictHostKeyChecking=no \
+    -o UserKnownHostsFile=/dev/null \
+    root@$host
 done
 
 # 进入 kubespray 目录
-cd /opt/kubespray-2.30.0
-# 创建虚拟环境
-python3 -m venv .venv
-# 激活虚拟环境
+cd /opt/kubespray-2.23.3
+
+mv uv /usr/local/bin/
+# 配置--python拉取大陆镜像
+export UV_PYTHON_INSTALL_MIRROR="https://registry.npmmirror.com/-/binary/python-build-standalone/"
+# 在当前目录基于指定版本创建Python虚拟环境
+uv python install 3.9
+/bin/bash -c "$(uv python list | grep cpython-3.9 | awk -F ' ' '{print $2}') -m venv .venv"
 source .venv/bin/activate
-# 安装依赖
-pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
+# pip安装ansible，generate_list.sh脚本执行需要依赖ansible
+python -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple --upgrade pip
+pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+pip install -r requirements.txt
+pip install "urllib3<2"
 
 
+# 配置mycluster集群文件
 cp -rfp inventory/sample inventory/mycluster
-
-cat <<EOF | sudo tee inventory/mycluster/group_vars/all/offline.yml
----
-
-# 把所有官方镜像仓库都重定向到本地 registry
-registry_host: "192.168.101.39:5000"
-kube_image_repo: "{{ registry_host }}"
-gcr_image_repo: "{{ registry_host }}"
-github_image_repo: "{{ registry_host }}"
-docker_image_repo: "{{ registry_host }}"
-quay_image_repo: "{{ registry_host }}"
-
-# 因为 registry 是 HTTP（非 HTTPS），必须声明为 insecure
-insecure_registries:
-  - "192.168.101.39:5000"
-
-# 文件服务器
-files_repo: "http://192.168.101.39/k8s"
-
-# ===== version tag 统一 =====
-runc_version_tag: "v{{ runc_version }}"
-containerd_version_tag: "v{{ containerd_version }}"
-nerdctl_version_tag: "v{{ nerdctl_version }}"
-youki_version_tag: "v{{ youki_version }}"
-crictl_version_tag: "v{{ crictl_version }}"
-cni_version_tag: "v{{ cni_version }}"
-etcd_version_tag: "v{{ etcd_version }}"
-kube_version_tag: "{{ kube_version | regex_replace('^v?', 'v') }}"
-
-# ===== Kubernetes 核心组件 =====
-kubeadm_download_url: "{{ files_repo }}/dl.k8s.io/release/{{ kube_version_tag }}/bin/linux/{{ image_arch }}/kubeadm"
-kubectl_download_url: "{{ files_repo }}/dl.k8s.io/release/{{ kube_version_tag }}/bin/linux/{{ image_arch }}/kubectl"
-kubelet_download_url: "{{ files_repo }}/dl.k8s.io/release/{{ kube_version_tag }}/bin/linux/{{ image_arch }}/kubelet"
-
-# ===== CNI（双 v）=====
-cni_download_url: "{{ files_repo }}/github.com/containernetworking/plugins/releases/download/{{ cni_version_tag }}/cni-plugins-linux-{{ image_arch }}-{{ cni_version_tag }}.tgz"
-
-# ===== 基础组件 =====
-crictl_download_url: "{{ files_repo }}/github.com/kubernetes-sigs/cri-tools/releases/download/{{ crictl_version_tag }}/crictl-{{ crictl_version_tag }}-{{ ansible_system | lower }}-{{ image_arch }}.tar.gz"
-
-# etcd（双 v）
-etcd_download_url: "{{ files_repo }}/github.com/etcd-io/etcd/releases/download/{{ etcd_version_tag }}/etcd-{{ etcd_version_tag }}-linux-{{ image_arch }}.tar.gz"
-
-# ===== 网络组件 =====
-calicoctl_download_url: "{{ files_repo }}/github.com/projectcalico/calico/releases/download/v{{ calico_ctl_version }}/calicoctl-linux-{{ image_arch }}"
-calico_crds_download_url: "{{ files_repo }}/github.com/projectcalico/calico/archive/{{ calico_version }}.tar.gz"
-
-
-# ===== 工具 =====
-helm_download_url: "{{ files_repo }}/get.helm.sh/helm-v{{ helm_version }}-linux-{{ image_arch }}.tar.gz"
-
-krew_download_url: "{{ files_repo }}/github.com/kubernetes-sigs/krew/releases/download/v{{ krew_version }}/krew-{{ host_os }}_{{ image_arch }}.tar.gz"
-
-# ===== 容器运行时 =====
-crun_download_url: "{{ files_repo }}/github.com/containers/crun/releases/download/{{ crun_version }}/crun-{{ crun_version }}-linux-{{ image_arch }}"
-
-kata_containers_download_url: "{{ files_repo }}/github.com/kata-containers/kata-containers/releases/download/{{ kata_containers_version }}/kata-static-{{ kata_containers_version }}-{{ ansible_architecture }}.tar.xz"
-
-# runc（带 v）
-runc_download_url: "{{ files_repo }}/github.com/opencontainers/runc/releases/download/{{ runc_version_tag }}/runc.{{ image_arch }}"
-
-# containerd / nerdctl
-containerd_download_url: "{{ files_repo }}/github.com/containerd/containerd/releases/download/{{ containerd_version_tag }}/containerd-{{ containerd_version }}-linux-{{ image_arch }}.tar.gz"
-
-nerdctl_download_url: "{{ files_repo }}/github.com/containerd/nerdctl/releases/download/{{ nerdctl_version_tag }}/nerdctl-{{ nerdctl_version }}-{{ ansible_system | lower }}-{{ image_arch }}.tar.gz"
-
-# ===== 其他 =====
-
-# cri-dockerd（你本地是 tgz 且文件名无 v）
-cri_dockerd_download_url: "{{ files_repo }}/github.com/Mirantis/cri-dockerd/releases/download/v{{ cri_dockerd_version }}/cri-dockerd-{{ cri_dockerd_version }}.amd64.tgz"
-
-# gvisor（特殊版本号）
-gvisor_runsc_download_url: "{{ files_repo }}/storage.googleapis.com/gvisor/releases/release/{{ gvisor_version }}/{{ ansible_architecture }}/runsc"
-
-gvisor_containerd_shim_runsc_download_url: "{{ files_repo }}/storage.googleapis.com/gvisor/releases/release/{{ gvisor_version }}/{{ ansible_architecture }}/containerd-shim-runsc-v1"
-
-# youki（特殊命名）
-youki_download_url: "{{ files_repo }}/github.com/containers/youki/releases/download/{{ youki_version_tag }}/youki_v{{ youki_version | replace('.', '_') }}_linux.tar.gz"
-EOF
-
 cat <<EOF | sudo tee  inventory/mycluster/inventory.ini
 [all]
-node1 ansible_host=192.168.101.40
-node2 ansible_host=192.168.101.44
-node3 ansible_host=192.168.101.45
+prod-k8s-control-01 ansible_host=192.168.101.40 ip=192.168.101.40 ansible_user=root
+prod-k8s-worker-01  ansible_host=192.168.101.44 ip=192.168.101.44 ansible_user=root
+prod-k8s-worker-02  ansible_host=192.168.101.45 ip=192.168.101.45 ansible_user=root
 
 [kube_control_plane]
-node1
+prod-k8s-control-01 
 
 [etcd]
-node1
+prod-k8s-control-01 
 
 [kube_node]
-node2
-node3
+prod-k8s-worker-01
+prod-k8s-worker-02
 
 [k8s_cluster:children]
 kube_control_plane
 kube_node
 EOF
 
+# 关闭 kube-ovn 全部高级功能
+sed -i \
+-e 's/kube_ovn_enable_lb: true/kube_ovn_enable_lb: false/' \
+-e 's/kube_ovn_enable_np: true/kube_ovn_enable_np: false/' \
+-e 's/kube_ovn_enable_external_vpc: true/kube_ovn_enable_external_vpc: false/' \
+-e 's/kube_ovn_ic_autoroute: true/kube_ovn_ic_autoroute: false/' \
+-e 's/kube_ovn_encap_checksum: true/kube_ovn_encap_checksum: false/' \
+-e 's/kube_ovn_default_gateway_check: true/kube_ovn_default_gateway_check: false/' \
+inventory/mycluster/group_vars/k8s_cluster/k8s-net-kube-ovn.yml
+# 关闭 macvlan NAT
+sed -i 's/enable_nat_default_gateway: true/enable_nat_default_gateway: false/' \
+inventory/mycluster/group_vars/k8s_cluster/k8s-net-macvlan.yml
+# 关闭nodelocaldns
+sed -i 's/enable_nodelocaldns: true/enable_nodelocaldns: false/' inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml
+# 配置kubernetes version为v1.27.10
+sed -i "s#kube_version: v1.27.7#kube_version: v1.27.10#" inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml
+# 配置CNI为calico
+sed -i "s#kube_network_plugin: flannel#kube_network_plugin: calico#" inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml
+
+# 验证变量最终值是true/false
+ansible prod-k8s-worker-01 -i inventory/mycluster/inventory.ini -m debug -a "var=dashboard_enabled"
+
+mkdir -p /opt/kubespray_cache
+chmod 755 /opt/kubespray_cache
+
+# 配置run_once缓存
+cat <<EOF | sudo tee -a inventory/mycluster/group_vars/all/all.yml
+
+# Download behavior optimization
+download_run_once: true
+download_localhost: true
+download_cache_dir: /opt/kubespray_cache
+download_keep_remote_cache: true
+download_force_cache: false
+
+ansible_ssh_pipelining: true
+ansible_pipelining: true
+ansible_ssh_args: '-o ControlMaster=auto -o ControlPersist=60s -o PreferredAuthentications=publickey'
+EOF
+
+cat <<EOF | sudo tee -a inventory/mycluster/group_vars/all/containerd.yml
+containerd_registries_mirrors:
+  - prefix: "192.168.101.39:5000"
+    mirrors:
+      - host: "http://192.168.101.39:5000"
+        capabilities: ["pull", "resolve", "push"]
+        skip_verify: true
+EOF
+
+# 测试各节点之间的连通性
 ansible all -i inventory/mycluster/inventory.ini -m ping
 
-cat <<EOF > extra-vars.yml
-download_run_once: true
-unsafe_show_logs: true
-EOF
-# 测试离线文件是否可以下载，主要为请求路径异常
-ansible-playbook -i inventory/mycluster/inventory.ini \
-  cluster.yml \
-  --tags download \
-  -e @extra-vars.yml
-
-ansible-playbook -i inventory/mycluster/inventory.ini \
-  cluster.yml \
-  -b --become-user=root \
+# 下载正常，即可执行完整流程
+ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml \
   -e "unsafe_show_logs=true" \
+  -e "nerdctl_extra_flags=--insecure-registry" \
+  --forks 30 \
+  --tags download \
+  -v
+
+ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml \
+  -e "unsafe_show_logs=true" \
+  -e "nerdctl_extra_flags=--insecure-registry" \
+  --forks 30 \
   -v
 
 mkdir -p ~/.kube
@@ -412,3 +404,8 @@ cp inventory/mycluster/artifacts/admin.conf ~/.kube/config
 kubectl get nodes
 kubectl get pods -A
 {{< /cmd >}}
+
+Kubespray执行完整流程
+1. download
+2. container-engine（安装 containerd + nerdctl）
+3. k8s 安装
