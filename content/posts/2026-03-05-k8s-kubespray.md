@@ -365,13 +365,14 @@ download_run_once: true
 download_localhost: true
 download_cache_dir: /opt/kubespray_cache
 download_keep_remote_cache: true
-download_force_cache: false
+download_force_cache: true
 
 ansible_ssh_pipelining: true
 ansible_pipelining: true
 ansible_ssh_args: '-o ControlMaster=auto -o ControlPersist=60s -o PreferredAuthentications=publickey'
 EOF
 
+# 配置基于http拉取镜像
 cat <<EOF | sudo tee -a inventory/mycluster/group_vars/all/containerd.yml
 containerd_registries_mirrors:
   - prefix: "192.168.101.39:5000"
@@ -384,7 +385,7 @@ EOF
 # 测试各节点之间的连通性
 ansible all -i inventory/mycluster/inventory.ini -m ping
 
-# 下载正常，即可执行完整流程
+# 执行下载阶段
 ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml \
   -e "unsafe_show_logs=true" \
   -e "nerdctl_extra_flags=--insecure-registry" \
@@ -392,10 +393,12 @@ ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml \
   --tags download \
   -v
 
+# 执行部署阶段
 ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml \
   -e "unsafe_show_logs=true" \
   -e "nerdctl_extra_flags=--insecure-registry" \
-  --forks 30 \
+  --forks 50 \
+  --skip-tags download \
   -v
 
 mkdir -p ~/.kube
@@ -403,6 +406,18 @@ cp inventory/mycluster/artifacts/admin.conf ~/.kube/config
 
 kubectl get nodes
 kubectl get pods -A
+
+# 删除集群
+ansible-playbook -i inventory/mycluster/inventory.ini reset.yml -b -v
+# 清理 containerd 镜像
+nerdctl -n k8s.io images -q | xargs -r nerdctl -n k8s.io rmi -f
+# 清理 CNI 残留
+rm -rf /etc/cni/net.d
+rm -rf /var/lib/cni
+# 清理 iptables
+iptables -F
+# 清理 etcd 数据
+rm -rf /var/lib/etcd
 {{< /cmd >}}
 
 Kubespray执行完整流程
