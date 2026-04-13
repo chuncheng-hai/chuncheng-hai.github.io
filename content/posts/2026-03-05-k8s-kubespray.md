@@ -65,6 +65,33 @@ systemctl disable --now  unattended-upgrades
 systemctl disable --now apt-daily.timer
 systemctl disable --now apt-daily-upgrade.timer
 
+# 删掉全部已安装的 Snap 软件
+# 先删所有非 core / snapd
+for p in $(snap list --all | awk 'NR>1 {print $1}' | grep -vE 'core|snapd'); do
+  snap remove --purge $p
+done
+# 删 core
+snap remove --purge core20
+snap remove --purge core18
+# 删 snapd
+snap remove --purge snapd
+sudo systemctl stop snapd
+sudo systemctl disable --now snapd.socket
+
+sudo apt purge -y snapd
+sudo apt autoremove --purge -y
+rm -rf ~/snap
+rm -rf /snap
+rm -rf /var/snap
+rm -rf /var/lib/snapd
+rm -rf /var/cache/snapd
+
+cat <<EOF | sudo tee /etc/apt/preferences.d/no-snap.pref
+Package: snapd
+Pin: release a=*
+Pin-Priority: -10
+EOF
+
 # 配置阿里镜像源
 bash <(curl -sSL https://linuxmirrors.cn/main.sh) \
   --source mirrors.aliyun.com \
@@ -172,7 +199,12 @@ sudo sysctl --system
 # 新建kubespraysudo用户基于kubespray部署k8s集群
 useradd -m -s /bin/bash kubespraysudo
 echo "kubespraysudo:PasswordStrong123!" | chpasswd
-echo "kubespraysudo ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/kubespraysudo
+sudo tee /etc/sudoers.d/kubespraysudo <<EOF
+kubespraysudo ALL=(ALL) NOPASSWD: ALL
+Defaults:kubespraysudo !requiretty
+EOF
+
+sudo chmod 440 /etc/sudoers.d/kubespraysudo
 chmod 440 /etc/sudoers.d/kubespraysudo
 
 sudo -u kubespraysudo bash <<'EOF'
@@ -197,7 +229,7 @@ EOF
 
 ## 3. kubespray 依赖repo构建
 
-### 3.1 离线文件repo构建
+### 3.1 离线二进制文件repo构建
 
 {{< cmd role="prod-repo-mirror-01" title="prod-repo-mirror-01 下载kubespray依赖" >}}
 # prod-repo-mirror-01 配置代理，192.168.101.49为代理服务器，7892为代理服务端口
@@ -315,8 +347,9 @@ cat offline-images.list | xargs -I {} -P 2 sh -c '
 ' _ {}
 {{< /cmd >}}
 
-## 控制节点配置
-{{< cmd role="prod-k8s-control-01" title="prod-k8s-control-01 配置kubespray" >}}
+## 4. 各节点Python环境配置
+{{< cmd role="prod-k8s-all" title="prod-k8s-all 编译安装Python-3.10.12" >}}
+# 编译安装Python-3.10.12
 apt update
 apt install -y build-essential gcc make \
   libssl-dev zlib1g-dev libbz2-dev \
@@ -331,7 +364,10 @@ cd Python-3.10.12
 ./configure --enable-optimizations --prefix=/usr/local/python-3.10.12
 make -j$(nproc)
 make install
+{{< /cmd >}}
 
+## 5. 部署
+{{< cmd role="prod-k8s-control-01" title="prod-k8s-control-01 配置kubespray" >}}
 /usr/local/python-3.10.12/bin/python3.10 -m venv venv
 source ./venv/bin/activate
 python -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple --upgrade pip
@@ -344,9 +380,10 @@ cp -rfp inventory/sample inventory/mycluster
 mv inventory/mycluster/group_vars/k8s_cluster/ inventory/mycluster/group_vars/k8s-cluster/
 # 配置mycluster集群文件
 cat <<EOF | tee inventory/mycluster/hosts.yaml
+---
 all:
   vars:
-    ansible_python_interpreter: /usr/local/python-3.10.12/bin/python3.10
+    ansible_python_interpreter: /usr/bin/python3
   hosts:
     prod-k8s-control-01:
       ansible_host: 192.168.101.40
@@ -371,17 +408,25 @@ all:
         kube-master:
         kube-node:
 EOF
+apt install -y yamllint
+yamllint inventory/mycluster/hosts.yaml
 
 # 在 defaults 段添加 interpreter_python = /opt/kubespray-2.24.3/venv/bin/python
 apt install -y crudini
 # 配置控制节点的python解释器
 crudini --set ansible.cfg defaults interpreter_python /opt/kubespray-2.24.3/venv/bin/python
 # 配置缓存写入目录
-mkdir /var/cache/kubespray
+mkdir -p /var/cache/kubespray
+chown kubespraysudo:kubespraysudo -R /var/cache/kubespray
 crudini --set ansible.cfg defaults fact_caching_connection /var/cache/kubespray
+# SSH连接超时调整
+crudini --set ansible.cfg defaults timeout 600
+# sudo 超时时间调整为600秒，默认12秒
+crudini --set ansible.cfg privilege_escalation become_timeout 600
 
 # 配置离线部署文件
 cat <<'EOF' | tee  inventory/mycluster/group_vars/all/offline.yml
+---
 registry_host: "192.168.101.39:5000"
 
 kube_image_repo: "{{ registry_host }}"
@@ -412,8 +457,9 @@ gvisor_runsc_download_url: "{{ files_repo }}/storage.googleapis.com/gvisor/relea
 gvisor_containerd_shim_runsc_download_url: "{{ files_repo }}/storage.googleapis.com/gvisor/releases/release/{{ gvisor_version }}/{{ ansible_architecture }}/containerd-shim-runsc-v1"
 youki_download_url: "{{ files_repo }}/github.com/containers/youki/releases/download/v{{ youki_version }}/youki_v{{ youki_version | regex_replace('\\.', '_') }}_linux.tar.gz"
 EOF
+yamllint inventory/mycluster/group_vars/all/offline.yml
 
-apt install -y yamllint
+
 # 关闭 kube-ovn 全部高级功能
 sed -i \
 -e 's/kube_ovn_enable_lb: true/kube_ovn_enable_lb: false/' \
@@ -428,14 +474,21 @@ yamllint inventory/mycluster/group_vars/k8s-cluster/k8s-net-kube-ovn.yml
 # 关闭 macvlan NAT
 sed -i 's/enable_nat_default_gateway: true/enable_nat_default_gateway: false/' \
 inventory/mycluster/group_vars/k8s-cluster/k8s-net-macvlan.yml
+# 基于yamllint检测yml文件是否异常
+yamllint inventory/mycluster/group_vars/k8s-cluster/k8s-net-macvlan.yml
+
 # 关闭nodelocaldns
 sed -i 's/enable_nodelocaldns: true/enable_nodelocaldns: false/' inventory/mycluster/group_vars/k8s-cluster/k8s-cluster.yml
 # 配置kubernetes version为v1.28.14
 sed -i "s#kube_version: v1.28.10#kube_version: v1.28.14#" inventory/mycluster/group_vars/k8s-cluster/k8s-cluster.yml
 # 配置CNI为calico
 sed -i "s#kube_network_plugin: flannel#kube_network_plugin: calico#" inventory/mycluster/group_vars/k8s-cluster/k8s-cluster.yml
+yamllint inventory/mycluster/group_vars/k8s-cluster/k8s-cluster.yml
+
 # 开启dashboard
 sed -i "s/# dashboard_enabled: false/dashboard_enabled: true/" inventory/mycluster/group_vars/k8s-cluster/addons.yml
+yamllint inventory/mycluster/group_vars/k8s-cluster/addons.yml
+
 # 修改内核模块，nf_conntrack_ipv4为nf_conntrack
 find . -type f -name "*.yml" -exec sed -i \
 -e 's/nf_conntrack_ipv4/nf_conntrack/g' \
@@ -445,6 +498,8 @@ find . -type f -name "*.yml" -exec sed -i \
 
 mkdir -p /opt/kubespray_cache
 chmod 755 /opt/kubespray_cache
+sudo chown -R kubespraysudo:kubespraysudo /opt/kubespray-2.24.3
+sudo chown -R kubespraysudo:kubespraysudo /opt/kubespray_cache
 
 # 修改节点临时存储为/opt/kubespray-releases，避免重启被清空
 grep -rl '/tmp/releases' . | xargs sed -i.bak 's#/tmp/releases#/opt/kubespray-releases#g'
@@ -476,10 +531,51 @@ ansible_user: kubespraysudo
 ansible_become: true
 ansible_become_method: sudo
 EOF
+yamllint inventory/mycluster/group_vars/all/all.yml
 
 # 配置基于http拉取镜像
 cat <<EOF | tee -a inventory/mycluster/group_vars/all/containerd.yml
 containerd_registries_mirrors:
+  # docker hub
+  - prefix: "docker.io"
+    mirrors:
+      - host: "http://192.168.101.39:5000"
+        capabilities: ["pull", "resolve"]
+        skip_verify: true
+      - host: "https://docker.gh-proxy.org"
+        capabilities: ["pull", "resolve"]
+      - host: "https://docker.1ms.run"
+        capabilities: ["pull", "resolve"]
+      - host: "https://docker.xuanyuan.me"
+        capabilities: ["pull", "resolve"]
+
+  # k8s 官方镜像
+  - prefix: "registry.k8s.io"
+    mirrors:
+      - host: "http://192.168.101.39:5000"
+        capabilities: ["pull", "resolve"]
+        skip_verify: true
+      - host: "https://docker.gh-proxy.org"
+        capabilities: ["pull", "resolve"]
+      - host: "https://docker.1ms.run"
+        capabilities: ["pull", "resolve"]
+      - host: "https://docker.xuanyuan.me"
+        capabilities: ["pull", "resolve"]
+
+  # calico / quay
+  - prefix: "quay.io"
+    mirrors:
+      - host: "http://192.168.101.39:5000"
+        capabilities: ["pull", "resolve"]
+        skip_verify: true
+      - host: "https://docker.gh-proxy.org"
+        capabilities: ["pull", "resolve"]
+      - host: "https://docker.1ms.run"
+        capabilities: ["pull", "resolve"]
+      - host: "https://docker.xuanyuan.me"
+        capabilities: ["pull", "resolve"]
+
+  # 私有仓库自身（可选）
   - prefix: "192.168.101.39:5000"
     mirrors:
       - host: "http://192.168.101.39:5000"
@@ -492,6 +588,40 @@ containerd_registries_mirrors:
       - host: "https://docker.xuanyuan.me"
         capabilities: ["pull", "resolve"]
 EOF
+yamllint  inventory/mycluster/group_vars/all/containerd.yml
+
+# 因集群资源紧张，故限制calico CPU内存等资源的使用
+cat <<EOF | tee -a  inventory/mycluster/group_vars/k8s-cluster/k8s-net-calico.yml
+calico_node_resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+calico_kube_controllers_resources:
+  requests:
+    cpu: 30m
+    memory: 32Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
+
+typha_enabled: true
+typha_replicas: 1
+
+calico_typha_resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 150m
+    memory: 128Mi
+
+calico_network_backend: vxlan
+EOF
+yamllint inventory/mycluster/group_vars/k8s-cluster/k8s-net-calico.yml
 
 # 避免 [WARNING]: Skipping callback plugin 'ara_default', unable to load 警告
 pip install ara[server] -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
@@ -499,16 +629,20 @@ pip install ara[server] -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
 python3 -m ara.setup.env >> /etc/profile.d/ara.sh
 source /etc/profile.d/ara.sh
 
+# 切换kubespraysudo用户
+su kubespraysudo
+
+source ./venv/bin/activate
 # 验证变量最终值是true/false
 ansible prod-k8s-worker-01 -i inventory/mycluster/hosts.yaml -m debug -a "var=dashboard_enabled"
 
 # 测试各节点之间的连通性
 ansible all -i inventory/mycluster/hosts.yaml -m ping
 
-# 执行部署阶段
+# 执行部署阶段，--forks 值根据CPU资源调整，本文2C CPU，配置10
 ansible-playbook -i inventory/mycluster/hosts.yaml cluster.yml \
   -b -v \
-  --forks 30 \
+  --forks 10 \
   -e unsafe_show_logs=true
 
 kubectl get nodes
@@ -517,8 +651,9 @@ kubectl get pods -A
 # 删除集群
 ansible-playbook -i inventory/mycluster/hosts.yaml reset.yml \
   -b -v \
-  --forks 30 \
+  --forks 10 \
   -e unsafe_show_logs=true
+
 {{< /cmd >}}
 
 Kubespray执行完整流程
