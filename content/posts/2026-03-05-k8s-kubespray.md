@@ -205,7 +205,6 @@ Defaults:kubespraysudo !requiretty
 EOF
 
 sudo chmod 440 /etc/sudoers.d/kubespraysudo
-chmod 440 /etc/sudoers.d/kubespraysudo
 
 sudo -u kubespraysudo bash <<'EOF'
 set -e
@@ -347,8 +346,8 @@ cat offline-images.list | xargs -I {} -P 2 sh -c '
 ' _ {}
 {{< /cmd >}}
 
-## 4. 各节点Python环境配置
-{{< cmd role="prod-k8s-all" title="prod-k8s-all 编译安装Python-3.10.12" >}}
+## 4. 控制节点Python环境配置
+{{< cmd role="prod-k8s-control-01" title="prod-k8s-control-01 编译安装Python-3.10.12" >}}
 # 编译安装Python-3.10.12
 apt update
 apt install -y build-essential gcc make \
@@ -362,12 +361,13 @@ wget https://www.python.org/ftp/python/3.10.12/Python-3.10.12.tgz
 tar -xzf Python-3.10.12.tgz
 cd Python-3.10.12
 ./configure --enable-optimizations --prefix=/usr/local/python-3.10.12
-make -j$(nproc)
-make install
+make -j$(nproc) && make install
 {{< /cmd >}}
 
 ## 5. 部署
 {{< cmd role="prod-k8s-control-01" title="prod-k8s-control-01 配置kubespray" >}}
+cd /opt/kubespray-2.24.3/
+
 /usr/local/python-3.10.12/bin/python3.10 -m venv venv
 source ./venv/bin/activate
 python -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple --upgrade pip
