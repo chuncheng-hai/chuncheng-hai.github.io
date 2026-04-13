@@ -1,6 +1,6 @@
 ---
 
-title: 基于Kubespray的三节点Kubernetes集群离线部署
+title: 基于Kubespray的三节点Kubernetes集群部署
 
 date: 2026-03-05 14:00:00 +0800
 
@@ -21,14 +21,13 @@ toc: true
 ## 1. 环境简介
 
 - prod-repo-mirror-01  192.168.101.39 2C2G  磁盘：40G Ubuntu24.04 LTS
-- prod-k8s-control-01  192.168.101.40 2C4G  磁盘：40G Ubuntu24.04 LTS
+- prod-k8s-control-01  192.168.101.40 4C8G  磁盘：40G Ubuntu24.04 LTS
 - prod-k8s-worker-01   192.168.101.44 2C2G  磁盘：40G Ubuntu24.04 LTS
 - prod-k8s-worker-02   192.168.101.45 2C2G  磁盘：40G Ubuntu24.04 LTS
 
 prod-repo-mirror-01 为文件代理服务器，用于下载Kubespray离线文件与离线镜像。
 版本选择：
-Kubespray: 2.23.3
-calico: v3.30.6
+Kubespray: 2.24.3
 
 ## 2. 各节点配置
 
@@ -53,6 +52,8 @@ sudo hostnamectl set-hostname prod-k8s-worker-02
 sudo swapoff -a
 sudo sed -i '/swap/s/^/#/' /etc/fstab
 sudo ufw disable
+systemctl disable --now networkd-dispatcher
+systemctl disable --now systemd-networkd-wait-online
 update-alternatives --set iptables /usr/sbin/iptables-legacy
 
 # 清理锁
@@ -75,7 +76,7 @@ bash <(curl -sSL https://linuxmirrors.cn/main.sh) \
   --ignore-backup-tips        \
   --pure-mode
 
-sudo apt update && sudo apt install -y sshpass curl wget git python3 python3-pip python3-venv
+sudo apt update && sudo apt install -y sshpass curl wget git
 
 # 配置时区为 亚洲上海
 timedatectl set-timezone Asia/Shanghai
@@ -135,6 +136,16 @@ cat <<EOF | sudo tee /etc/hosts
 192.168.101.45 prod-k8s-worker-02
 EOF
 
+# 解除 symlink
+rm -f /etc/resolv.conf
+# 写入静态 DNS
+cat > /etc/resolv.conf <<EOF
+nameserver 8.8.8.8
+nameserver 1.1.1.1
+EOF
+# 防止被覆盖
+chattr +i /etc/resolv.conf
+
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
@@ -152,10 +163,36 @@ net.ipv4.conf.all.rp_filter=0
 net.ipv4.conf.default.rp_filter=0
 net.ipv6.conf.all.disable_ipv6=1
 net.ipv6.conf.default.disable_ipv6=1
+net.netfilter.nf_conntrack_max = 262144
 EOF
 
 # 应用 sysctl 参数而不重新启动
 sudo sysctl --system
+
+# 新建kubespraysudo用户基于kubespray部署k8s集群
+useradd -m -s /bin/bash kubespraysudo
+echo "kubespraysudo:PasswordStrong123!" | chpasswd
+echo "kubespraysudo ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/kubespraysudo
+chmod 440 /etc/sudoers.d/kubespraysudo
+
+sudo -u kubespraysudo bash <<'EOF'
+set -e
+# 生成 SSH key（幂等处理）
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+
+[ -f ~/.ssh/id_ed25519 ] || ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519 -q
+
+PASSWORD='PasswordStrong123!'
+
+for host in prod-k8s-control-01 prod-k8s-worker-01 prod-k8s-worker-02; do
+  sshpass -p "$PASSWORD" ssh-copy-id \
+    -i ~/.ssh/id_ed25519.pub \
+    -o StrictHostKeyChecking=no \
+    -o UserKnownHostsFile=/dev/null \
+    kubespraysudo@$host
+done
+EOF
 {{< /cmd >}}
 
 ## 3. kubespray 依赖repo构建
@@ -172,19 +209,19 @@ export no_proxy="localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
 curl -LsSf https://astral.sh/uv/install.sh | sh
 source $HOME/.local/bin/env
 
-# 下载kubespray v2.23.3压缩包
+# 下载kubespray v2.24.3压缩包
 apt  install -y aria2
-aria2c -x 16 -s 16 -k 1M https://github.com/kubernetes-sigs/kubespray/archive/refs/tags/v2.23.3.tar.gz
-tar -xf kubespray-2.23.3.tar.gz
+aria2c -x 16 -s 16 -k 1M https://github.com/kubernetes-sigs/kubespray/archive/refs/tags/v2.24.3.tar.gz
+tar -xf kubespray-2.24.3.tar.gz
 
 # 将kubespray 目录拷贝至控制节点
-rsync -avzP kubespray-2.23.3/ root@prod-k8s-control-01:/opt/kubespray-2.23.3
+rsync -avzP kubespray-2.24.3/ root@prod-k8s-control-01:/opt/kubespray-2.24.3
 
-cd  kubespray-2.23.3
+cd  kubespray-2.24.3
 # 配置--python拉取大陆镜像
 export UV_PYTHON_INSTALL_MIRROR="https://registry.npmmirror.com/-/binary/python-build-standalone/"
 # 在当前目录基于指定版本创建Python虚拟环境
-uv venv --python 3.9
+uv venv --python  3.10.12
 # 激活虚拟环境
 source .venv/bin/activate
 
@@ -193,8 +230,9 @@ uv pip install -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/
 
 # 生成temp/files.list 和 temp/images.list 镜像列表文件
 bash contrib/offline/generate_list.sh
-# 删除不需要的镜像
-grep -Ev 'cilium|flannel|weave|kube-ovn|kube-router|sig-storage|cephfs|rbd|csi' contrib/offline/temp/images.list > images.filtered.txt
+# 若集群资源充足可保留全部镜像，本文选择保留部分核心镜像
+grep -Ev 'cilium|flannel|weave|kube-ovn|kube-router|sig-storage|cephfs|rbd|csi' contrib/offline/temp/images.list > offline-images.list
+
 
 apt install -y wget2
 # 下载所有二进制文件（kubeadm、kubelet、containerd、etcd、CNI 等） 单线程下载： wget -x -P temp/files -i temp/files.list
@@ -204,6 +242,8 @@ sudo apt install -y nginx
 sudo mkdir -p /var/www/k8s
 sudo mv files/* /var/www/k8s/
 sudo chown -R www-data:www-data /var/www/k8s
+# 查看kubernetes的离线包版本号
+ls /var/www/k8s/dl.k8s.io/release/
 
 # 配置 nginx代理k8s安装文件
 cat <<EOF | sudo tee /etc/nginx/sites-enabled/default
@@ -264,74 +304,116 @@ docker run -d --restart=always -p 5000:5000 --name registry swr.cn-north-4.myhua
 sudo apt install -y skopeo
 
 # 开2个线程同步镜像到内网registry制品库
-cat images.filtered.txt | xargs -I {} -P 2 sh -c '
+cat offline-images.list | xargs -I {} -P 2 sh -c '
   echo "Syncing {} ..."
   skopeo copy \
-    --retry-times 3 \
+    --retry-times 5 \
+    --command-timeout 300s \
     --dest-tls-verify=false \
     docker://{} \
     docker://192.168.101.39:5000/${1#*/};
 ' _ {}
-
-scp $(which uv) root@prod-k8s-control-01:/opt/kubespray-2.23.3
 {{< /cmd >}}
-
 
 ## 控制节点配置
 {{< cmd role="prod-k8s-control-01" title="prod-k8s-control-01 配置kubespray" >}}
-# 配置prod-k8s-control-01节点与其它节点的SSH免密
-ssh-keygen -t ed25519 -N ""
+apt update
+apt install -y build-essential gcc make \
+  libssl-dev zlib1g-dev libbz2-dev \
+  libreadline-dev libsqlite3-dev \
+  libffi-dev libncursesw5-dev \
+  liblzma-dev tk-dev uuid-dev \
+  wget curl
+cd /usr/src
+wget https://www.python.org/ftp/python/3.10.12/Python-3.10.12.tgz
+tar -xzf Python-3.10.12.tgz
+cd Python-3.10.12
+./configure --enable-optimizations --prefix=/usr/local/python-3.10.12
+make -j$(nproc)
+make install
 
-PASSWORD='你的root密码'
-
-for host in prod-k8s-control-01 prod-k8s-worker-01 prod-k8s-worker-02; do
-  sshpass -p "$PASSWORD" ssh-copy-id \
-    -i ~/.ssh/id_ed25519 \
-    -o StrictHostKeyChecking=no \
-    -o UserKnownHostsFile=/dev/null \
-    root@$host
-done
-
-# 进入 kubespray 目录
-cd /opt/kubespray-2.23.3
-
-mv uv /usr/local/bin/
-# 配置--python拉取大陆镜像
-export UV_PYTHON_INSTALL_MIRROR="https://registry.npmmirror.com/-/binary/python-build-standalone/"
-# 在当前目录基于指定版本创建Python虚拟环境
-uv python install 3.9
-/bin/bash -c "$(uv python list | grep cpython-3.9 | awk -F ' ' '{print $2}') -m venv .venv"
-source .venv/bin/activate
-# pip安装ansible，generate_list.sh脚本执行需要依赖ansible
+/usr/local/python-3.10.12/bin/python3.10 -m venv venv
+source ./venv/bin/activate
 python -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple --upgrade pip
 pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
 pip install -r requirements.txt
 pip install "urllib3<2"
 
-
-# 配置mycluster集群文件
 cp -rfp inventory/sample inventory/mycluster
-cat <<EOF | sudo tee  inventory/mycluster/inventory.ini
-[all]
-prod-k8s-control-01 ansible_host=192.168.101.40 ip=192.168.101.40 ansible_user=root
-prod-k8s-worker-01  ansible_host=192.168.101.44 ip=192.168.101.44 ansible_user=root
-prod-k8s-worker-02  ansible_host=192.168.101.45 ip=192.168.101.45 ansible_user=root
+# 修改目录名与inventory/mycluster/hosts.yaml文件的组名k8s-cluster对应，避免对应目录下的变量文件加载异常
+mv inventory/mycluster/group_vars/k8s_cluster/ inventory/mycluster/group_vars/k8s-cluster/
+# 配置mycluster集群文件
+cat <<EOF | tee inventory/mycluster/hosts.yaml
+all:
+  vars:
+    ansible_python_interpreter: /usr/local/python-3.10.12/bin/python3.10
+  hosts:
+    prod-k8s-control-01:
+      ansible_host: 192.168.101.40
+    prod-k8s-worker-01:
+      ansible_host: 192.168.101.44
+    prod-k8s-worker-02:
+      ansible_host: 192.168.101.45
 
-[kube_control_plane]
-prod-k8s-control-01 
-
-[etcd]
-prod-k8s-control-01 
-
-[kube_node]
-prod-k8s-worker-01
-prod-k8s-worker-02
-
-[k8s_cluster:children]
-kube_control_plane
-kube_node
+  children:
+    kube-master:
+      hosts:
+        prod-k8s-control-01:
+    kube-node:
+      hosts:
+        prod-k8s-worker-01:
+        prod-k8s-worker-02:
+    etcd:
+      hosts:
+        prod-k8s-control-01:
+    k8s-cluster:
+      children:
+        kube-master:
+        kube-node:
 EOF
 
+# 在 defaults 段添加 interpreter_python = /opt/kubespray-2.24.3/venv/bin/python
+apt install -y crudini
+# 配置控制节点的python解释器
+crudini --set ansible.cfg defaults interpreter_python /opt/kubespray-2.24.3/venv/bin/python
+# 配置缓存写入目录
+mkdir /var/cache/kubespray
+crudini --set ansible.cfg defaults fact_caching_connection /var/cache/kubespray
+
+# 配置离线部署文件
+cat <<'EOF' | tee  inventory/mycluster/group_vars/all/offline.yml
+registry_host: "192.168.101.39:5000"
+
+kube_image_repo: "{{ registry_host }}"
+gcr_image_repo: "{{ registry_host }}"
+github_image_repo: "{{ registry_host }}"
+docker_image_repo: "{{ registry_host }}"
+quay_image_repo: "{{ registry_host }}"
+
+files_repo: "http://192.168.101.39/k8s"
+kubeadm_download_url: "{{ files_repo }}/dl.k8s.io/release/{{ kube_version }}/bin/linux/{{ image_arch }}/kubeadm"
+kubectl_download_url: "{{ files_repo }}/dl.k8s.io/release/{{ kube_version }}/bin/linux/{{ image_arch }}/kubectl"
+kubelet_download_url: "{{ files_repo }}/dl.k8s.io/release/{{ kube_version }}/bin/linux/{{ image_arch }}/kubelet"
+cni_download_url: "{{ files_repo }}/github.com/containernetworking/plugins/releases/download/{{ cni_version }}/cni-plugins-linux-{{ image_arch }}-{{ cni_version }}.tgz"
+crictl_download_url: "{{ files_repo }}/github.com/kubernetes-sigs/cri-tools/releases/download/{{ crictl_version }}/crictl-{{ crictl_version }}-{{ ansible_system | lower }}-{{ image_arch }}.tar.gz"
+etcd_download_url: "{{ files_repo }}/github.com/etcd-io/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-{{ image_arch }}.tar.gz"
+calicoctl_download_url: "{{ files_repo }}/github.com/projectcalico/calico/releases/download/{{ calico_ctl_version }}/calicoctl-linux-{{ image_arch }}"
+calico_crds_download_url: "{{ files_repo }}/github.com/projectcalico/calico/archive/{{ calico_version }}.tar.gz"
+flannel_cni_download_url: "{{ files_repo }}/github.com/flannel-io/cni-plugin/releases/download/{{ flannel_cni_version }}/flannel-{{ image_arch }}"
+helm_download_url: "{{ files_repo }}/get.helm.sh/helm-{{ helm_version }}-linux-{{ image_arch }}.tar.gz"
+crun_download_url: "{{ files_repo }}/github.com/containers/crun/releases/download/{{ crun_version }}/crun-{{ crun_version }}-linux-{{ image_arch }}"
+kata_containers_download_url: "{{ files_repo }}/github.com/kata-containers/kata-containers/releases/download/{{ kata_containers_version }}/kata-static-{{ kata_containers_version }}-{{ ansible_architecture }}.tar.xz"
+runc_download_url: "{{ files_repo }}/github.com/opencontainers/runc/releases/download/{{ runc_version }}/runc.{{ image_arch }}"
+containerd_download_url: "{{ files_repo }}/github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-{{ image_arch }}.tar.gz"
+nerdctl_download_url: "{{ files_repo }}/github.com/containerd/nerdctl/releases/download/v{{ nerdctl_version }}/nerdctl-{{ nerdctl_version }}-{{ ansible_system | lower }}-{{ image_arch }}.tar.gz"
+krew_download_url: "{{ files_repo }}/github.com/kubernetes-sigs/krew/releases/download/{{ krew_version }}/krew-{{ host_os }}_{{ image_arch }}.tar.gz"
+cri_dockerd_download_url: "{{ files_repo }}/github.com/Mirantis/cri-dockerd/releases/download/{{ cri_dockerd_version }}/cri-dockerd-{{ cri_dockerd_version }}-linux-{{ image_arch }}.tar.gz"
+gvisor_runsc_download_url: "{{ files_repo }}/storage.googleapis.com/gvisor/releases/release/{{ gvisor_version }}/{{ ansible_architecture }}/runsc"
+gvisor_containerd_shim_runsc_download_url: "{{ files_repo }}/storage.googleapis.com/gvisor/releases/release/{{ gvisor_version }}/{{ ansible_architecture }}/containerd-shim-runsc-v1"
+youki_download_url: "{{ files_repo }}/github.com/containers/youki/releases/download/v{{ youki_version }}/youki_v{{ youki_version | regex_replace('\\.', '_') }}_linux.tar.gz"
+EOF
+
+apt install -y yamllint
 # 关闭 kube-ovn 全部高级功能
 sed -i \
 -e 's/kube_ovn_enable_lb: true/kube_ovn_enable_lb: false/' \
@@ -340,84 +422,103 @@ sed -i \
 -e 's/kube_ovn_ic_autoroute: true/kube_ovn_ic_autoroute: false/' \
 -e 's/kube_ovn_encap_checksum: true/kube_ovn_encap_checksum: false/' \
 -e 's/kube_ovn_default_gateway_check: true/kube_ovn_default_gateway_check: false/' \
-inventory/mycluster/group_vars/k8s_cluster/k8s-net-kube-ovn.yml
+inventory/mycluster/group_vars/k8s-cluster/k8s-net-kube-ovn.yml
+yamllint inventory/mycluster/group_vars/k8s-cluster/k8s-net-kube-ovn.yml
+
 # 关闭 macvlan NAT
 sed -i 's/enable_nat_default_gateway: true/enable_nat_default_gateway: false/' \
-inventory/mycluster/group_vars/k8s_cluster/k8s-net-macvlan.yml
+inventory/mycluster/group_vars/k8s-cluster/k8s-net-macvlan.yml
 # 关闭nodelocaldns
-sed -i 's/enable_nodelocaldns: true/enable_nodelocaldns: false/' inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml
-# 配置kubernetes version为v1.27.10
-sed -i "s#kube_version: v1.27.7#kube_version: v1.27.10#" inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml
+sed -i 's/enable_nodelocaldns: true/enable_nodelocaldns: false/' inventory/mycluster/group_vars/k8s-cluster/k8s-cluster.yml
+# 配置kubernetes version为v1.28.14
+sed -i "s#kube_version: v1.28.10#kube_version: v1.28.14#" inventory/mycluster/group_vars/k8s-cluster/k8s-cluster.yml
 # 配置CNI为calico
-sed -i "s#kube_network_plugin: flannel#kube_network_plugin: calico#" inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml
-
-# 验证变量最终值是true/false
-ansible prod-k8s-worker-01 -i inventory/mycluster/inventory.ini -m debug -a "var=dashboard_enabled"
+sed -i "s#kube_network_plugin: flannel#kube_network_plugin: calico#" inventory/mycluster/group_vars/k8s-cluster/k8s-cluster.yml
+# 开启dashboard
+sed -i "s/# dashboard_enabled: false/dashboard_enabled: true/" inventory/mycluster/group_vars/k8s-cluster/addons.yml
+# 修改内核模块，nf_conntrack_ipv4为nf_conntrack
+find . -type f -name "*.yml" -exec sed -i \
+-e 's/nf_conntrack_ipv4/nf_conntrack/g' \
+-e 's/modprobe_nf_conntrack_ipv4/modprobe_nf_conntrack/g' \
+-e 's/name: nf_conntrack_ipv4/name: nf_conntrack/g' \
+{} \;
 
 mkdir -p /opt/kubespray_cache
 chmod 755 /opt/kubespray_cache
 
-# 配置run_once缓存
-cat <<EOF | sudo tee -a inventory/mycluster/group_vars/all/all.yml
+# 修改节点临时存储为/opt/kubespray-releases，避免重启被清空
+grep -rl '/tmp/releases' . | xargs sed -i.bak 's#/tmp/releases#/opt/kubespray-releases#g'
 
-# Download behavior optimization
+# 配置run_once缓存
+cat <<EOF | tee -a inventory/mycluster/group_vars/all/all.yml
+# =====================
+# binary cache（保留）
+# =====================
 download_run_once: true
 download_localhost: true
-download_cache_dir: /opt/kubespray_cache
 download_keep_remote_cache: true
-download_force_cache: true
+download_cache_dir: /opt/kubespray_cache
 
-ansible_ssh_pipelining: true
-ansible_pipelining: true
-ansible_ssh_args: '-o ControlMaster=auto -o ControlPersist=60s -o PreferredAuthentications=publickey'
+# =====================
+# images关闭 cache，每台节点直接pull镜像
+# =====================
+download_container: false
+
+gather_facts: false
+
+calico_ipset_enabled: false
+
+calico_wait_for_kubeconfig_timeout: 600
+calico_wait_for_datastore: 600
+calico_deploy_wait: 600
+
+ansible_user: kubespraysudo
+ansible_become: true
+ansible_become_method: sudo
 EOF
 
 # 配置基于http拉取镜像
-cat <<EOF | sudo tee -a inventory/mycluster/group_vars/all/containerd.yml
+cat <<EOF | tee -a inventory/mycluster/group_vars/all/containerd.yml
 containerd_registries_mirrors:
   - prefix: "192.168.101.39:5000"
     mirrors:
       - host: "http://192.168.101.39:5000"
         capabilities: ["pull", "resolve", "push"]
         skip_verify: true
+      - host: "https://docker.gh-proxy.org"
+        capabilities: ["pull", "resolve"]
+      - host: "https://docker.1ms.run"
+        capabilities: ["pull", "resolve"]
+      - host: "https://docker.xuanyuan.me"
+        capabilities: ["pull", "resolve"]
 EOF
 
-# 测试各节点之间的连通性
-ansible all -i inventory/mycluster/inventory.ini -m ping
+# 避免 [WARNING]: Skipping callback plugin 'ara_default', unable to load 警告
+pip install ara[server] -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+# 配置环境变量，加载ARA插件路径
+python3 -m ara.setup.env >> /etc/profile.d/ara.sh
+source /etc/profile.d/ara.sh
 
-# 执行下载阶段
-ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml \
-  -e "unsafe_show_logs=true" \
-  -e "nerdctl_extra_flags=--insecure-registry" \
-  --forks 30 \
-  --tags download \
-  -v
+# 验证变量最终值是true/false
+ansible prod-k8s-worker-01 -i inventory/mycluster/hosts.yaml -m debug -a "var=dashboard_enabled"
+
+# 测试各节点之间的连通性
+ansible all -i inventory/mycluster/hosts.yaml -m ping
 
 # 执行部署阶段
-ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml \
-  -e "unsafe_show_logs=true" \
-  -e "nerdctl_extra_flags=--insecure-registry" \
-  --forks 50 \
-  --skip-tags download \
-  -v
-
-mkdir -p ~/.kube
-cp inventory/mycluster/artifacts/admin.conf ~/.kube/config
+ansible-playbook -i inventory/mycluster/hosts.yaml cluster.yml \
+  -b -v \
+  --forks 30 \
+  -e unsafe_show_logs=true
 
 kubectl get nodes
 kubectl get pods -A
 
 # 删除集群
-ansible-playbook -i inventory/mycluster/inventory.ini reset.yml -b -v
-# 清理 containerd 镜像
-nerdctl -n k8s.io images -q | xargs -r nerdctl -n k8s.io rmi -f
-# 清理 CNI 残留
-rm -rf /etc/cni/net.d
-rm -rf /var/lib/cni
-# 清理 iptables
-iptables -F
-# 清理 etcd 数据
-rm -rf /var/lib/etcd
+ansible-playbook -i inventory/mycluster/hosts.yaml reset.yml \
+  -b -v \
+  --forks 30 \
+  -e unsafe_show_logs=true
 {{< /cmd >}}
 
 Kubespray执行完整流程
