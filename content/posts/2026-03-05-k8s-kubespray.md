@@ -48,14 +48,6 @@ sudo hostnamectl set-hostname prod-k8s-worker-02
 {{< /cmd >}}
 
 {{< cmd role="prod-k8s-all" title="prod-k8s-all 配置" >}}
-# 关闭 swap、防火墙
-sudo swapoff -a
-sudo sed -i '/swap/s/^/#/' /etc/fstab
-sudo ufw disable
-systemctl disable --now networkd-dispatcher
-systemctl disable --now systemd-networkd-wait-online
-update-alternatives --set iptables /usr/sbin/iptables-legacy
-
 # 清理锁
 rm -f /var/lib/dpkg/lock-frontend
 rm -f /var/lib/apt/lists/lock
@@ -64,6 +56,65 @@ dpkg --configure -a
 systemctl disable --now  unattended-upgrades
 systemctl disable --now apt-daily.timer
 systemctl disable --now apt-daily-upgrade.timer
+
+
+# 配置阿里镜像源
+bash <(curl -sSL https://linuxmirrors.cn/main.sh) \
+  --source mirrors.aliyun.com \
+  --protocol https            \
+  --use-intranet-source false \
+  --backup true               \
+  --upgrade-software false    \
+  --clean-cache false         \
+  --ignore-backup-tips        \
+  --pure-mode
+
+sudo apt update && sudo apt install -y sshpass curl wget git
+
+cat <<EOF | sudo tee /etc/hosts
+192.168.101.39 prod-repo-mirror-01
+192.168.101.40 prod-k8s-control-01
+192.168.101.44 prod-k8s-worker-01
+192.168.101.45 prod-k8s-worker-02
+EOF
+
+# 新建kubespraysudo用户基于kubespray部署k8s集群
+useradd -m -s /bin/bash kubespraysudo
+echo "kubespraysudo:PasswordStrong123!" | chpasswd
+
+sudo tee /etc/sudoers.d/kubespraysudo <<EOF
+kubespraysudo ALL=(ALL) NOPASSWD: ALL
+Defaults:kubespraysudo !requiretty
+EOF
+
+sudo chmod 440 /etc/sudoers.d/kubespraysudo
+
+sudo -u kubespraysudo bash <<'EOF'
+set -e
+# 生成 SSH key（幂等处理）
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+
+[ -f ~/.ssh/id_ed25519 ] || ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519 -q
+
+PASSWORD='PasswordStrong123!'
+
+for host in prod-k8s-control-01 prod-k8s-worker-01 prod-k8s-worker-02; do
+  sshpass -p "$PASSWORD" ssh-copy-id \
+    -i ~/.ssh/id_ed25519.pub \
+    -o StrictHostKeyChecking=no \
+    -o UserKnownHostsFile=/dev/null \
+    kubespraysudo@$host
+done
+EOF
+
+# 关闭 swap、防火墙
+sudo swapoff -a
+sudo sed -i '/swap/s/^/#/' /etc/fstab
+sudo ufw disable
+systemctl disable --now networkd-dispatcher
+systemctl disable --now systemd-networkd-wait-online
+update-alternatives --set iptables /usr/sbin/iptables-legacy
 
 # 删掉全部已安装的 Snap 软件
 # 先删所有非 core / snapd
@@ -91,19 +142,6 @@ Package: snapd
 Pin: release a=*
 Pin-Priority: -10
 EOF
-
-# 配置阿里镜像源
-bash <(curl -sSL https://linuxmirrors.cn/main.sh) \
-  --source mirrors.aliyun.com \
-  --protocol https            \
-  --use-intranet-source false \
-  --backup true               \
-  --upgrade-software false    \
-  --clean-cache false         \
-  --ignore-backup-tips        \
-  --pure-mode
-
-sudo apt update && sudo apt install -y sshpass curl wget git
 
 # 配置时区为 亚洲上海
 timedatectl set-timezone Asia/Shanghai
@@ -156,13 +194,6 @@ systemctl enable --now chrony
 chronyc sources -v
 chronyc tracking
 
-cat <<EOF | sudo tee /etc/hosts
-192.168.101.39 prod-repo-mirror-01
-192.168.101.40 prod-k8s-control-01
-192.168.101.44 prod-k8s-worker-01
-192.168.101.45 prod-k8s-worker-02
-EOF
-
 # 解除 symlink
 rm -f /etc/resolv.conf
 # 写入静态 DNS
@@ -195,35 +226,6 @@ EOF
 
 # 应用 sysctl 参数而不重新启动
 sudo sysctl --system
-
-# 新建kubespraysudo用户基于kubespray部署k8s集群
-useradd -m -s /bin/bash kubespraysudo
-echo "kubespraysudo:PasswordStrong123!" | chpasswd
-sudo tee /etc/sudoers.d/kubespraysudo <<EOF
-kubespraysudo ALL=(ALL) NOPASSWD: ALL
-Defaults:kubespraysudo !requiretty
-EOF
-
-sudo chmod 440 /etc/sudoers.d/kubespraysudo
-
-sudo -u kubespraysudo bash <<'EOF'
-set -e
-# 生成 SSH key（幂等处理）
-mkdir -p ~/.ssh
-chmod 700 ~/.ssh
-
-[ -f ~/.ssh/id_ed25519 ] || ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519 -q
-
-PASSWORD='PasswordStrong123!'
-
-for host in prod-k8s-control-01 prod-k8s-worker-01 prod-k8s-worker-02; do
-  sshpass -p "$PASSWORD" ssh-copy-id \
-    -i ~/.ssh/id_ed25519.pub \
-    -o StrictHostKeyChecking=no \
-    -o UserKnownHostsFile=/dev/null \
-    kubespraysudo@$host
-done
-EOF
 {{< /cmd >}}
 
 ## 3. kubespray 依赖repo构建
@@ -413,16 +415,49 @@ yamllint inventory/mycluster/hosts.yaml
 
 # 在 defaults 段添加 interpreter_python = /opt/kubespray-2.24.3/venv/bin/python
 apt install -y crudini
-# 配置控制节点的python解释器
-crudini --set ansible.cfg defaults interpreter_python /opt/kubespray-2.24.3/venv/bin/python
 # 配置缓存写入目录
 mkdir -p /var/cache/kubespray
 chown kubespraysudo:kubespraysudo -R /var/cache/kubespray
-crudini --set ansible.cfg defaults fact_caching_connection /var/cache/kubespray
-# SSH连接超时调整
-crudini --set ansible.cfg defaults timeout 600
-# sudo 超时时间调整为600秒，默认12秒
-crudini --set ansible.cfg privilege_escalation become_timeout 600
+cat <<'EOF' | tee ansible.cfg
+[defaults]
+# 全局默认 forks 保持低，适合 2C CPU（命令行 --forks 仍可覆盖）
+forks = 2
+
+# 核心优化：大幅减少 SSH 连接次数和 CPU 开销
+pipelining = True
+
+# 忽略组名中的 - 和 . （Kubespray 常用）
+force_valid_group_names = ignore
+
+host_key_checking = False
+gathering = smart
+fact_caching = jsonfile
+fact_caching_connection = /var/cache/kubespray
+fact_caching_timeout = 86400
+
+display_skipped_hosts = no
+deprecation_warnings = False
+timeout = 600
+
+# Kubespray 相关路径（保持你原来的）
+library = ./library
+roles_path = roles:$VIRTUAL_ENV/usr/local/share/kubespray/roles:$VIRTUAL_ENV/usr/local/share/ansible/roles:/usr/share/kubespray/roles
+interpreter_python = /opt/kubespray-2.24.3/venv/bin/python
+
+[ssh_connection]
+# 核心：复用 SSH 连接，显著降低 CPU 上下文切换
+pipelining = True
+ssh_args = -o ControlMaster=auto -o ControlPersist=300s -o ServerAliveInterval=60 -o ServerAliveCountMax=3
+
+# 可选：指定 control_path，避免权限或路径问题
+control_path_dir = ~/.ansible/cp
+
+[inventory]
+ignore_patterns = artifacts, credentials
+
+[privilege_escalation]
+become_timeout = 600
+EOF
 
 # 配置离线部署文件
 cat <<'EOF' | tee  inventory/mycluster/group_vars/all/offline.yml
@@ -592,42 +627,44 @@ yamllint  inventory/mycluster/group_vars/all/containerd.yml
 
 # 因集群资源紧张，故限制calico CPU内存等资源的使用
 cat <<EOF | tee -a  inventory/mycluster/group_vars/k8s-cluster/k8s-net-calico.yml
+# ==================== Calico 极致轻量化配置（2C 2G 学习环境）====================
 calico_node_resources:
   requests:
-    cpu: 50m
-    memory: 64Mi
+    cpu: "30m"
+    memory: "64Mi"
   limits:
-    cpu: 200m
-    memory: 256Mi
+    cpu: "150m"
+    memory: "256Mi"
 
 calico_kube_controllers_resources:
   requests:
-    cpu: 30m
-    memory: 32Mi
+    cpu: "20m"
+    memory: "32Mi"
   limits:
-    cpu: 100m
-    memory: 128Mi
+    cpu: "80m"
+    memory: "128Mi"
 
+# Typha 配置
 typha_enabled: true
 typha_replicas: 1
 
 calico_typha_resources:
   requests:
-    cpu: 50m
-    memory: 64Mi
+    cpu: "30m"
+    memory: "64Mi"
   limits:
-    cpu: 150m
-    memory: 128Mi
+    cpu: "100m"
+    memory: "128Mi"
 
-calico_network_backend: vxlan
+# 其他推荐设置（2C 2G 环境下非常有用）
+calico_network_backend: vxlan          # VXLAN 在小集群和 NAT 环境下更稳定
+calico_felix_cpu_request: "30m"        # 额外控制 felix（calico-node 核心组件）
+calico_felix_cpu_limit: "120m"
+
+# 可选：降低 Typha 连接数限制，减少 CPU 开销
+typha_max_connections_lower_limit: 150
 EOF
 yamllint inventory/mycluster/group_vars/k8s-cluster/k8s-net-calico.yml
-
-# 避免 [WARNING]: Skipping callback plugin 'ara_default', unable to load 警告
-pip install ara[server] -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
-# 配置环境变量，加载ARA插件路径
-python3 -m ara.setup.env >> /etc/profile.d/ara.sh
-source /etc/profile.d/ara.sh
 
 # 切换kubespraysudo用户
 su kubespraysudo
@@ -639,20 +676,16 @@ ansible prod-k8s-worker-01 -i inventory/mycluster/hosts.yaml -m debug -a "var=da
 # 测试各节点之间的连通性
 ansible all -i inventory/mycluster/hosts.yaml -m ping
 
-# 执行部署阶段，--forks 值根据CPU资源调整，本文2C CPU，配置10
-ansible-playbook -i inventory/mycluster/hosts.yaml cluster.yml \
-  -b -v \
-  --forks 10 \
-  -e unsafe_show_logs=true
+# 执行部署阶段，--forks 值根据CPU资源调整
+ansible-playbook -i inventory/mycluster/hosts.yaml cluster.yml -b -v
 
+sudo cp -r /root/.kube/ ~
+sudo chown kubespraysudo:kubespraysudo -R ~/.kube
 kubectl get nodes
-kubectl get pods -A
+kubectl get pods -A -o wide
 
 # 删除集群
-ansible-playbook -i inventory/mycluster/hosts.yaml reset.yml \
-  -b -v \
-  --forks 10 \
-  -e unsafe_show_logs=true
+ansible-playbook -i inventory/mycluster/hosts.yaml reset.yml -b -v
 
 {{< /cmd >}}
 
