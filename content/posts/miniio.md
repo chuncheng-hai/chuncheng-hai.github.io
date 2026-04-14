@@ -24,6 +24,8 @@ mv minio /usr/local/bin/
 
 export MINIO_ROOT_USER=minioadmin
 export MINIO_ROOT_PASSWORD=minioadmin123
+export MINIO_CACHE_SIZE=0
+export MINIO_BROWSER=on
 
 cat > /etc/systemd/system/minio.service <<EOF
 [Unit]
